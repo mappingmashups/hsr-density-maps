@@ -1,0 +1,15 @@
+id,corridor,region,status,stations,route_km,pop_5km,pop_10km,pop_20km,pop_50km,per_km_5km,per_km_10km,per_km_20km,share_10_of_50,share_5_of_50
+es,Madrid – Barcelona,Europe,existing,7,548,2718645,6245088,10368968,14281261,4962,11398,18924,0.437,0.19
+fr,Paris – Marseille,Europe,existing,8,687,3067684,7154647,12341406,19380349,4463,10408,17953,0.369,0.158
+it,Turin – Naples,Europe,existing,7,832,3354892,7177030,11977575,23425227,4034,8630,14402,0.306,0.143
+ca,San Francisco – LA – Anaheim,North America,building,13,707,2435471,7756166,15740327,24780813,3445,10970,22262,0.313,0.098
+cascadia,Vancouver – Seattle – Portland,North America,planned,7,447,1061252,2997123,6729743,10343199,2377,6712,15072,0.29,0.103
+tx,Dallas – Houston,North America,planned,3,355,266247,1205087,4064659,12770608,749,3390,11435,0.094,0.021
+nec,Washington – New York – Boston,North America,existing,16,660,4319002,11269553,24456637,41303250,6543,17074,37052,0.273,0.105
+fl,Miami – Orlando (Brightline),North America,existing,6,333,778414,2396028,5883747,8691638,2339,7200,17681,0.276,0.09
+bw,Las Vegas – LA (Brightline West),North America,building,4,310,341003,1406736,3902179,9454722,1101,4544,12604,0.149,0.036
+ab,Calgary – Edmonton,North America,planned,3,281,576842,1570666,2887575,3422634,2055,5595,10286,0.459,0.169
+on,Windsor – Toronto – Québec City,North America,planned,12,1113,2569133,6117919,11029071,20571713,2309,5498,9912,0.297,0.125
+jp,Tokyo – Osaka (Tōkaidō),Asia,existing,17,484,5918017,18914630,41017588,65157202,12221,39059,84703,0.29,0.091
+kr,Seoul – Busan (Gyeongbu),Asia,existing,10,393,3750439,13249287,28523958,42506964,9542,33710,72572,0.312,0.088
+tw,Taipei – Kaohsiung,Asia,existing,12,327,5799628,12848279,20719605,23164623,17741,39304,63383,0.555,0.25

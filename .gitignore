@@ -1,0 +1,14 @@
+# Downloaded source data (8+ GB) - fetch with ./fetch_data.sh
+data/
+
+# Rendered images: regenerate with the plot_* / build_prisms scripts.
+# The published, compressed copies live in docs/.
+out/*.png
+out/*.svg
+out/atlas/
+out/ground/
+out/site/
+
+__pycache__/
+*.pyc
+.DS_Store

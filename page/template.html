@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HSR Station Catchments</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316171a'/%3E%3Crect x='7' y='14' width='5' height='12' fill='%23eb6834'/%3E%3Crect x='14' y='7' width='5' height='19' fill='%232a78d6'/%3E%3Crect x='21' y='17' width='5' height='9' fill='%231baf7a'/%3E%3C/svg%3E">
+<meta name="description" content="How many people live within 5, 10, 20 and 50 km of the stations on 14 existing and planned high-speed rail corridors, measured from one global population grid.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Overpass+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column (~70ch) for argument + method, with figure "plates"
+   that break out wider. Transit-signage display face, bookish serif body, mono for numbers. */
+:root {
+  --bg: #f6f5f1; --surface: #ffffff; --plate: #ffffff;
+  --ink: #16171a; --ink-2: #4f5057; --ink-3: #85868c; --rule: #dddcd5; --grid: #e7e6e0;
+  --accent: #16171a;
+  --eu: #2a78d6; --na: #eb6834; --as: #1baf7a;
+  --hi: #16171a; --lo: #c4c3bc;
+  --f-display: "Overpass", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
+  --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
+  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
+  --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
+  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
+  color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1180px; margin: 0 auto; padding-block: 48px 96px; display: grid; gap: 64px; }
+.col { max-width: 70ch; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 4.5vw, 3.1rem); font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 1.55rem; font-weight: 800; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0; }
+.stack { display: grid; gap: 16px; }
+.eyebrow { font: 600 0.75rem/1 var(--f-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.lede { font-size: 1.25rem; line-height: 1.5; color: var(--ink-2); }
+.meta { font: 400 0.8125rem/1.5 var(--f-display); color: var(--ink-3); }
+a { color: inherit; text-decoration-color: var(--ink-3); text-underline-offset: 3px; }
+.num, td.n, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+/* segmented control */
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); background: none; border: 0; padding: 9px 14px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg button:focus-visible, select:focus-visible, th button:focus-visible, .plate a:focus-visible { outline: 2px solid var(--eu); outline-offset: 2px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.controls label { font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); display: flex; gap: 8px; align-items: center; }
+select { font: 400 0.875rem/1.2 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 7px 10px; }
+
+/* figures */
+figure { margin: 0; display: grid; gap: 12px; }
+figcaption { font: 400 0.875rem/1.5 var(--f-display); color: var(--ink-3); max-width: 80ch; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 4px; overflow: auto; max-height: 85vh; }
+.plate img { display: block; width: 100%; height: auto; }
+.plate.actual img { width: auto; max-width: none; }
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; overflow-x: auto; }
+.chart svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.chart text { font-family: var(--f-display); fill: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 400 0.8125rem/1 var(--f-display); color: var(--ink-2); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* key-finding row */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.fact { background: var(--surface); padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.fact .big { font: 800 2.1rem/1 var(--f-display); }
+.fact .big small { font-size: 0.95rem; font-weight: 600; color: var(--ink-3); }
+.fact p { font: 400 0.9375rem/1.45 var(--f-display); color: var(--ink-2); }
+
+/* tables */
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font: 400 0.875rem/1.35 var(--f-display); }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { font-weight: 600; color: var(--ink-3); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--surface); position: sticky; top: 0; }
+th button { all: unset; cursor: pointer; }
+th button::after { content: ""; margin-left: 4px; }
+th[aria-sort="descending"] button::after { content: "↓"; }
+th[aria-sort="ascending"] button::after { content: "↑"; }
+td.n, th.n { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+td .bar { display: inline-block; height: 10px; border-radius: 0 4px 4px 0; vertical-align: middle; margin-right: 8px; }
+td.barcell { width: 40%; min-width: 220px; }
+.status { font: 600 0.6875rem/1 var(--f-display); letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 7px; border-radius: 3px; border: 1px solid var(--rule); color: var(--ink-2); }
+.status.existing { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.status.building { border-style: dashed; }
+.status.planned { border-style: dotted; }
+tr.diff td { color: var(--ink-3); }
+
+/* prism view */
+.pxscroll { overflow-x: auto; }
+.pxstack { display: grid; gap: 28px; min-width: 760px; }
+.pxrow { display: grid; gap: 6px; min-width: 0; }
+.pxrow header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.pxrow h3 { font-size: 1rem; }
+.pxrow .meta { font-size: 0.8125rem; }
+.pxplate { overflow: hidden; }
+.pxplate svg { display: block; height: auto; }
+.pxplate text { font-family: var(--f-display); }
+.pxkey { display: flex; align-items: flex-end; gap: 18px; font: 400 0.75rem/1.2 var(--f-display); color: var(--ink-2); }
+.pxkey svg { display: block; overflow: visible; }
+input[type="range"] { accent-color: var(--ink); width: 140px; }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font: 400 0.8125rem/1.4 var(--f-display); padding: 8px 10px; border-radius: 4px; max-width: 280px; z-index: 20; }
+#tip b { font-weight: 600; }
+
+.method { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+.method > div { min-width: 0; display: grid; gap: 10px; align-content: start; }
+.method p, .method li { font-size: 0.9875rem; color: var(--ink-2); }
+.method ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+code { font-family: var(--f-mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; overflow-wrap: anywhere; }
+.log { display: grid; gap: 10px; }
+.log div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; font-size: 0.9375rem; color: var(--ink-2); }
+.log time { font-family: var(--f-mono); font-size: 0.8125rem; color: var(--ink-3); padding-top: 2px; }
+@media (max-width: 520px) { .log div { grid-template-columns: 1fr; gap: 2px; } body { font-size: 1rem; } }
+@media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s, color .15s; } }
+
+/* base reset (previously supplied by the artifact host) */
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<main>
+  <header class="stack col">
+    <span class="eyebrow">High-speed rail · population near stations</span>
+    <h1>Big metros, far from the station</h1>
+    <p class="lede">California's cities look as big and as well spaced as Spain's and France's. But fewer of their residents live close to where the train actually stops. This page measures that with one global population grid, using fixed circles around every station on 14 corridors.</p>
+    <p class="meta">Updated <span id="updated"></span> · Kontur Population 2023 (~400 m H3 grid) · cross-checked against Meta HRSL (30 m)</p>
+  </header>
+
+  <section class="stack" aria-labelledby="h-find">
+    <h2 id="h-find" class="col">The comparison flips as the circle shrinks</h2>
+    <p class="col">Residents per kilometre of route, counted within a radius of any station, relative to the average of Madrid–Barcelona and Paris–Marseille. Above 1.0 means the corridor has more people near its stations per km of track than those two European lines; below 1.0 means fewer.</p>
+    <div class="facts" id="facts"></div>
+    <figure>
+      <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
+      <figcaption>Dark lines: North American corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stack" aria-labelledby="h-maps">
+    <h2 id="h-maps" class="col">Every corridor at the same scale</h2>
+    <p class="col">Each panel is rotated so its route runs top to bottom (arrow points north). Coloured circle area is proportional to the population inside the radius. Dashed rings show the real radius at map scale, and the grey inside them shows how densely populated that land is. Where two stations’ rings overlap, a dashed line splits them halfway between the stations, matching how the counts work: each person is counted once, toward the nearest station. When a coloured circle is bigger than its dashed ring, the area inside the radius is denser than the circle scale; when it's smaller, the area is sparser.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Map radius" id="mapseg">
+        <button type="button" data-map="nested" aria-pressed="true">5 / 10 / 20 km</button>
+        <button type="button" data-map="5km" aria-pressed="false">5 km</button>
+        <button type="button" data-map="10km" aria-pressed="false">10 km</button>
+        <button type="button" data-map="20km" aria-pressed="false">20 km</button>
+        <button type="button" data-map="50km" aria-pressed="false">50 km</button>
+      </div>
+      <div class="seg" role="group" aria-label="Map zoom" id="zoomseg">
+        <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
+        <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
+      </div>
+    </div>
+    <figure>
+      <div class="plate" id="plate"><img id="mapimg" src="maps/map_nested.webp" alt="Same-scale maps of 14 high-speed rail corridors with population circles at each station"></div>
+      <figcaption id="mapcap">Circle scale differs between radius views (stated on each map) so that the 5 km circles stay readable. Within one map, every circle uses the same scale.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stack" aria-labelledby="h-px">
+    <h2 id="h-px" class="col">Population as height</h2>
+    <p class="col">The same catchments, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground shows population density out to 50 km.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Catchment radius" id="pxseg">
+        <button type="button" data-r="5" aria-pressed="false">5 km</button>
+        <button type="button" data-r="10" aria-pressed="true">10 km</button>
+        <button type="button" data-r="20" aria-pressed="false">20 km</button>
+      </div>
+      <label for="pxtilt">View angle <input type="range" id="pxtilt" min="20" max="75" value="58" step="1"></label>
+      <div class="pxkey" id="pxkey" aria-hidden="true"></div>
+    </div>
+    <div class="pxscroll"><div class="pxstack" id="pxstack"></div></div>
+    <p class="meta col">Block height uses one scale for every corridor at the selected radius (see the key), and the scale changes when you switch radius. Hover a block for its numbers.</p>
+  </section>
+
+  <section class="stack" aria-labelledby="h-fp">
+    <h2 id="h-fp" class="col">Station footprints</h2>
+    <p class="col">The same 20 km circles drawn large, so you can see what's actually around each main-city station. Where another station sits within 40 km, a straight dashed line and a pale wash mark the part that the corridor maps count toward that neighbour; the numbers under each disc include everything inside it. Every disc uses the same scale, with north up. Grey shows people per km², and dashed rings mark 5, 10 and 20 km. Paris, Tokyo, Seoul and Taipei are dark nearly to the 10 km ring. Los Angeles, Houston and Dallas are an even mid-grey sprawl, with no dense core around the station.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Footprint zoom" id="fpzoom">
+        <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
+        <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
+      </div>
+    </div>
+    <figure>
+      <div class="plate" id="fpplate"><img src="atlas/atlas_cities.webp" alt="Twenty-kilometre discs around 36 main-city stations, shaded by population density, sorted by population within 10 km"></div>
+      <figcaption>Sorted by residents within 10 km. The bar under each disc shows the share of its 20 km population living within 5 km. Pick a corridor in the station explorer below to see every stop on that line.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stack" aria-labelledby="h-corr">
+    <h2 id="h-corr" class="col">Corridor catchments</h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Radius" id="radseg">
+        <button type="button" data-r="5" aria-pressed="false">5 km</button>
+        <button type="button" data-r="10" aria-pressed="true">10 km</button>
+        <button type="button" data-r="20" aria-pressed="false">20 km</button>
+        <button type="button" data-r="50" aria-pressed="false">50 km</button>
+      </div>
+      <div class="legend"><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></div>
+    </div>
+    <div class="tablewrap"><table id="ctable"><thead></thead><tbody></tbody></table></div>
+    <p class="meta col">Bars show residents per route-km at the selected radius. Route length is the sum of straight-line distances between consecutive stops. Click a column header to sort.</p>
+  </section>
+
+  <section class="stack" aria-labelledby="h-cent">
+    <h2 id="h-cent" class="col">How much of the metro is near the station?</h2>
+    <p class="col">For each large metro (at least 2.5 M people within 50 km), the share of that 50 km population living within 5 km and within 10 km of its main station. European cities cluster around 40% at 10 km. Most US cities sit between 8% and 22%.</p>
+    <figure>
+      <div class="chart"><svg id="cent" role="img" aria-labelledby="cent-t"><title id="cent-t">Share of 50 km population within 5 and 10 km of the main station</title></svg></div>
+      <figcaption>Open circle: within 5 km. Filled circle: within 10 km. Hover for counts. Smaller, isolated cities score higher on this measure by construction, so they're left out.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stack" aria-labelledby="h-st">
+    <h2 id="h-st" class="col">Station explorer</h2>
+    <div class="controls"><label for="csel">Corridor <select id="csel"></select></label></div>
+    <figure>
+      <div class="plate" id="stplate"><img id="stimg" src="atlas/es.webp" alt=""></div>
+    </figure>
+    <div class="tablewrap"><table id="stable"><thead></thead><tbody></tbody></table></div>
+    <p class="meta col">“Counted” columns credit overlapping circles to the nearest station, and corridor totals use these. HRSL is the 30 m Meta layer, listed as a check on Kontur (it has no data for Canada). km to next is the straight-line distance.</p>
+  </section>
+
+  <hr>
+
+  <section class="method" aria-labelledby="h-m">
+    <div>
+      <h2 id="h-m">Method</h2>
+      <p>Each population cell counts for a station if its centre falls within the radius (great-circle distance). Where circles overlap, as at Tokyo/Shinagawa, Taipei/Banqiao, the LA basin and NYC/Newark, each cell goes to its nearest station only, so nobody is counted twice.</p>
+      <p>The maps use an azimuthal-equidistant projection centred on each corridor, rotated so the route runs vertically. 100 km is the same length in every panel.</p>
+      <p>Grey shading uses the Kontur hexagons inside each radius, in four density classes: 300–1,500, 1,500–5,000, 5,000–15,000 and 15,000+ people per km². Land under 300 per km² is left blank. The lowest cut-off matches the EU/GHSL definition of an urban cluster, and 1,500 matches an urban centre.</p>
+    </div>
+    <div>
+      <h3>Data</h3>
+      <ul>
+        <li><b>Kontur Population 2023-11-01</b>: a global H3 res-8 grid (~0.74 km² cells) fusing GHSL, Meta HRSL, Microsoft buildings and Copernicus land cover. It's the only uniform layer here that also covers Canada.</li>
+        <li><b>Meta / CIESIN HRSL</b>: 30 m, used as a cross-check. It agrees with Kontur within a few percent wherever both exist.</li>
+        <li>Natural Earth 10 m outlines for the map backgrounds.</li>
+      </ul>
+      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
+    </div>
+    <div>
+      <h3>Caveats</h3>
+      <ul>
+        <li>Planned station sites are approximate: city centre or the most-cited candidate. The 5 km figures are sensitive to this. Texas Central's Houston terminal is at Northwest Mall, not downtown.</li>
+        <li>Windsor–Québec joins the Alto project (Toronto–Québec City) to the older Windsor–Toronto proposal.</li>
+        <li>Vancouver–Portland uses the Amtrak Cascades stops as stand-ins for a future high-speed line.</li>
+        <li>Counts are residents only. Jobs, visitors and transfer catchments aren't included.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="stack col" aria-labelledby="h-log">
+    <h2 id="h-log">Change log</h2>
+    <div class="log" id="log"></div>
+  </section>
+</main>
+<div id="tip" hidden></div>
+
+<script>
+const DATA = /*DATA*/null;
+const REGVAR = { "Europe": "var(--eu)", "North America": "var(--na)", "Asia": "var(--as)" };
+const fmtM = v => v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + " M" : Math.round(v / 1e3) + "k";
+const fmtK = v => (v / 1e3).toFixed(v < 1e4 ? 1 : 0) + "k";
+const $ = s => document.querySelector(s);
+const svgNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(svgNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+/* tooltip */
+const tip = $("#tip");
+function showTip(html, ev) { tip.innerHTML = html; tip.hidden = false; moveTip(ev); }
+function moveTip(ev) { const x = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = x + "px"; tip.style.top = (ev.clientY + 14) + "px"; }
+function hideTip() { tip.hidden = true; }
+
+$("#updated").textContent = DATA.updated;
+$("#log").innerHTML = DATA.log.map(([d, t]) => `<div><time>${d}</time><span>${t}</span></div>`).join("");
+
+/* ---------- flip chart: per-km relative to ES+FR average ---------- */
+const C = Object.fromEntries(DATA.corridors.map(c => [c.id, c]));
+const R = [5, 10, 20, 50];
+const perkm = (c, r) => c[`pop_${r}km`] / c.route_km;
+const ref = r => (perkm(C.es, r) + perkm(C.fr, r)) / 2;
+const NA = DATA.corridors.filter(c => c.region === "North America").map(c => c.id);
+(function facts() {
+  const ca = C.ca, tx = C.tx;
+  const f = [
+    [`${(perkm(ca, 50) / ref(50)).toFixed(2)}×`, "SF–LA vs Spain/France, within 50 km", "At metro scale, California has more people along its line per km than either European corridor."],
+    [`${(perkm(ca, 5) / ref(5)).toFixed(2)}×`, "SF–LA vs Spain/France, within 5 km", "Within walking-and-transit distance of the stations, it has fewer."],
+    [`${(perkm(tx, 50) / ref(50)).toFixed(2)}× → ${(perkm(tx, 5) / ref(5)).toFixed(2)}×`, "Dallas–Houston, 50 km → 5 km", "The biggest drop of any corridor, partly because the Houston terminal is planned well outside downtown."],
+  ];
+  $("#facts").innerHTML = f.map(([b, l, p]) => `<div class="fact"><span class="eyebrow">${l}</span><span class="big num">${b}</span><p>${p}</p></div>`).join("");
+})();
+(function flip() {
+  const svg = $("#flip"), W = 900, H = 420, m = { l: 48, r: 230, t: 16, b: 40 };
+  const xs = r => m.l + R.indexOf(r) * (W - m.l - m.r) / (R.length - 1);
+  const series = DATA.corridors.filter(c => !["es", "fr"].includes(c.id)).map(c => ({ c, v: R.map(r => perkm(c, r) / ref(r)) }));
+  const ymax = 6, ys = v => m.t + (1 - Math.log2(v / 0.125) / Math.log2(ymax / 0.125)) * (H - m.t - m.b);
+  [0.125, 0.25, 0.5, 1, 2, 4].forEach(v => {
+    el("line", { x1: m.l, x2: W - m.r, y1: ys(v), y2: ys(v), stroke: v === 1 ? "var(--ink-3)" : "var(--grid)", "stroke-width": v === 1 ? 1.2 : 1, "stroke-dasharray": v === 1 ? "4 3" : "" }, svg);
+    el("text", { x: m.l - 8, y: ys(v) + 4, "text-anchor": "end", "font-size": 12 }, svg).textContent = v < 1 ? v.toFixed(v === 0.125 ? 3 : 2).replace(/0+$/, "") + "×" : v + "×";
+  });
+  el("text", { x: m.l + 6, y: ys(1) - 6, "font-size": 11, fill: "var(--ink-3)" }, svg).textContent = "1× = Madrid–Barcelona / Paris–Marseille average";
+  R.forEach(r => { el("text", { x: xs(r), y: H - 14, "text-anchor": "middle", "font-size": 12 }, svg).textContent = `within ${r} km`; });
+  series.sort((a, b) => NA.includes(a.c.id) - NA.includes(b.c.id)).forEach(s => {
+    const na = NA.includes(s.c.id);
+    const g = el("g", { tabindex: 0, "aria-label": `${s.c.corridor}: ${s.v.map((v, i) => R[i] + " km " + v.toFixed(2) + "×").join(", ")}` }, svg);
+    const d = s.v.map((v, i) => `${i ? "L" : "M"}${xs(R[i])},${ys(v)}`).join("");
+    el("path", { d, fill: "none", stroke: na ? "var(--hi)" : "var(--lo)", "stroke-width": na ? 2 : 1.5, "stroke-linejoin": "round" }, g);
+    s.v.forEach((v, i) => el("circle", { cx: xs(R[i]), cy: ys(v), r: na ? 4 : 3, fill: na ? "var(--hi)" : "var(--lo)", stroke: "var(--surface)", "stroke-width": 2 }, g));
+    el("path", { d, fill: "none", stroke: "transparent", "stroke-width": 14 }, g); // hit target
+    const html = `<b>${s.c.corridor}</b><br>` + R.map((r, i) => `${r} km: ${s.v[i].toFixed(2)}× <span style="opacity:.7">(${fmtK(perkm(s.c, r))}/km)</span>`).join("<br>");
+    g.addEventListener("pointerenter", e => { showTip(html, e); g.querySelector("path").setAttribute("stroke-width", 3.5); });
+    g.addEventListener("pointermove", moveTip);
+    g.addEventListener("pointerleave", () => { hideTip(); g.querySelector("path").setAttribute("stroke-width", na ? 2 : 1.5); });
+  });
+  // direct labels in the right gutter, beside the 50 km end, nudged apart
+  const right = series.map(s => ({ y: ys(s.v[3]), text: s.c.corridor.replace(/ \(.*\)/, ""), na: NA.includes(s.c.id) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < right.length; i++) if (right[i].y - right[i - 1].y < 13) right[i].y = right[i - 1].y + 13;
+  right.forEach(l => el("text", { x: W - m.r + 10, y: l.y + 4, "font-size": 11.5, fill: l.na ? "var(--ink)" : "var(--ink-3)", "font-weight": l.na ? 600 : 400 }, svg).textContent = l.text);
+})();
+
+/* ---------- maps ---------- */
+function press(group, btn) { group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn)); }
+$("#mapseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#mapseg"), b);
+  $("#mapimg").src = `maps/map_${b.dataset.map}.webp`; });
+$("#fpzoom").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#fpzoom"), b);
+  $("#fpplate").classList.toggle("actual", b.dataset.zoom === "actual"); });
+$("#zoomseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#zoomseg"), b);
+  $("#plate").classList.toggle("actual", b.dataset.zoom === "actual"); });
+
+/* ---------- corridor table ---------- */
+let rSel = 10, sortKey = "perkm", sortDir = -1;
+function corrTable() {
+  const rows = DATA.corridors.map(c => ({ ...c, perkm: perkm(c, rSel), pop: c[`pop_${rSel}km`] }));
+  rows.sort((a, b) => { const x = a[sortKey], y = b[sortKey]; return (typeof x === "string" ? x.localeCompare(y) : x - y) * sortDir; });
+  const max = Math.max(...DATA.corridors.map(c => perkm(c, rSel)));
+  const cols = [["corridor", "Corridor", ""], ["status", "Status", ""], ["route_km", "Route km", "n"], ["stations", "Stops", "n"], ["pop", `Pop ≤${rSel} km`, "n"], ["perkm", "Per route-km", ""]];
+  $("#ctable thead").innerHTML = "<tr>" + cols.map(([k, l, cl]) => `<th class="${cl}" aria-sort="${k === sortKey ? (sortDir < 0 ? "descending" : "ascending") : "none"}"><button type="button" data-k="${k}">${l}</button></th>`).join("") + "</tr>";
+  $("#ctable tbody").innerHTML = rows.map(c => `<tr><td>${c.corridor}</td><td><span class="status ${c.status}">${c.status === "building" ? "under construction" : c.status}</span></td>
+    <td class="n">${c.route_km.toLocaleString()}</td><td class="n">${c.stations}</td><td class="n">${fmtM(c.pop)}</td>
+    <td class="barcell"><span class="bar" style="width:${(c.perkm / max * 70).toFixed(1)}%;background:${REGVAR[c.region]}"></span><span class="num">${fmtK(c.perkm)}</span></td></tr>`).join("");
+}
+$("#ctable").addEventListener("click", e => { const b = e.target.closest("th button"); if (!b) return; const k = b.dataset.k;
+  sortDir = k === sortKey ? -sortDir : (["corridor", "status"].includes(k) ? 1 : -1); sortKey = k; corrTable(); });
+$("#radseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#radseg"), b); rSel = +b.dataset.r; corrTable(); });
+corrTable();
+
+/* ---------- centralisation dumbbell ---------- */
+(function cent() {
+  const rows = DATA.cities.slice().sort((a, b) => b.s10 - a.s10);
+  const svg = $("#cent"), rowH = 22, m = { l: 190, r: 60, t: 10, b: 36 }, W = 900, H = m.t + m.b + rows.length * rowH;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const xs = v => m.l + v / 0.6 * (W - m.l - m.r);
+  [0, .1, .2, .3, .4, .5, .6].forEach(v => {
+    el("line", { x1: xs(v), x2: xs(v), y1: m.t, y2: H - m.b, stroke: "var(--grid)" }, svg);
+    el("text", { x: xs(v), y: H - m.b + 18, "text-anchor": "middle", "font-size": 12 }, svg).textContent = Math.round(v * 100) + "%";
+  });
+  rows.forEach((c, i) => {
+    const y = m.t + i * rowH + rowH / 2, col = REGVAR[c.region];
+    const g = el("g", { tabindex: 0, "aria-label": `${c.name}: ${Math.round(c.s5 * 100)}% within 5 km, ${Math.round(c.s10 * 100)}% within 10 km` }, svg);
+    el("rect", { x: 0, y: y - rowH / 2, width: W, height: rowH, fill: "transparent" }, g);
+    el("text", { x: m.l - 10, y: y + 4, "text-anchor": "end", "font-size": 12.5, fill: "var(--ink)" }, g).textContent = c.name;
+    el("line", { x1: xs(c.s5), x2: xs(c.s10), y1: y, y2: y, stroke: col, "stroke-width": 3, "stroke-opacity": .45, "stroke-linecap": "round" }, g);
+    el("circle", { cx: xs(c.s5), cy: y, r: 4.5, fill: "var(--surface)", stroke: col, "stroke-width": 2 }, g);
+    el("circle", { cx: xs(c.s10), cy: y, r: 5.5, fill: col, stroke: "var(--surface)", "stroke-width": 2 }, g);
+    el("text", { x: xs(c.s10) + 10, y: y + 4, "font-size": 11.5, fill: "var(--ink-3)", "font-family": "var(--f-mono)" }, g).textContent = Math.round(c.s10 * 100) + "%";
+    const html = `<b>${c.name}</b> · ${c.corridor}<br>≤5 km: ${fmtM(c.p5)} (${Math.round(c.s5 * 100)}%)<br>≤10 km: ${fmtM(c.p10)} (${Math.round(c.s10 * 100)}%)<br>≤50 km: ${fmtM(c.p50)}`;
+    g.addEventListener("pointerenter", e => showTip(html, e)); g.addEventListener("pointermove", moveTip); g.addEventListener("pointerleave", hideTip);
+  });
+})();
+
+/* ---------- station explorer ---------- */
+const csel = $("#csel");
+csel.innerHTML = DATA.corridors.map(c => `<option value="${c.id}">${c.corridor}</option>`).join("");
+try { const saved = localStorage.getItem("hsr-corridor"); if (saved && C[saved]) csel.value = saved; } catch (e) {}
+function stTable() {
+  const id = csel.value; try { localStorage.setItem("hsr-corridor", id); } catch (e) {}
+  const img = $("#stimg"); img.src = `atlas/${id}.webp`; img.alt = `20 km footprints of every station on ${C[id].corridor}`;
+  const rows = DATA.stations.filter(s => s.cid === id);
+  $("#stable thead").innerHTML = `<tr><th>Station</th><th class="n">km to next</th><th class="n">≤5 km</th><th class="n">≤10 km</th><th class="n">≤20 km</th><th class="n">≤50 km</th><th class="n">Counted ≤10 km</th><th class="n">HRSL ≤10 km</th></tr>`;
+  $("#stable tbody").innerHTML = rows.map(s => `<tr><td>${s.station}</td><td class="n">${s.next ?? "–"}</td>
+    ${[5, 10, 20, 50].map(r => `<td class="n">${fmtM(s["raw_" + r])}</td>`).join("")}
+    <td class="n">${fmtM(s.dedup_10)}</td><td class="n">${s.hrsl_10 == null ? "–" : fmtM(s.hrsl_10)}</td></tr>`).join("");
+}
+csel.addEventListener("change", stTable); stTable();
+
+/* ---------- prism view: catchments extruded by population, oblique parallel projection ---------- */
+(function prisms() {
+  const P = DATA.prisms; if (!P) return;
+  const REGKEY = { "Europe": "--eu", "North America": "--na", "Asia": "--as" };
+  const stack = $("#pxstack");
+  const SIDE = 40; // km of margin each side for labels
+  const maxSpan = Math.max(...P.corridors.map(c => c.bbox[2] - c.bbox[0])) + 2 * SIDE;
+  // one height scale per radius, shared by every corridor: tallest block = HMAX km of "height"
+  const HMAX = 150;
+  const maxPop = Object.fromEntries(P.radii.map(r => [r, Math.max(...P.corridors.flatMap(c => c.stations.map(s => s.c[r].pop)))]));
+  let radius = 10, tilt = 58, grow = 1;
+
+  function hex2rgb(h) { h = h.trim().replace("#", ""); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+  function mix(rgb, to, t) { return "rgb(" + rgb.map((v, i) => Math.round(v + (to[i] - v) * t)).join(",") + ")"; }
+  function colors(region) {
+    const rgb = hex2rgb(getComputedStyle(document.documentElement).getPropertyValue(REGKEY[region]) || "#888888");
+    return { rgb, top: mix(rgb, [255, 255, 255], 0.38), edge: mix(rgb, [0, 0, 0], 0.45) };
+  }
+  const fmtP = v => v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : Math.round(v / 1e3) + "k";
+
+  // build one block per corridor
+  const rows = P.corridors.map(c => {
+    const row = document.createElement("article"); row.className = "pxrow";
+    const tot = r => c.stations.reduce((a, s) => a + s.c[r].pop, 0);
+    row.innerHTML = `<header><h3>${c.name}</h3><span class="meta">${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km · <span class="pxtot"></span></span></header>`;
+    const plate = document.createElement("div"); plate.className = "pxplate";
+    plate.style.width = ((c.bbox[2] - c.bbox[0] + 2 * SIDE) / maxSpan * 100).toFixed(2) + "%";
+    const svg = el("svg", { role: "img", "aria-label": `${c.name}: catchment populations as blocks` });
+    plate.appendChild(svg); row.appendChild(plate); stack.appendChild(row);
+    return { c, row, svg, tot, totEl: row.querySelector(".pxtot") };
+  });
+
+  function render() {
+    const t = tilt * Math.PI / 180, cs = Math.cos(t), sn = Math.sin(t);
+    const hk = HMAX / maxPop[radius] * grow;           // height units per person
+    const X = (x) => x, Y = (y, z) => -(y * cs + z * sn);
+    rows.forEach(({ c, svg, tot, totEl }) => {
+      const pxPerKm = (svg.parentNode.clientWidth || 800) / (c.bbox[2] - c.bbox[0] + 2 * SIDE);
+      const fs = 11.5 / pxPerKm, fsS = 10 / pxPerKm;
+      const col = colors(c.region);
+      const [x0, y0, x1, y1] = c.bbox;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      totEl.textContent = `${fmtP(tot(radius))} within ${radius} km`;
+      // ground image, mapped onto the tilted plane (parallel projection = pure y-scale)
+      const img = el("image", { href: `ground/${c.id}.webp`, x: x0, y: -y1, width: x1 - x0, height: y1 - y0,
+        preserveAspectRatio: "none", transform: `scale(1,${cs})` }, svg);
+      el("rect", { x: x0, y: -y1, width: x1 - x0, height: y1 - y0, fill: "none", stroke: "var(--rule)", "stroke-width": 1 / pxPerKm,
+        "vector-effect": "non-scaling-stroke", transform: `scale(1,${cs})` }, svg);
+      // route on the ground
+      el("polyline", { points: c.stations.map(s => `${X(s.x)},${Y(s.y, 0)}`).join(" "), fill: "none", stroke: "#3a3a38",
+        "stroke-width": 1.4 / pxPerKm, "stroke-dasharray": c.status === "existing" ? "" : c.status === "building" ? `${4 / pxPerKm} ${2 / pxPerKm}` : `${1.5 / pxPerKm} ${1.5 / pxPerKm}` }, svg);
+      // north arrow on the ground, bottom-left
+      const ax = x0 + 30, ay = y0 + 30, L = 12, n = c.north;
+      el("line", { x1: X(ax - n[0] * L), y1: Y(ay - n[1] * L, 0), x2: X(ax + n[0] * L), y2: Y(ay + n[1] * L, 0), stroke: "#52514e", "stroke-width": 1.2 / pxPerKm }, svg);
+      el("circle", { cx: X(ax + n[0] * L), cy: Y(ay + n[1] * L, 0), r: 2.2 / pxPerKm, fill: "#52514e" }, svg);
+      el("text", { x: X(ax + n[0] * (L + 7)), y: Y(ay + n[1] * (L + 7), 0) + fsS * 0.35, "font-size": fsS, "text-anchor": "middle", fill: "#52514e" }, svg).textContent = "N";
+      // blocks, far to near so nearer ones paint over
+      const order = c.stations.map((s, i) => i).sort((a, b) => c.stations[b].y - c.stations[a].y);
+      let top = Y(y1, 0), bottom = Y(y0, 0);
+      const labels = [];
+      order.forEach(i => {
+        const s = c.stations[i], k = s.c[radius], h = k.pop * hk, poly = k.poly;
+        const g = el("g", { tabindex: 0, "aria-label": `${s.full}: ${fmtP(k.pop)} within ${radius} km` }, svg);
+        // footprint outline on the ground
+        el("polygon", { points: poly.map(p => `${X(p[0])},${Y(p[1], 0)}`).join(" "), fill: "none", stroke: col.edge,
+          "stroke-width": 0.8 / pxPerKm, "stroke-dasharray": `${2.2 / pxPerKm} ${1.6 / pxPerKm}` }, g);
+        if (h > 0.05) {
+          // walls that face the viewer (outward normal pointing toward -y), shaded by a light from the front-left
+          const walls = [];
+          for (let j = 0; j < poly.length; j++) {
+            const a = poly[j], b = poly[(j + 1) % poly.length];
+            const ex = b[0] - a[0], ey = b[1] - a[1], len = Math.hypot(ex, ey); if (len < 1e-6) continue;
+            const nx = ey / len, ny = -ex / len;         // outward normal for a CCW ring
+            if (ny >= 0) continue;
+            const lit = 0.25 + 0.75 * Math.max(0, -0.55 * nx - 0.84 * ny);
+            walls.push([a, b, lit]);
+          }
+          walls.forEach(([a, b, lit]) => el("polygon", {
+            points: [[a, 0], [b, 0], [b, h], [a, h]].map(([p, z]) => `${X(p[0])},${Y(p[1], z)}`).join(" "),
+            fill: mix(col.rgb, [0, 0, 0], 0.55 - 0.45 * lit), stroke: mix(col.rgb, [0, 0, 0], 0.55 - 0.45 * lit), "stroke-width": 0.3 / pxPerKm }, g));
+          el("polygon", { points: poly.map(p => `${X(p[0])},${Y(p[1], h)}`).join(" "), fill: col.top, stroke: col.edge, "stroke-width": 0.7 / pxPerKm }, g);
+        }
+        el("circle", { cx: X(s.x), cy: Y(s.y, h), r: 2 / pxPerKm, fill: "#16171a" }, g);
+        top = Math.min(top, Y(s.y, h) - fs * 2.6);
+        labels.push({ s, k, x: X(s.x), y: Y(s.y, h) });
+        const tipHtml = `<b>${s.full}</b><br>${fmtP(k.pop)} people counted within ${radius} km<br>catchment ${k.area.toLocaleString()} km² · ${Math.round(k.pop / k.area).toLocaleString()} per km²`;
+        g.addEventListener("pointerenter", e => showTip(tipHtml, e)); g.addEventListener("pointermove", moveTip); g.addEventListener("pointerleave", hideTip);
+      });
+      // labels above block tops, biggest first, skipping ones that would collide
+      const placed = [];
+      const ends = new Set([c.stations[0].name, c.stations[c.stations.length - 1].name]);
+      labels.sort((a, b) => ends.has(b.s.name) - ends.has(a.s.name) || b.k.pop - a.k.pop).forEach((l, n) => {
+        const major = ends.has(l.s.name) || n < 4 || l.k.pop >= maxPop[radius] * 0.12;
+        const f = major ? fs : fsS, w = l.s.name.length * f * 0.56, hgt = f * (major ? 2.3 : 1.2);
+        const bx = l.x - w / 2, by = l.y - f * 0.7 - hgt;
+        if (placed.some(p => bx < p[0] + p[2] && bx + w > p[0] && by < p[1] + p[3] && by + hgt > p[1])) return;
+        placed.push([bx, by, w, hgt]);
+        const tx = el("text", { x: l.x, y: l.y - f * 0.7 - (major ? f * 1.15 : 0), "font-size": f, "text-anchor": "middle", fill: "var(--ink)", "font-weight": major ? 600 : 400,
+          stroke: "var(--bg)", "stroke-width": f * 0.28, "paint-order": "stroke", "pointer-events": "none" }, svg);
+        tx.textContent = l.s.name;
+        if (major) {
+          const v = el("text", { x: l.x, y: l.y - f * 0.7, "font-size": fsS, "text-anchor": "middle", fill: "var(--ink-2)",
+            stroke: "var(--bg)", "stroke-width": fsS * 0.28, "paint-order": "stroke", "pointer-events": "none", "font-family": "var(--f-mono)" }, svg);
+          v.textContent = fmtP(l.k.pop);
+        }
+      });
+      svg.setAttribute("viewBox", `${x0 - SIDE} ${top} ${x1 - x0 + 2 * SIDE} ${bottom - top}`);
+      svg.setAttribute("width", "100%");
+    });
+    // key: 100 km bar and a 1 M-person block height, in the same pixels as the plates
+    const k = ($("#pxstack").clientWidth || 800) / maxSpan;
+    const unit = maxPop[radius] > 3e6 ? 1e6 : 5e5;
+    const hpx = unit * HMAX / maxPop[radius] * sn * k, wpx = 100 * k;
+    $("#pxkey").innerHTML = `<span style="display:flex;align-items:flex-end;gap:6px"><svg width="10" height="${hpx.toFixed(1)}"><rect width="10" height="${hpx.toFixed(1)}" fill="var(--ink-3)"/></svg>${fmtP(unit)} people</span>` +
+      `<span style="display:grid;gap:4px"><svg width="${wpx.toFixed(1)}" height="6"><rect y="2" width="${wpx.toFixed(1)}" height="2" fill="var(--ink-2)"/><rect width="1.5" height="6" fill="var(--ink-2)"/><rect x="${(wpx - 1.5).toFixed(1)}" width="1.5" height="6" fill="var(--ink-2)"/></svg>100 km</span>`;
+  }
+
+  function animateGrow() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { grow = 1; render(); return; }
+    const t0 = performance.now(), D = 550;
+    (function step(now) { const u = Math.min(1, (now - t0) / D); grow = 1 - Math.pow(1 - u, 3); render(); if (u < 1) requestAnimationFrame(step); })(t0);
+  }
+  $("#pxseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#pxseg"), b); radius = +b.dataset.r; animateGrow(); });
+  $("#pxtilt").addEventListener("input", e => { tilt = +e.target.value; render(); });
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  render();
+})();
+</script>
+</body>
+</html>
