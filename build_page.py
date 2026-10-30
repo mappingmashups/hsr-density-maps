@@ -11,6 +11,7 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-10-30", "Height view: north never points downward any more, so Florida now reads Orlando → Miami and Taiwan reads Kaohsiung → Taipei."),
     ("2026-10-29", "Moved to GitHub Pages, with data credits and a link to the code. Images now ship as WebP."),
     ("2026-10-28", "Height view: mostly east–west routes now keep north up (Osaka on the left of Tokyo, for example); north–south routes still read in the order of their names."),
     ("2026-10-28", "New view: every corridor turned horizontal and tilted, with each station's catchment raised into a block by population."),

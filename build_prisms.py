@@ -29,7 +29,6 @@ OUT = os.path.join(HERE, "out")
 RADII = [5, 10, 20]
 PAD = 55          # km of ground shown around the stations
 PX_PER_KM = 3     # ground image resolution
-MAX_NORTH_UP_TURN = 60  # degrees: routes needing less turn than this stay north-up
 LAND, WATER, BORDER = "#efeee9", "#dfe8ed", "#d2d1cb"
 BINS, GREYS = FOOTPRINT["density"]
 
@@ -57,10 +56,9 @@ def corridor(c):
     t = np.radians(phi)
     R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
     xy = xy @ R.T
-    # Mostly east–west routes keep the smallest rotation, so north stays roughly up.
-    # Mostly north–south routes turn ~90° either way, so put the first-named
-    # station on the left to read like the corridor's name.
-    if abs(phi) > MAX_NORTH_UP_TURN and xy[0, 0] > xy[-1, 0]:
+    # North must never point downward. The smallest rotation already guarantees
+    # that; the check stays as a guard for a route turned exactly 90°.
+    if (R @ np.array([0.0, 1.0]))[1] < 0:
         R = -R
         xy = -xy
     x0, y0 = xy.min(0) - PAD
