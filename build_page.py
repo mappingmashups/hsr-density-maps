@@ -11,6 +11,7 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-11-07", "New title and introduction."),
     ("2026-11-07", "Added Paris – London and Paris – Brussels – Amsterdam, and extended Cascadia to Eugene."),
     ("2026-11-07", "Height view and comparison: the catchment radius is now a slider from 5 to 50 km in 1 km steps. Catchment shapes are drawn live for any radius."),
     ("2026-11-06", "Comparison: flip either map, slide the shorter route along the line (or align the biggest stations), and show US stations' census metro-area populations with county outlines."),
