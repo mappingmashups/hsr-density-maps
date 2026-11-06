@@ -34,7 +34,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | US census metro-area (CBSA) population per station, split evenly between stations sharing a metro | `build_msa.py` | `out/msa.json` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
-| Browser-drawn views: oblique "population as height" and the two-corridor comparison | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` (drawn in the browser) |
+| Browser-drawn views: oblique "population as height" and the two-corridor comparison. Stores each station's population at every km from 5 to 50 km; the page draws catchments live for the radius slider | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` |
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 

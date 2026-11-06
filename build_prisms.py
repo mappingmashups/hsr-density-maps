@@ -2,8 +2,9 @@
 
 Each corridor is rotated along its principal axis, either left→right (the oblique
 "population as height" view) or bottom→top (the side-by-side comparison, matching
-the first series of maps). For each radius, each station's catchment is its r-km
-circle cut by its Voronoi cell (the same nearest-station rule as the counts).
+the first series of maps). For every whole km from 5 to 50, each station gets the
+people in its full circle and the people counted for it (nearest-station rule, as
+in the tables). The page draws catchment shapes itself for whatever radius is chosen.
 
 Outputs:
   out/prisms.json            horizontal geometry in rotated km (x right, y "north" = away from viewer)
@@ -23,7 +24,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 from shapely.geometry import Point, MultiPoint, box
-from shapely.ops import voronoi_diagram
 from pyproj import Transformer
 from stations import CORRIDORS
 from popcalc import hav_km
@@ -31,7 +31,7 @@ from plot_maps import FOOTPRINT, short
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
-RADII = [5, 10, 20]
+R_MIN, R_MAX = 5, 50   # catchment radius range offered on the page (km, 1 km steps)
 PAD = 55          # km of ground shown around the stations
 PX_PER_KM = 3     # ground image resolution
 LAND, WATER, BORDER = "#efeee9", "#dfe8ed", "#d2d1cb"
@@ -79,29 +79,19 @@ def corridor(c, orient="h"):
     x0, y0 = xy.min(0) - PAD
     x1, y1 = xy.max(0) + PAD
 
-    # catchments: circle ∩ Voronoi cell, per radius
-    env = box(x0 - 500, y0 - 500, x1 + 500, y1 + 500)
-    if len(xy) > 1:
-        cells = list(voronoi_diagram(MultiPoint([tuple(p) for p in xy]), envelope=env).geoms)
-        cell_of = [next(g for g in cells if g.contains(Point(p))) for p in xy]
-    else:
-        cell_of = [env]
+    # population at every whole km from R_MIN to R_MAX: "p" = counted (each hexagon credited to its
+    # nearest station on the corridor), "pr" = everyone in the full circle. The page draws the
+    # catchment shapes itself (circle cut halfway to neighbouring stations) for any radius.
+    h = pd.read_parquet(os.path.join(OUT, "hex", f"{c['id']}.parquet"), columns=["lon", "lat", "population"])
+    D = np.stack([hav_km(s_[1], s_[2], h["lon"].values, h["lat"].values) for s_ in sts], axis=1)
+    near, hp = D.argmin(1), h["population"].values
+    edges = np.arange(0, R_MAX + 1)                       # 1 km bins; cumulative sum = people within r
     stations = []
-    for i, (s, p) in enumerate(zip(sts, xy)):
-        pr = POP[(c["id"], s[0])]
-        cat = {}
-        for r in RADII:
-            g = Point(p).buffer(r, 48).intersection(cell_of[i])
-            g = g.simplify(0.05)
-            ring = np.asarray(g.exterior.coords)[:-1]
-            # counter-clockwise, so outward normals are well defined on the page
-            if g.exterior.is_ccw is False:
-                ring = ring[::-1]
-            cat[str(r)] = dict(poly=rnd(ring), pop=round(pr[f"dedup_{r}"]), area=round(g.area, 1))
-        st = dict(name=short(s[0]), full=s[0], x=round(float(p[0]), 2), y=round(float(p[1]), 2), c=cat)
-        if orient == "v":
-            st["raw"] = {str(r): round(pr[f"raw_{r}"]) for r in RADII}
-        stations.append(st)
+    for i, (s_, p) in enumerate(zip(sts, xy)):
+        raw = np.cumsum(np.histogram(D[:, i], bins=edges, weights=hp)[0])
+        ded = np.cumsum(np.histogram(D[near == i, i], bins=edges, weights=hp[near == i])[0])
+        stations.append(dict(name=short(s_[0]), full=s_[0], x=round(float(p[0]), 2), y=round(float(p[1]), 2),
+                             p=[int(round(v)) for v in ded[R_MIN - 1:]], pr=[int(round(v)) for v in raw[R_MIN - 1:]]))
 
     ground(c["id"], proj, R, (x0, y0, x1, y1), sts, "ground" if orient == "h" else "ground_v")
     north = (R @ np.array([0.0, 1.0])).tolist()
@@ -183,5 +173,5 @@ def ground(cid, proj, R, bb, sts, folder="ground"):
 if __name__ == "__main__":
     for orient, name in (("h", "prisms.json"), ("v", "compare.json")):
         data = [corridor(c, orient) for c in CORRIDORS]
-        json.dump(dict(radii=RADII, corridors=data), open(os.path.join(OUT, name), "w"), ensure_ascii=False)
+        json.dump(dict(r_min=R_MIN, r_max=R_MAX, corridors=data), open(os.path.join(OUT, name), "w"), ensure_ascii=False)
         print("wrote", name, os.path.getsize(os.path.join(OUT, name)) // 1024, "KB")

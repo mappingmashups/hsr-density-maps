@@ -24,7 +24,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUTDIR = os.path.join(HERE, "out", "hex")
 RMAX = 50
 RES = 8
-K = int(RMAX / (2 * h3.average_hexagon_edge_length(RES, unit="km") * 0.866)) + 3  # rings to cover RMAX
+# rings needed to cover RMAX. H3 cells vary in size across the globe (smaller than
+# average in e.g. Korea), so pad the average-based count generously; cells are then
+# filtered by true distance below.
+K = int(RMAX / (2 * h3.average_hexagon_edge_length(RES, unit="km") * 0.866) * 1.3) + 5
 
 
 def main():
