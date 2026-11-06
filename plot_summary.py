@@ -4,7 +4,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from stations import CORRIDORS
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out")
-REG = {"Europe": "#2a78d6", "North America": "#eb6834", "Asia": "#1baf7a"}
+REG = {"North America": "#eb6834", "Australia": "#b8461d", "Europe": "#2a78d6", "Asia": "#1baf7a"}
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 rows = json.load(open(f"{OUT}/corridors.json"))
 plt.rcParams.update({"font.size": 8.5, "axes.edgecolor": GRID, "axes.labelcolor": INK2,

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>HSR Station Catchments</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316171a'/%3E%3Crect x='7' y='14' width='5' height='12' fill='%23eb6834'/%3E%3Crect x='14' y='7' width='5' height='19' fill='%232a78d6'/%3E%3Crect x='21' y='17' width='5' height='9' fill='%231baf7a'/%3E%3C/svg%3E">
-<meta name="description" content="How many people live within 5, 10, 20 and 50 km of the stations on 16 existing and planned high-speed rail corridors, measured from one global population grid.">
+<meta name="description" content="How many people live within 5, 10, 20 and 50 km of the stations on 26 existing and planned high-speed rail corridors, measured from one global population grid.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Overpass+Mono:wght@400;600&display=swap">
 <style>
@@ -15,7 +15,7 @@
   --bg: #f6f5f1; --surface: #ffffff; --plate: #ffffff;
   --ink: #16171a; --ink-2: #4f5057; --ink-3: #85868c; --rule: #dddcd5; --grid: #e7e6e0;
   --accent: #16171a;
-  --eu: #2a78d6; --na: #eb6834; --as: #1baf7a;
+  --eu: #2a78d6; --na: #eb6834; --au: #b8461d; --as: #1baf7a;
   --hi: #16171a; --lo: #c4c3bc;
   --f-display: "Overpass", "Helvetica Neue", Arial, sans-serif;
   --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -24,12 +24,12 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
   --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
-  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
+  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --au: #ee8a5e; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
   color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
   --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
-  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
+  --accent: #eeede8; --eu: #3987e5; --na: #d95926; --au: #ee8a5e; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
   color-scheme: dark }
 
 * { box-sizing: border-box; }
@@ -157,7 +157,7 @@ img { max-width: 100%; }
   <header class="stack col">
     <span class="eyebrow">High-speed rail · population near stations</span>
     <h1>Where would High Speed Rail work in North America?</h1>
-    <p class="lede">Metro populations and distances between many city pairs in North America are comparable to those in Europe, where High Speed Rail is successful. But North American cities are less dense, so fewer of their residents live close to where the train actually stops. This page measures that with one global population grid, using fixed circles around every station on 16 corridors.</p>
+    <p class="lede">Metro populations and distances between many city pairs in North America are comparable to those in Europe, where High Speed Rail is successful. But North American cities are less dense, so fewer of their residents live close to where the train actually stops. This page measures that with one global population grid, using fixed circles around every station on 26 corridors.</p>
     <p class="meta">Updated <span id="updated"></span> · Kontur Population 2023 (~400 m H3 grid) · cross-checked against Meta HRSL (30 m)</p>
   </header>
 
@@ -204,7 +204,7 @@ img { max-width: 100%; }
       </div>
     </div>
     <figure>
-      <div class="plate" id="plate"><img id="mapimg" src="maps/map_nested.webp" alt="Same-scale maps of 16 high-speed rail corridors with population circles at each station"></div>
+      <div class="plate" id="plate"><img id="mapimg" src="maps/map_nested.webp" alt="Same-scale maps of 26 high-speed rail corridors with population circles at each station"></div>
       <figcaption id="mapcap">Circle scale differs between radius views (stated on each map) so that the 5 km circles stay readable. Within one map, every circle uses the same scale.</figcaption>
     </figure>
   </section>
@@ -227,7 +227,7 @@ img { max-width: 100%; }
     <div class="facts" id="facts"></div>
     <figure>
       <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
-      <figcaption>Dark lines: North American corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
+      <figcaption>Dark lines: North American and Australian corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
     </figure>
   </section>
 
@@ -240,7 +240,7 @@ img { max-width: 100%; }
         <button type="button" data-r="20" aria-pressed="false">20 km</button>
         <button type="button" data-r="50" aria-pressed="false">50 km</button>
       </div>
-      <div class="legend"><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></div>
+      <div class="legend"><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--au)"></i>Australia</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></div>
     </div>
     <div class="tablewrap"><table id="ctable"><thead></thead><tbody></tbody></table></div>
     <p class="meta col">Bars show residents per route-km at the selected radius. Route length is the sum of straight-line distances between consecutive stops. Click a column header to sort.</p>
@@ -303,7 +303,9 @@ img { max-width: 100%; }
       <ul>
         <li>Planned station sites are approximate: city centre or the most-cited candidate. The 5 km figures are sensitive to this. Texas Central's Houston terminal is at Northwest Mall, not downtown.</li>
         <li>Windsor–Québec joins the Alto project (Toronto–Québec City) to the older Windsor–Toronto proposal.</li>
-        <li>Vancouver–Portland uses the Amtrak Cascades stops as stand-ins for a future high-speed line.</li>
+        <li>Vancouver–Eugene uses the Amtrak Cascades stops as stand-ins for a future high-speed line.</li>
+        <li>Chicago–St. Louis, Chicago–Detroit and Chicago–Twin Cities use today's Amtrak stops (the latter via Madison, as in the Midwest regional rail plan). Atlanta–Charlotte and Cleveland–Columbus–Cincinnati have no fixed stations, so most sites are city centres.</li>
+        <li>Mumbai–Ahmedabad and the smaller Beijing–Shanghai stations are placed from approximate coordinates and may be a few km off; many of these stations sit outside town centres, so treat their 5 km figures with care.</li>
         <li>Counts are residents only. Jobs, visitors and transfer catchments aren't included.</li>
       </ul>
     </div>
@@ -318,7 +320,7 @@ img { max-width: 100%; }
 
 <script>
 const DATA = /*DATA*/null;
-const REGVAR = { "Europe": "var(--eu)", "North America": "var(--na)", "Asia": "var(--as)" };
+const REGVAR = { "Europe": "var(--eu)", "North America": "var(--na)", "Australia": "var(--au)", "Asia": "var(--as)" };
 const fmtM = v => v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + " M" : Math.round(v / 1e3) + "k";
 const fmtK = v => (v / 1e3).toFixed(v < 1e4 ? 1 : 0) + "k";
 const $ = s => document.querySelector(s);
@@ -339,7 +341,8 @@ const C = Object.fromEntries(DATA.corridors.map(c => [c.id, c]));
 const R = [5, 10, 20, 50];
 const perkm = (c, r) => c[`pop_${r}km`] / c.route_km;
 const ref = r => (perkm(C.es, r) + perkm(C.fr, r)) / 2;
-const NA = DATA.corridors.filter(c => c.region === "North America").map(c => c.id);
+// North America plus Australia: the low-density, car-oriented comparison group, drawn dark
+const NA = DATA.corridors.filter(c => c.region === "North America" || c.region === "Australia").map(c => c.id);
 (function facts() {
   const ca = C.ca, tx = C.tx;
   const f = [
@@ -474,7 +477,7 @@ function radiusSlider(id, init, onChange) {
 
 (function prisms() {
   const P = DATA.prisms; if (!P) return;
-  const REGKEY = { "Europe": "--eu", "North America": "--na", "Asia": "--as" };
+  const REGKEY = { "Europe": "--eu", "North America": "--na", "Australia": "--au", "Asia": "--as" };
   const stack = $("#pxstack");
   const SIDE = 40; // km of margin each side for labels
   const maxSpan = Math.max(...P.corridors.map(c => c.bbox[2] - c.bbox[0])) + 2 * SIDE;
@@ -603,7 +606,7 @@ function radiusSlider(id, init, onChange) {
   const V = DATA.compare; if (!V) return;
   const circleDensity = r => 50 * r;   // people per km² of circle: 250 at 5 km, 500 at 10 km, like the corridor maps
   const byId = Object.fromEntries(V.corridors.map(c => [c.id, c]));
-  const REGKEY = { "Europe": "--eu", "North America": "--na", "Asia": "--as" };
+  const REGKEY = { "Europe": "--eu", "North America": "--na", "Australia": "--au", "Asia": "--as" };
   const fmtP = v => v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : Math.round(v / 1e3) + "k";
   const S = { L: { id: "ca", flip: false, off: 0 }, R: { id: "fr", flip: false, off: 0 }, radius: 10, msa: false };
   try { const s = JSON.parse(localStorage.getItem("hsr-compare2") || "null");
