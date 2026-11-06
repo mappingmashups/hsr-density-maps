@@ -161,14 +161,30 @@ img { max-width: 100%; }
     <p class="meta">Updated <span id="updated"></span> · Kontur Population 2023 (~400 m H3 grid) · cross-checked against Meta HRSL (30 m)</p>
   </header>
 
-  <section class="stack" aria-labelledby="h-find">
-    <h2 id="h-find" class="col">The comparison flips as the circle shrinks</h2>
-    <p class="col">Residents per kilometre of route, counted within a radius of any station, relative to the average of Madrid–Barcelona and Paris–Marseille. Above 1.0 means the corridor has more people near its stations per km of track than those two European lines; below 1.0 means fewer.</p>
-    <div class="facts" id="facts"></div>
-    <figure>
-      <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
-      <figcaption>Dark lines: North American corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
-    </figure>
+  <section class="stack" aria-labelledby="h-cmp">
+    <h2 id="h-cmp" class="col">Compare two corridors</h2>
+    <p class="col">Pick two lines. The maps on either side use the same scale as each other, and the middle panel straightens both routes into one vertical line of distance. Each bar is a station's catchment: its length is the people counted there, and its thickness is the stretch of line the catchment covers (up to the radius each way, but only halfway to the next station). Where stations crowd together, their bars get thinner and touch. Flip either map to run it from the other end, and slide the shorter route up or down (drag its map or bars, or use the slider) to line up the cities you want to compare.</p>
+    <div class="controls">
+      <label for="cmpL">Left <select id="cmpL"></select></label>
+      <button type="button" class="swap" id="cmpSwap" aria-label="Swap left and right">⇄</button>
+      <label for="cmpR">Right <select id="cmpR"></select></label>
+      <label for="cmpRad">Catchment radius <input type="range" id="cmpRad" min="5" max="50" value="10" step="1" aria-describedby="cmpRadVal"> <span class="mono" id="cmpRadVal">10 km</span></label>
+    </div>
+    <div class="controls">
+      <label for="cmpSlide"><span id="cmpSlideLabel">Slide shorter route</span> <input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"> <span class="mono" id="cmpSlideVal">0 km</span></label>
+      <button type="button" class="swap" id="cmpAlign">Align biggest stations</button>
+      <label for="cmpMsa"><input type="checkbox" id="cmpMsa"> Census metro population (US stations)</label>
+    </div>
+    <div class="cmpscroll"><div class="cmp" id="cmp">
+      <div class="cmphead" id="cmpHL"></div>
+      <div class="cmphead cmpmidhead" id="cmpHM"></div>
+      <div class="cmphead" id="cmpHR"></div>
+      <div class="cmpcol" id="cmpColL"><svg id="cmpMapL" role="img"></svg></div>
+      <div class="cmpcol"><svg id="cmpMid" role="img" aria-label="Station populations along the straightened routes"></svg></div>
+      <div class="cmpcol" id="cmpColR"><svg id="cmpMapR" role="img"></svg></div>
+    </div></div>
+    <p class="meta col" id="cmpNote">Maps: coloured circle area is proportional to the people counted at each station (the same circle scale as the corridor maps in the next section). Dashed outlines are the real catchments, split halfway between stations, and only people inside them are counted. The grey is background only: population density within 50 km of the line. Bars use one population scale for both sides. Hover a bar or a station to see it on both.</p>
+    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: the station's share of its census metro area's population (Vintage 2024 county estimates; metro areas as defined by the Census Bureau in July 2023). Where several stations on a line share one metro area, its population is split evenly between them. A station in a county outside any metro area gets that county's population. This is the figure people usually quote for US cities; the solid bars show how many of them live near the station. County outlines are drawn on the maps, with each station's metro area tinted.</p>
   </section>
 
   <section class="stack" aria-labelledby="h-maps">
@@ -195,7 +211,7 @@ img { max-width: 100%; }
 
   <section class="stack" aria-labelledby="h-px">
     <h2 id="h-px" class="col">Population as height</h2>
-    <p class="col">The same catchments, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground is background only: population density within 50 km of the whole line, shown for geography. Only the people inside the blocks are counted.</p>
+    <p class="col">The catchments from the maps above, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground is background only: population density within 50 km of the whole line, shown for geography. Only the people inside the blocks are counted.</p>
     <div class="controls">
       <label for="pxRad">Catchment radius <input type="range" id="pxRad" min="5" max="50" value="10" step="1" aria-describedby="pxRadVal"> <span class="mono" id="pxRadVal">10 km</span></label>
       <label for="pxtilt">View angle <input type="range" id="pxtilt" min="20" max="75" value="58" step="1"></label>
@@ -205,44 +221,13 @@ img { max-width: 100%; }
     <p class="meta col">Block height uses one scale for every corridor at the chosen radius (see the key); the scale adjusts as you change the radius, so the tallest block always fits. Hover a block for its numbers.</p>
   </section>
 
-  <section class="stack" aria-labelledby="h-cmp">
-    <h2 id="h-cmp" class="col">Compare two corridors</h2>
-    <p class="col">Pick two lines. The maps on either side use the same scale as each other, and the middle panel straightens both routes into one vertical line of distance. Each bar is a station's catchment: its length is the people counted there, and its thickness is the stretch of line the catchment covers (up to the radius each way, but only halfway to the next station). Where stations crowd together, their bars get thinner and touch. Flip either map to run it from the other end, and slide the shorter route up or down (drag its map or bars, or use the slider) to line up the cities you want to compare.</p>
-    <div class="controls">
-      <label for="cmpL">Left <select id="cmpL"></select></label>
-      <button type="button" class="swap" id="cmpSwap" aria-label="Swap left and right">⇄</button>
-      <label for="cmpR">Right <select id="cmpR"></select></label>
-      <label for="cmpRad">Catchment radius <input type="range" id="cmpRad" min="5" max="50" value="10" step="1" aria-describedby="cmpRadVal"> <span class="mono" id="cmpRadVal">10 km</span></label>
-    </div>
-    <div class="controls">
-      <label for="cmpSlide"><span id="cmpSlideLabel">Slide shorter route</span> <input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"> <span class="mono" id="cmpSlideVal">0 km</span></label>
-      <button type="button" class="swap" id="cmpAlign">Align biggest stations</button>
-      <label for="cmpMsa"><input type="checkbox" id="cmpMsa"> Census metro population (US stations)</label>
-    </div>
-    <div class="cmpscroll"><div class="cmp" id="cmp">
-      <div class="cmphead" id="cmpHL"></div>
-      <div class="cmphead cmpmidhead" id="cmpHM"></div>
-      <div class="cmphead" id="cmpHR"></div>
-      <div class="cmpcol" id="cmpColL"><svg id="cmpMapL" role="img"></svg></div>
-      <div class="cmpcol"><svg id="cmpMid" role="img" aria-label="Station populations along the straightened routes"></svg></div>
-      <div class="cmpcol" id="cmpColR"><svg id="cmpMapR" role="img"></svg></div>
-    </div></div>
-    <p class="meta col" id="cmpNote">Maps: coloured circle area is proportional to the people counted at each station (the same circle scale as the first maps). Dashed outlines are the real catchments, split halfway between stations, and only people inside them are counted. The grey is background only: population density within 50 km of the line. Bars use one population scale for both sides. Hover a bar or a station to see it on both.</p>
-    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: the station's share of its census metro area's population (Vintage 2024 county estimates; metro areas as defined by the Census Bureau in July 2023). Where several stations on a line share one metro area, its population is split evenly between them. A station in a county outside any metro area gets that county's population. This is the figure people usually quote for US cities; the solid bars show how many of them live near the station. County outlines are drawn on the maps, with each station's metro area tinted.</p>
-  </section>
-
-  <section class="stack" aria-labelledby="h-fp">
-    <h2 id="h-fp" class="col">Station footprints</h2>
-    <p class="col">The same 20 km circles drawn large, so you can see what's actually around each main-city station. Where another station sits within 40 km, a straight dashed line and a pale wash mark the part that the corridor maps count toward that neighbour; the numbers under each disc include everything inside it. Every disc uses the same scale, with north up. Grey shows people per km², and dashed rings mark 5, 10 and 20 km. Paris, Tokyo, Seoul and Taipei are dark nearly to the 10 km ring. Los Angeles, Houston and Dallas are an even mid-grey sprawl, with no dense core around the station.</p>
-    <div class="controls">
-      <div class="seg" role="group" aria-label="Footprint zoom" id="fpzoom">
-        <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
-        <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
-      </div>
-    </div>
+  <section class="stack" aria-labelledby="h-find">
+    <h2 id="h-find" class="col">The comparison flips as the circle shrinks</h2>
+    <p class="col">Residents per kilometre of route, counted within a radius of any station, relative to the average of Madrid–Barcelona and Paris–Marseille. Above 1.0 means the corridor has more people near its stations per km of track than those two European lines; below 1.0 means fewer.</p>
+    <div class="facts" id="facts"></div>
     <figure>
-      <div class="plate" id="fpplate"><img src="atlas/atlas_cities.webp" alt="Twenty-kilometre discs around 36 main-city stations, shaded by population density, sorted by population within 10 km"></div>
-      <figcaption>Sorted by residents within 10 km. The bar under each disc shows the share of its 20 km population living within 5 km. Pick a corridor in the station explorer below to see every stop on that line.</figcaption>
+      <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
+      <figcaption>Dark lines: North American corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
     </figure>
   </section>
 
@@ -267,6 +252,21 @@ img { max-width: 100%; }
     <figure>
       <div class="chart"><svg id="cent" role="img" aria-labelledby="cent-t"><title id="cent-t">Share of 50 km population within 5 and 10 km of the main station</title></svg></div>
       <figcaption>Open circle: within 5 km. Filled circle: within 10 km. Hover for counts. Smaller, isolated cities score higher on this measure by construction, so they're left out.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stack" aria-labelledby="h-fp">
+    <h2 id="h-fp" class="col">Station footprints</h2>
+    <p class="col">The same 20 km circles drawn large, so you can see what's actually around each main-city station. Where another station sits within 40 km, a straight dashed line and a pale wash mark the part that the corridor maps count toward that neighbour; the numbers under each disc include everything inside it. Every disc uses the same scale, with north up. Grey shows people per km², and dashed rings mark 5, 10 and 20 km. Paris, Tokyo, Seoul and Taipei are dark nearly to the 10 km ring. Los Angeles, Houston and Dallas are an even mid-grey sprawl, with no dense core around the station.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Footprint zoom" id="fpzoom">
+        <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
+        <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
+      </div>
+    </div>
+    <figure>
+      <div class="plate" id="fpplate"><img src="atlas/atlas_cities.webp" alt="Twenty-kilometre discs around 36 main-city stations, shaded by population density, sorted by population within 10 km"></div>
+      <figcaption>Sorted by residents within 10 km. The bar under each disc shows the share of its 20 km population living within 5 km. Pick a corridor in the station explorer below to see every stop on that line.</figcaption>
     </figure>
   </section>
 
@@ -601,7 +601,7 @@ function radiusSlider(id, init, onChange) {
 /* ---------- compare two corridors: vertical maps + straightened distance bars ---------- */
 (function compare() {
   const V = DATA.compare; if (!V) return;
-  const circleDensity = r => 50 * r;   // people per km² of circle: 250 at 5 km, 500 at 10 km, like the first maps
+  const circleDensity = r => 50 * r;   // people per km² of circle: 250 at 5 km, 500 at 10 km, like the corridor maps
   const byId = Object.fromEntries(V.corridors.map(c => [c.id, c]));
   const REGKEY = { "Europe": "--eu", "North America": "--na", "Asia": "--as" };
   const fmtP = v => v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : Math.round(v / 1e3) + "k";

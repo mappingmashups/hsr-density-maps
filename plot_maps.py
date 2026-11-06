@@ -29,8 +29,10 @@ REGION_COL = {"Europe": "#2a78d6", "North America": "#eb6834", "Asia": "#1baf7a"
 INK, INK2, INK3 = "#0b0b0b", "#52514e", "#8a8984"
 LAND, LAND_EDGE, COUNTRY_EDGE, LINE = "#eeede9", "#ffffff", "#c9c8c2", "#3a3a38"
 
-# page order, roughly the comparison you want to read side by side
-ORDER = ["ca", "es", "fr", "uk", "nl", "it", "nec", "on", "cascadia", "tx", "fl", "bw", "ab", "jp", "kr", "tw"]
+# page order: North America, then Europe, then Asia
+ORDER = ["ca", "nec", "cascadia", "tx", "fl", "bw", "on", "ab",   # North America
+         "es", "fr", "uk", "nl", "it",                            # Europe
+         "jp", "kr", "tw"]                                        # Asia
 PAGE_W = 2500  # km of page width before wrapping to the next shelf
 GAP = 70       # km between panels
 MIN_W = 390    # km, narrowest panel
