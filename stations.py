@@ -81,6 +81,7 @@ CORRIDORS = [
         ("Tacoma",             -122.4282, 47.2393),
         ("Olympia/Lacey",      -122.7935, 46.9905),
         ("Portland",           -122.6767, 45.5290),
+        ("Salem",              -123.0290, 44.9315),
         ("Eugene",             -123.0938, 44.0549),
     ]),
     dict(id="tx", name="Dallas – Houston", country="USA (Texas)", status="planned",
