@@ -30,14 +30,15 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Population within R of each station | `popcalc.py kontur` · `popcalc.py hrsl` | `out/pop_kontur.json`, `out/pop_hrsl.json` |
 | Tables | `summarize.py` | `out/stations.csv`, `out/corridors.csv` |
 | Hexagons near stations (for footprints) | `extract_hex.py` (~1 min) | `out/hex/<corridor>.parquet` |
+| Context cells within 50 km of each route line (background only, never counted) | `extract_context.py` (~1–6 min) | `out/context/<corridor>.parquet` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
-| Oblique "population as height" view | `build_prisms.py` | `out/prisms.json`, `out/ground/<corridor>.png` (drawn in the browser) |
+| Browser-drawn views: oblique "population as height" and the two-corridor comparison | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` (drawn in the browser) |
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
-`python popcalc.py hrsl <id>`, then `extract_hex.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
+`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
 Add a line to `LOG` in `build_page.py` for each update; the page shows it as a change log.
 Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redeploys automatically.
 

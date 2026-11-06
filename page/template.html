@@ -112,6 +112,21 @@ tr.diff td { color: var(--ink-3); }
 .pxkey { display: flex; align-items: flex-end; gap: 18px; font: 400 0.75rem/1.2 var(--f-display); color: var(--ink-2); }
 .pxkey svg { display: block; overflow: visible; }
 input[type="range"] { accent-color: var(--ink); width: 140px; }
+/* two-corridor comparison */
+.cmpscroll { overflow-x: auto; }
+.cmp { display: grid; grid-template-columns: auto auto auto; justify-content: center; align-items: start; gap: 14px; min-width: 860px; }
+.cmpcol { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cmphead { display: grid; gap: 2px; min-height: 2.9em; }
+.cmphead b { font: 600 0.9375rem/1.25 var(--f-display); }
+.cmphead span { font: 400 0.75rem/1.3 var(--f-display); color: var(--ink-3); }
+.cmpmidhead { text-align: center; }
+#cmp svg { display: block; overflow: visible; }
+#cmpMapL, #cmpMapR { border-radius: 3px; }
+#cmp text { font-family: var(--f-display); }
+#cmp .hl .bar, #cmp .hl .dot { stroke: var(--ink); stroke-width: 2px; }
+#cmp .hl .ring { stroke: #16171a; stroke-width: 2.5px; }
+.swap { font: 600 1rem/1 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+.swap:focus-visible { outline: 2px solid var(--eu); outline-offset: 2px; }
 #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font: 400 0.8125rem/1.4 var(--f-display); padding: 8px 10px; border-radius: 4px; max-width: 280px; z-index: 20; }
 #tip b { font-weight: 600; }
 
@@ -177,7 +192,7 @@ img { max-width: 100%; }
 
   <section class="stack" aria-labelledby="h-px">
     <h2 id="h-px" class="col">Population as height</h2>
-    <p class="col">The same catchments, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground shows population density out to 50 km.</p>
+    <p class="col">The same catchments, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground is background only: population density within 50 km of the whole line, shown for geography. Only the people inside the blocks are counted.</p>
     <div class="controls">
       <div class="seg" role="group" aria-label="Catchment radius" id="pxseg">
         <button type="button" data-r="5" aria-pressed="false">5 km</button>
@@ -189,6 +204,27 @@ img { max-width: 100%; }
     </div>
     <div class="pxscroll"><div class="pxstack" id="pxstack"></div></div>
     <p class="meta col">Block height uses one scale for every corridor at the selected radius (see the key), and the scale changes when you switch radius. Hover a block for its numbers.</p>
+  </section>
+
+  <section class="stack" aria-labelledby="h-cmp">
+    <h2 id="h-cmp" class="col">Compare two corridors</h2>
+    <p class="col">Pick two lines. The maps on either side use the same scale as each other, and the middle panel straightens both routes into one vertical line of distance. Each bar is a station, placed at its distance along the line and sized by the people counted in its catchment. Distance runs from the station at the top of each map.</p>
+    <div class="controls">
+      <label for="cmpL">Left <select id="cmpL"></select></label>
+      <button type="button" class="swap" id="cmpSwap" aria-label="Swap left and right">⇄</button>
+      <label for="cmpR">Right <select id="cmpR"></select></label>
+      <div class="seg" role="group" aria-label="Catchment radius" id="cmpseg">
+        <button type="button" data-r="5" aria-pressed="false">5 km</button>
+        <button type="button" data-r="10" aria-pressed="true">10 km</button>
+        <button type="button" data-r="20" aria-pressed="false">20 km</button>
+      </div>
+    </div>
+    <div class="cmpscroll"><div class="cmp" id="cmp">
+      <div class="cmpcol"><div class="cmphead" id="cmpHL"></div><svg id="cmpMapL" role="img"></svg></div>
+      <div class="cmpcol"><div class="cmphead cmpmidhead" id="cmpHM"></div><svg id="cmpMid" role="img" aria-label="Station populations along the straightened routes"></svg></div>
+      <div class="cmpcol"><div class="cmphead" id="cmpHR"></div><svg id="cmpMapR" role="img"></svg></div>
+    </div></div>
+    <p class="meta col" id="cmpNote">Maps: coloured circle area is proportional to the people counted at each station (the same circle scale as the first maps); dashed outlines are the real catchments, split halfway between stations, and only people inside them are counted. The grey is background: population density within 50 km of the line, for geography only. Bars use one population scale for both sides. Hover a bar or a station to see it on both.</p>
   </section>
 
   <section class="stack" aria-labelledby="h-fp">
@@ -530,6 +566,148 @@ csel.addEventListener("change", stTable); stTable();
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  render();
+})();
+
+/* ---------- compare two corridors: vertical maps + straightened distance bars ---------- */
+(function compare() {
+  const V = DATA.compare; if (!V) return;
+  const CIRCLE_DENSITY = { 5: 250, 10: 500, 20: 800 };   // people per km² of circle, as on the first maps
+  const PAD = 55;                                           // km of ground above the top station (build_prisms.PAD)
+  const byId = Object.fromEntries(V.corridors.map(c => [c.id, c]));
+  const REGKEY = { "Europe": "--eu", "North America": "--na", "Asia": "--as" };
+  const fmtP = v => v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : Math.round(v / 1e3) + "k";
+  let left = "ca", right = "fr", radius = 10;
+  try { const s = JSON.parse(localStorage.getItem("hsr-compare") || "null"); if (s && byId[s.l] && byId[s.r]) { left = s.l; right = s.r; } } catch (e) {}
+
+  const selL = $("#cmpL"), selR = $("#cmpR");
+  const opts = V.corridors.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  selL.innerHTML = opts; selR.innerHTML = opts; selL.value = left; selR.value = right;
+
+  // distance along the route measured from whichever end sits at the top of the map
+  function ordered(c) {
+    const s = c.stations, topFirst = s[0].y >= s[s.length - 1].y;
+    return s.map((st, i) => ({ st, i, d: topFirst ? st.d : c.stations[s.length - 1].d - st.d }));
+  }
+
+  function highlight(key, on) { document.querySelectorAll(`#cmp [data-k="${key}"]`).forEach(n => n.classList.toggle("hl", on)); }
+  function hook(g, key, html) {
+    g.setAttribute("data-k", key); g.setAttribute("tabindex", 0);
+    g.addEventListener("pointerenter", e => { highlight(key, true); showTip(html, e); });
+    g.addEventListener("pointermove", moveTip);
+    g.addEventListener("pointerleave", () => { highlight(key, false); hideTip(); });
+    g.addEventListener("focus", () => highlight(key, true)); g.addEventListener("blur", () => highlight(key, false));
+  }
+  function tipHtml(c, st, d) {
+    const k = st.c[radius];
+    return `<b>${st.full}</b> · ${c.name}<br>${fmtP(k.pop)} people counted within ${radius} km` +
+      (st.raw[radius] > k.pop * 1.02 ? ` <span style="opacity:.75">(${fmtP(st.raw[radius])} in the full circle)</span>` : "") +
+      `<br>${Math.round(d)} km along the line from the top station`;
+  }
+
+  function drawMap(svg, c, side, k) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const [x0, y0, x1, y1] = c.bbox, w = x1 - x0, h = y1 - y0;
+    svg.setAttribute("viewBox", `${x0} ${-y1} ${w} ${h}`);
+    svg.setAttribute("width", (w * k).toFixed(1)); svg.setAttribute("height", (h * k).toFixed(1));
+    svg.setAttribute("aria-label", `Map of ${c.name}`);
+    const px = 1 / k, col = getComputedStyle(document.documentElement).getPropertyValue(REGKEY[c.region]).trim();
+    el("image", { href: `ground_v/${c.id}.webp`, x: x0, y: -y1, width: w, height: h, preserveAspectRatio: "none" }, svg);
+    el("polyline", { points: c.stations.map(s => `${s.x},${-s.y}`).join(" "), fill: "none", stroke: "#3a3a38", "stroke-width": 1.3 * px,
+      "stroke-dasharray": c.status === "existing" ? "" : c.status === "building" ? `${4 * px} ${2 * px}` : `${1.5 * px} ${1.5 * px}` }, svg);
+    // real catchments (dashed), then population circles on top
+    c.stations.forEach(s => el("polygon", { points: s.c[radius].poly.map(p => `${p[0]},${-p[1]}`).join(" "), fill: "none",
+      stroke: "#1d1d1b", "stroke-width": 0.7 * px, "stroke-dasharray": `${2.2 * px} ${1.6 * px}`, opacity: 0.8 }, svg));
+    const order = ordered(c);
+    order.slice().sort((a, b) => b.st.c[radius].pop - a.st.c[radius].pop).forEach(({ st, i, d }) => {
+      const g = el("g", {}, svg);
+      const r = Math.sqrt(st.c[radius].pop / (Math.PI * CIRCLE_DENSITY[radius]));
+      el("circle", { class: "ring", cx: st.x, cy: -st.y, r: Math.max(r, 1.5 * px), fill: col, "fill-opacity": 0.22, stroke: col, "stroke-width": 1.1 * px }, g);
+      el("circle", { cx: st.x, cy: -st.y, r: 2 * px, fill: "#16171a", stroke: "#fff", "stroke-width": 0.6 * px }, g);
+      el("circle", { cx: st.x, cy: -st.y, r: Math.max(r, 8 * px), fill: "transparent" }, g);   // hit target
+      hook(g, `${side}${i}`, tipHtml(c, st, d));
+    });
+    // north arrow, top-right
+    const n = c.north, ax = x1 - 18 * px, ay = y1 - 26 * px, L = 10 * px;
+    el("line", { x1: ax - n[0] * L, y1: -(ay - n[1] * L), x2: ax + n[0] * L, y2: -(ay + n[1] * L), stroke: "#52514e", "stroke-width": 1.2 * px }, svg);
+    el("circle", { cx: ax + n[0] * L, cy: -(ay + n[1] * L), r: 2 * px, fill: "#52514e" }, svg);
+    el("text", { x: ax + n[0] * (L + 7 * px), y: -(ay + n[1] * (L + 7 * px)) + 3.5 * px, "font-size": 10 * px, "text-anchor": "middle", fill: "#52514e" }, svg).textContent = "N";
+  }
+
+  function render() {
+    const cL = byId[left], cR = byId[right];
+    const wrapW = Math.max($("#cmp").clientWidth, 860);
+    const chartW = Math.min(440, Math.max(320, wrapW * 0.36));
+    const wL = cL.bbox[2] - cL.bbox[0], wR = cR.bbox[2] - cR.bbox[0];
+    const hL = cL.bbox[3] - cL.bbox[1], hR = cR.bbox[3] - cR.bbox[1];
+    const Lmax = Math.max(cL.route_km, cR.route_km);
+    // one km scale for all three panels, so the maps and the straightened line agree
+    const k = Math.min((wrapW - chartW - 28) / (wL + wR), 860 / Math.max(Lmax + 2 * PAD, hL, hR), 1.1);
+    drawMap($("#cmpMapL"), cL, "L", k); drawMap($("#cmpMapR"), cR, "R", k);
+    const head = c => `<b>${c.name}</b><span>${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km</span>`;
+    $("#cmpHL").innerHTML = head(cL); $("#cmpHR").innerHTML = head(cR);
+    $("#cmpHM").innerHTML = `<b>Distance along the line ↓</b><span>← people within ${radius} km · people within ${radius} km →</span>`;
+    try { localStorage.setItem("hsr-compare", JSON.stringify({ l: left, r: right })); } catch (e) {}
+
+    // middle chart
+    const svg = $("#cmpMid"); while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const top = PAD * k, H = top + Lmax * k + 46, mid = chartW / 2, gap = 3, labelRoom = 76;
+    const half = mid - gap - labelRoom;
+    svg.setAttribute("viewBox", `0 0 ${chartW} ${H}`); svg.setAttribute("width", chartW); svg.setAttribute("height", H);
+    const oL = ordered(cL), oR = ordered(cR);
+    const maxPop = Math.max(...oL.concat(oR).map(o => o.st.c[radius].pop));
+    const step = [250e3, 500e3, 1e6, 2e6, 5e6].find(s => maxPop / s <= 4) || 5e6;
+    for (let v = step; v <= maxPop; v += step) {          // population gridlines, both sides
+      [-1, 1].forEach(sg => {
+        const x = mid + sg * (gap + v / maxPop * half);
+        el("line", { x1: x, x2: x, y1: top - 6, y2: top + Lmax * k, stroke: "var(--grid)" }, svg);
+        el("text", { x, y: H - 22, "text-anchor": "middle", "font-size": 10.5, fill: "var(--ink-3)" }, svg).textContent = fmtP(v);
+      });
+    }
+    const kmStep = Lmax > 600 ? 100 : 50;
+    for (let d = 0; d <= Lmax + 0.1; d += kmStep) {
+      const y = top + d * k;
+      el("line", { x1: mid - 5, x2: mid + 5, y1: y, y2: y, stroke: "var(--ink-3)" }, svg);
+    }
+    // route lengths: each side's axis segment ends at its own last station
+    [[cL, -1], [cR, 1]].forEach(([c, sg]) => el("line", { x1: mid + sg * 1.5, x2: mid + sg * 1.5, y1: top, y2: top + c.route_km * k,
+      stroke: "var(--ink)", "stroke-width": 2, "stroke-linecap": "round" }, svg));
+    for (let d = 0; d <= Lmax + 0.1; d += kmStep) {
+      const t = el("text", { x: mid, y: top + d * k + 3.5, "text-anchor": "middle", "font-size": 10, fill: "var(--ink-2)",
+        stroke: "var(--surface)", "stroke-width": 4, "paint-order": "stroke", "font-family": "var(--f-mono)" }, svg);
+      t.textContent = d === 0 ? "0" : `${d}`;
+    }
+    el("text", { x: mid, y: H - 6, "text-anchor": "middle", "font-size": 10.5, fill: "var(--ink-3)" }, svg).textContent = "km along the line · people per station";
+    [[oL, cL, "L", -1], [oR, cR, "R", 1]].forEach(([os, c, side, sg]) => {
+      const col = `var(${REGKEY[c.region]})`;
+      const placed = [];
+      os.slice().sort((a, b) => b.st.c[radius].pop - a.st.c[radius].pop).forEach(({ st, i, d }) => {
+        const y = top + d * k, len = Math.max(1.5, st.c[radius].pop / maxPop * half), th = 7;
+        const g = el("g", {}, svg);
+        const x = sg < 0 ? mid - gap - len : mid + gap;
+        el("rect", { class: "bar", x, y: y - th / 2, width: len, height: th, rx: 2, fill: col }, g);
+        el("rect", { x: sg < 0 ? mid - gap - half - labelRoom : mid + gap, y: y - 6, width: half + labelRoom, height: 12, fill: "transparent" }, g);
+        if (!placed.some(p => Math.abs(p - y) < 12)) {   // label unless it would collide with a bigger station's label
+          placed.push(y);
+          const t = el("text", { x: sg < 0 ? mid - gap - len - 5 : mid + gap + len + 5, y: y + 3.5, "text-anchor": sg < 0 ? "end" : "start",
+            "font-size": 10.5, fill: "var(--ink)" }, g);
+          t.textContent = st.name + " ";
+          const v = el("tspan", { fill: "var(--ink-3)", "font-family": "var(--f-mono)", "font-size": 9.5 }, t); v.textContent = fmtP(st.c[radius].pop);
+        }
+        hook(g, `${side}${i}`, tipHtml(c, st, d));
+      });
+    });
+    // totals under the heads
+    const tot = c => c.stations.reduce((a, s) => a + s.c[radius].pop, 0);
+    const line = c => `${fmtP(tot(c))} within ${radius} km · ${Math.round(tot(c) / c.route_km / 100) / 10}k per route-km`;
+    $("#cmpHL").innerHTML += `<span>${line(cL)}</span>`; $("#cmpHR").innerHTML += `<span>${line(cR)}</span>`;
+  }
+
+  selL.addEventListener("change", () => { left = selL.value; render(); });
+  selR.addEventListener("change", () => { right = selR.value; render(); });
+  $("#cmpSwap").addEventListener("click", () => { [left, right] = [right, left]; selL.value = left; selR.value = right; render(); });
+  $("#cmpseg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press($("#cmpseg"), b); radius = +b.dataset.r; render(); });
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
   render();
 })();
 </script>

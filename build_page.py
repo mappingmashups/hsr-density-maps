@@ -11,6 +11,8 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-11-06", "The grey background in the height view and the comparison now covers 50 km either side of the whole line, in a lighter tone, so it reads as geography rather than counted data."),
+    ("2026-11-06", "New section: compare any two corridors side by side, with both routes straightened into one line of distance."),
     ("2026-10-30", "Height view: north never points downward any more, so Florida now reads Orlando → Miami and Taiwan reads Kaohsiung → Taipei."),
     ("2026-10-29", "Moved to GitHub Pages, with data credits and a link to the code. Images now ship as WebP."),
     ("2026-10-28", "Height view: mostly east–west routes now keep north up (Osaka on the left of Tokyo, for example); north–south routes still read in the order of their names."),
@@ -44,7 +46,8 @@ for c in CORRIDORS:
                                s5=round(k["raw_5"] / k["raw_50"], 4), s10=round(k["raw_10"] / k["raw_50"], 4)))
 
 prisms = json.load(open(f"{OUT}/prisms.json"))
-data = dict(updated=LOG[0][0], log=LOG, corridors=corridors, stations=stations, cities=cities, prisms=prisms)
+compare = json.load(open(f"{OUT}/compare.json"))
+data = dict(updated=LOG[0][0], log=LOG, corridors=corridors, stations=stations, cities=cities, prisms=prisms, compare=compare)
 html = open(os.path.join(HERE, "page", "template.html")).read().replace("/*DATA*/null", json.dumps(data, ensure_ascii=False))
 os.makedirs(SITE, exist_ok=True)
 open(os.path.join(SITE, "index.html"), "w").write(html)
@@ -59,6 +62,7 @@ def webp(src, dst):
 
 for c in CORRIDORS:
     webp(os.path.join(OUT, "ground", f"{c['id']}.png"), os.path.join(SITE, "ground", f"{c['id']}.webp"))
+    webp(os.path.join(OUT, "ground_v", f"{c['id']}.png"), os.path.join(SITE, "ground_v", f"{c['id']}.webp"))
     webp(os.path.join(OUT, "atlas", f"{c['id']}.png"), os.path.join(SITE, "atlas", f"{c['id']}.webp"))
 webp(os.path.join(OUT, "atlas_cities.png"), os.path.join(SITE, "atlas", "atlas_cities.webp"))
 for v in ("nested", "5km", "10km", "20km", "50km"):
