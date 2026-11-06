@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Download the source data into data/ (git-ignored).
-#   ./fetch_data.sh         Natural Earth outlines only (~60 MB): enough to redraw the
+#   ./fetch_data.sh         Natural Earth + US census files (~65 MB): enough to redraw the
 #                           maps, atlases and height view from the committed out/hex/ extract
 #   ./fetch_data.sh --all   also Kontur Population (2.4 GB download, 6.7 GB unzipped):
 #                           needed to recompute populations or change stations
@@ -10,6 +10,14 @@ mkdir -p data/ne
 NE=https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson
 for f in ne_10m_admin_0_countries ne_10m_admin_1_states_provinces_lakes ne_10m_lakes; do
   [ -s "data/ne/$f.geojson" ] || curl -fL --retry 3 -o "data/ne/$f.geojson" "$NE/$f.geojson"
+done
+# US census metro areas (build_msa.py): CBSA delineation, county estimates, county outlines
+mkdir -p data/census
+CEN=https://www2.census.gov
+for u in programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx \
+         programs-surveys/popest/datasets/2020-2024/counties/totals/co-est2024-alldata.csv \
+         geo/tiger/GENZ2023/shp/cb_2023_us_county_5m.zip; do
+  [ -s "data/census/$(basename "$u")" ] || curl -fL --retry 3 -o "data/census/$(basename "$u")" "$CEN/$u"
 done
 if [ "${1:-}" = "--all" ]; then
   K=kontur_population_20231101.gpkg

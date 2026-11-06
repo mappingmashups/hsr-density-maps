@@ -31,6 +31,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Tables | `summarize.py` | `out/stations.csv`, `out/corridors.csv` |
 | Hexagons near stations (for footprints) | `extract_hex.py` (~1 min) | `out/hex/<corridor>.parquet` |
 | Context cells within 50 km of each route line (background only, never counted) | `extract_context.py` (~1–6 min) | `out/context/<corridor>.parquet` |
+| US census metro-area (CBSA) population per station, split evenly between stations sharing a metro | `build_msa.py` | `out/msa.json` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
 | Browser-drawn views: oblique "population as height" and the two-corridor comparison | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` (drawn in the browser) |
@@ -38,7 +39,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
-`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
+`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
 Add a line to `LOG` in `build_page.py` for each update; the page shows it as a change log.
 Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redeploys automatically.
 
@@ -55,6 +56,10 @@ Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redep
   Canada coverage**, so it can't be the uniform base. Where both datasets
   cover a station they agree within a few percent; see `stations.csv`.
 * Natural Earth 10 m admin-0 / admin-1 outlines for the map backgrounds.
+* **US Census Bureau** (comparison view, US stations only): CBSA delineation of
+  July 2023, Vintage 2024 county population estimates, and 1:5M cartographic
+  county outlines. Each station gets its metro area's population divided by the
+  number of stations on that corridor in the same metro area.
 
 The WorldPop stats API and GHSL (JRC, 100 m) would be good alternatives; they
 weren't reachable from the environment this was first built in. The 5 km

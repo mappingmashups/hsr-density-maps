@@ -1,0 +1,910 @@
+{
+ "year": 2024,
+ "vintage": "Vintage 2024 county estimates; CBSA delineation July 2023",
+ "corridors": {
+  "ca": [
+   {
+    "station": "San Francisco",
+    "county": "San Francisco County, CA",
+    "county_fips": "06075",
+    "area": "41860",
+    "area_title": "San Francisco-Oakland-Fremont, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4648486,
+    "area_counties": [
+     "06001",
+     "06013",
+     "06075",
+     "06081",
+     "06041"
+    ],
+    "shared_by": 2,
+    "share": 2324243
+   },
+   {
+    "station": "Millbrae",
+    "county": "San Mateo County, CA",
+    "county_fips": "06081",
+    "area": "41860",
+    "area_title": "San Francisco-Oakland-Fremont, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4648486,
+    "area_counties": [
+     "06001",
+     "06013",
+     "06075",
+     "06081",
+     "06041"
+    ],
+    "shared_by": 2,
+    "share": 2324243
+   },
+   {
+    "station": "San Jose",
+    "county": "Santa Clara County, CA",
+    "county_fips": "06085",
+    "area": "41940",
+    "area_title": "San Jose-Sunnyvale-Santa Clara, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 1995484,
+    "area_counties": [
+     "06069",
+     "06085"
+    ],
+    "shared_by": 2,
+    "share": 997742
+   },
+   {
+    "station": "Gilroy",
+    "county": "Santa Clara County, CA",
+    "county_fips": "06085",
+    "area": "41940",
+    "area_title": "San Jose-Sunnyvale-Santa Clara, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 1995484,
+    "area_counties": [
+     "06069",
+     "06085"
+    ],
+    "shared_by": 2,
+    "share": 997742
+   },
+   {
+    "station": "Merced",
+    "county": "Merced County, CA",
+    "county_fips": "06047",
+    "area": "32900",
+    "area_title": "Merced, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 296774,
+    "area_counties": [
+     "06047"
+    ],
+    "shared_by": 1,
+    "share": 296774
+   },
+   {
+    "station": "Fresno",
+    "county": "Fresno County, CA",
+    "county_fips": "06019",
+    "area": "23420",
+    "area_title": "Fresno, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 1189557,
+    "area_counties": [
+     "06019",
+     "06039"
+    ],
+    "shared_by": 1,
+    "share": 1189557
+   },
+   {
+    "station": "Kings/Tulare",
+    "county": "Kings County, CA",
+    "county_fips": "06031",
+    "area": "25260",
+    "area_title": "Hanford-Corcoran, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 154913,
+    "area_counties": [
+     "06031"
+    ],
+    "shared_by": 1,
+    "share": 154913
+   },
+   {
+    "station": "Bakersfield",
+    "county": "Kern County, CA",
+    "county_fips": "06029",
+    "area": "12540",
+    "area_title": "Bakersfield-Delano, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 922529,
+    "area_counties": [
+     "06029"
+    ],
+    "shared_by": 1,
+    "share": 922529
+   },
+   {
+    "station": "Palmdale",
+    "county": "Los Angeles County, CA",
+    "county_fips": "06037",
+    "area": "31080",
+    "area_title": "Los Angeles-Long Beach-Anaheim, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 12927614,
+    "area_counties": [
+     "06059",
+     "06037"
+    ],
+    "shared_by": 5,
+    "share": 2585523
+   },
+   {
+    "station": "Burbank Airport",
+    "county": "Los Angeles County, CA",
+    "county_fips": "06037",
+    "area": "31080",
+    "area_title": "Los Angeles-Long Beach-Anaheim, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 12927614,
+    "area_counties": [
+     "06059",
+     "06037"
+    ],
+    "shared_by": 5,
+    "share": 2585523
+   },
+   {
+    "station": "Los Angeles",
+    "county": "Los Angeles County, CA",
+    "county_fips": "06037",
+    "area": "31080",
+    "area_title": "Los Angeles-Long Beach-Anaheim, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 12927614,
+    "area_counties": [
+     "06059",
+     "06037"
+    ],
+    "shared_by": 5,
+    "share": 2585523
+   },
+   {
+    "station": "Norwalk/SFS",
+    "county": "Los Angeles County, CA",
+    "county_fips": "06037",
+    "area": "31080",
+    "area_title": "Los Angeles-Long Beach-Anaheim, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 12927614,
+    "area_counties": [
+     "06059",
+     "06037"
+    ],
+    "shared_by": 5,
+    "share": 2585523
+   },
+   {
+    "station": "Anaheim",
+    "county": "Orange County, CA",
+    "county_fips": "06059",
+    "area": "31080",
+    "area_title": "Los Angeles-Long Beach-Anaheim, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 12927614,
+    "area_counties": [
+     "06059",
+     "06037"
+    ],
+    "shared_by": 5,
+    "share": 2585523
+   }
+  ],
+  "cascadia": [
+   {
+    "station": "Bellingham",
+    "county": "Whatcom County, WA",
+    "county_fips": "53073",
+    "area": "13380",
+    "area_title": "Bellingham, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 234954,
+    "area_counties": [
+     "53073"
+    ],
+    "shared_by": 1,
+    "share": 234954
+   },
+   {
+    "station": "Everett",
+    "county": "Snohomish County, WA",
+    "county_fips": "53061",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Seattle",
+    "county": "King County, WA",
+    "county_fips": "53033",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Tacoma",
+    "county": "Pierce County, WA",
+    "county_fips": "53053",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Olympia/Lacey",
+    "county": "Thurston County, WA",
+    "county_fips": "53067",
+    "area": "36500",
+    "area_title": "Olympia-Lacey-Tumwater, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 302912,
+    "area_counties": [
+     "53067"
+    ],
+    "shared_by": 1,
+    "share": 302912
+   },
+   {
+    "station": "Portland",
+    "county": "Multnomah County, OR",
+    "county_fips": "41051",
+    "area": "38900",
+    "area_title": "Portland-Vancouver-Hillsboro, OR-WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2537904,
+    "area_counties": [
+     "41005",
+     "41009",
+     "41051",
+     "41067",
+     "41071",
+     "53011",
+     "53059"
+    ],
+    "shared_by": 1,
+    "share": 2537904
+   }
+  ],
+  "tx": [
+   {
+    "station": "Dallas",
+    "county": "Dallas County, TX",
+    "county_fips": "48113",
+    "area": "19100",
+    "area_title": "Dallas-Fort Worth-Arlington, TX",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 8344032,
+    "area_counties": [
+     "48085",
+     "48113",
+     "48121",
+     "48139",
+     "48231",
+     "48257",
+     "48397",
+     "48251",
+     "48367",
+     "48439",
+     "48497"
+    ],
+    "shared_by": 1,
+    "share": 8344032
+   },
+   {
+    "station": "Brazos Valley",
+    "county": "Grimes County, TX",
+    "county_fips": "48185",
+    "area": "county-48185",
+    "area_title": "Grimes County, TX",
+    "area_kind": "County (not in a metro area)",
+    "area_pop": 33448,
+    "area_counties": [
+     "48185"
+    ],
+    "shared_by": 1,
+    "share": 33448
+   },
+   {
+    "station": "Houston",
+    "county": "Harris County, TX",
+    "county_fips": "48201",
+    "area": "26420",
+    "area_title": "Houston-Pasadena-The Woodlands, TX",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 7796182,
+    "area_counties": [
+     "48015",
+     "48039",
+     "48071",
+     "48157",
+     "48167",
+     "48201",
+     "48291",
+     "48339",
+     "48407",
+     "48473"
+    ],
+    "shared_by": 1,
+    "share": 7796182
+   }
+  ],
+  "nec": [
+   {
+    "station": "Washington",
+    "county": "District of Columbia County, DC",
+    "county_fips": "11001",
+    "area": "47900",
+    "area_title": "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6436489,
+    "area_counties": [
+     "51013",
+     "51043",
+     "51047",
+     "51059",
+     "51061",
+     "51107",
+     "51153",
+     "51157",
+     "51177",
+     "51179",
+     "51187",
+     "51510",
+     "51600",
+     "51610",
+     "51630",
+     "51683",
+     "51685",
+     "54037",
+     "24021",
+     "24031",
+     "11001",
+     "24017",
+     "24033"
+    ],
+    "shared_by": 2,
+    "share": 3218244
+   },
+   {
+    "station": "New Carrollton",
+    "county": "Prince George's County, MD",
+    "county_fips": "24033",
+    "area": "47900",
+    "area_title": "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6436489,
+    "area_counties": [
+     "51013",
+     "51043",
+     "51047",
+     "51059",
+     "51061",
+     "51107",
+     "51153",
+     "51157",
+     "51177",
+     "51179",
+     "51187",
+     "51510",
+     "51600",
+     "51610",
+     "51630",
+     "51683",
+     "51685",
+     "54037",
+     "24021",
+     "24031",
+     "11001",
+     "24017",
+     "24033"
+    ],
+    "shared_by": 2,
+    "share": 3218244
+   },
+   {
+    "station": "BWI Airport",
+    "county": "Anne Arundel County, MD",
+    "county_fips": "24003",
+    "area": "12580",
+    "area_title": "Baltimore-Columbia-Towson, MD",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2859024,
+    "area_counties": [
+     "24003",
+     "24005",
+     "24013",
+     "24025",
+     "24027",
+     "24035",
+     "24510"
+    ],
+    "shared_by": 2,
+    "share": 1429512
+   },
+   {
+    "station": "Baltimore",
+    "county": "Baltimore County, MD",
+    "county_fips": "24510",
+    "area": "12580",
+    "area_title": "Baltimore-Columbia-Towson, MD",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2859024,
+    "area_counties": [
+     "24003",
+     "24005",
+     "24013",
+     "24025",
+     "24027",
+     "24035",
+     "24510"
+    ],
+    "shared_by": 2,
+    "share": 1429512
+   },
+   {
+    "station": "Wilmington",
+    "county": "New Castle County, DE",
+    "county_fips": "10003",
+    "area": "37980",
+    "area_title": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6330422,
+    "area_counties": [
+     "34005",
+     "34007",
+     "34015",
+     "42017",
+     "42029",
+     "42091",
+     "42045",
+     "42101",
+     "10003",
+     "24015",
+     "34033"
+    ],
+    "shared_by": 2,
+    "share": 3165211
+   },
+   {
+    "station": "Philadelphia",
+    "county": "Philadelphia County, PA",
+    "county_fips": "42101",
+    "area": "37980",
+    "area_title": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6330422,
+    "area_counties": [
+     "34005",
+     "34007",
+     "34015",
+     "42017",
+     "42029",
+     "42091",
+     "42045",
+     "42101",
+     "10003",
+     "24015",
+     "34033"
+    ],
+    "shared_by": 2,
+    "share": 3165211
+   },
+   {
+    "station": "Trenton",
+    "county": "Mercer County, NJ",
+    "county_fips": "34021",
+    "area": "45940",
+    "area_title": "Trenton-Princeton, NJ",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 392138,
+    "area_counties": [
+     "34021"
+    ],
+    "shared_by": 1,
+    "share": 392138
+   },
+   {
+    "station": "Metropark",
+    "county": "Middlesex County, NJ",
+    "county_fips": "34023",
+    "area": "35620",
+    "area_title": "New York-Newark-Jersey City, NY-NJ",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 19940274,
+    "area_counties": [
+     "34023",
+     "34025",
+     "34029",
+     "34035",
+     "36059",
+     "36103",
+     "34013",
+     "34019",
+     "34027",
+     "34037",
+     "34039",
+     "34003",
+     "34017",
+     "34031",
+     "36005",
+     "36047",
+     "36061",
+     "36079",
+     "36081",
+     "36085",
+     "36087",
+     "36119"
+    ],
+    "shared_by": 3,
+    "share": 6646758
+   },
+   {
+    "station": "Newark",
+    "county": "Essex County, NJ",
+    "county_fips": "34013",
+    "area": "35620",
+    "area_title": "New York-Newark-Jersey City, NY-NJ",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 19940274,
+    "area_counties": [
+     "34023",
+     "34025",
+     "34029",
+     "34035",
+     "36059",
+     "36103",
+     "34013",
+     "34019",
+     "34027",
+     "34037",
+     "34039",
+     "34003",
+     "34017",
+     "34031",
+     "36005",
+     "36047",
+     "36061",
+     "36079",
+     "36081",
+     "36085",
+     "36087",
+     "36119"
+    ],
+    "shared_by": 3,
+    "share": 6646758
+   },
+   {
+    "station": "New York",
+    "county": "New York County, NY",
+    "county_fips": "36061",
+    "area": "35620",
+    "area_title": "New York-Newark-Jersey City, NY-NJ",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 19940274,
+    "area_counties": [
+     "34023",
+     "34025",
+     "34029",
+     "34035",
+     "36059",
+     "36103",
+     "34013",
+     "34019",
+     "34027",
+     "34037",
+     "34039",
+     "34003",
+     "34017",
+     "34031",
+     "36005",
+     "36047",
+     "36061",
+     "36079",
+     "36081",
+     "36085",
+     "36087",
+     "36119"
+    ],
+    "shared_by": 3,
+    "share": 6646758
+   },
+   {
+    "station": "Stamford",
+    "county": "Western Connecticut County, CT",
+    "county_fips": "09190",
+    "area": "14860",
+    "area_title": "Bridgeport-Stamford-Danbury, CT",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 972679,
+    "area_counties": [
+     "09120",
+     "09190"
+    ],
+    "shared_by": 1,
+    "share": 972679
+   },
+   {
+    "station": "New Haven",
+    "county": "South Central Connecticut County, CT",
+    "county_fips": "09170",
+    "area": "35300",
+    "area_title": "New Haven, CT",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 576718,
+    "area_counties": [
+     "09170"
+    ],
+    "shared_by": 1,
+    "share": 576718
+   },
+   {
+    "station": "New London",
+    "county": "Southeastern Connecticut County, CT",
+    "county_fips": "09180",
+    "area": "35980",
+    "area_title": "Norwich-New London-Willimantic, CT",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 282602,
+    "area_counties": [
+     "09180"
+    ],
+    "shared_by": 1,
+    "share": 282602
+   },
+   {
+    "station": "Providence",
+    "county": "Providence County, RI",
+    "county_fips": "44007",
+    "area": "39300",
+    "area_title": "Providence-Warwick, RI-MA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 1700901,
+    "area_counties": [
+     "25005",
+     "44001",
+     "44003",
+     "44005",
+     "44007",
+     "44009"
+    ],
+    "shared_by": 1,
+    "share": 1700901
+   },
+   {
+    "station": "Route 128",
+    "county": "Norfolk County, MA",
+    "county_fips": "25021",
+    "area": "14460",
+    "area_title": "Boston-Cambridge-Newton, MA-NH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 5025517,
+    "area_counties": [
+     "25021",
+     "25023",
+     "25025",
+     "25009",
+     "25017",
+     "33015",
+     "33017"
+    ],
+    "shared_by": 2,
+    "share": 2512758
+   },
+   {
+    "station": "Boston",
+    "county": "Suffolk County, MA",
+    "county_fips": "25025",
+    "area": "14460",
+    "area_title": "Boston-Cambridge-Newton, MA-NH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 5025517,
+    "area_counties": [
+     "25021",
+     "25023",
+     "25025",
+     "25009",
+     "25017",
+     "33015",
+     "33017"
+    ],
+    "shared_by": 2,
+    "share": 2512758
+   }
+  ],
+  "fl": [
+   {
+    "station": "Miami",
+    "county": "Miami-Dade County, FL",
+    "county_fips": "12086",
+    "area": "33100",
+    "area_title": "Miami-Fort Lauderdale-West Palm Beach, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6457988,
+    "area_counties": [
+     "12011",
+     "12086",
+     "12099"
+    ],
+    "shared_by": 5,
+    "share": 1291598
+   },
+   {
+    "station": "Aventura",
+    "county": "Miami-Dade County, FL",
+    "county_fips": "12086",
+    "area": "33100",
+    "area_title": "Miami-Fort Lauderdale-West Palm Beach, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6457988,
+    "area_counties": [
+     "12011",
+     "12086",
+     "12099"
+    ],
+    "shared_by": 5,
+    "share": 1291598
+   },
+   {
+    "station": "Fort Lauderdale",
+    "county": "Broward County, FL",
+    "county_fips": "12011",
+    "area": "33100",
+    "area_title": "Miami-Fort Lauderdale-West Palm Beach, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6457988,
+    "area_counties": [
+     "12011",
+     "12086",
+     "12099"
+    ],
+    "shared_by": 5,
+    "share": 1291598
+   },
+   {
+    "station": "Boca Raton",
+    "county": "Palm Beach County, FL",
+    "county_fips": "12099",
+    "area": "33100",
+    "area_title": "Miami-Fort Lauderdale-West Palm Beach, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6457988,
+    "area_counties": [
+     "12011",
+     "12086",
+     "12099"
+    ],
+    "shared_by": 5,
+    "share": 1291598
+   },
+   {
+    "station": "West Palm Beach",
+    "county": "Palm Beach County, FL",
+    "county_fips": "12099",
+    "area": "33100",
+    "area_title": "Miami-Fort Lauderdale-West Palm Beach, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6457988,
+    "area_counties": [
+     "12011",
+     "12086",
+     "12099"
+    ],
+    "shared_by": 5,
+    "share": 1291598
+   },
+   {
+    "station": "Orlando Airport",
+    "county": "Orange County, FL",
+    "county_fips": "12095",
+    "area": "36740",
+    "area_title": "Orlando-Kissimmee-Sanford, FL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2940513,
+    "area_counties": [
+     "12069",
+     "12095",
+     "12097",
+     "12117"
+    ],
+    "shared_by": 1,
+    "share": 2940513
+   }
+  ],
+  "bw": [
+   {
+    "station": "Las Vegas",
+    "county": "Clark County, NV",
+    "county_fips": "32003",
+    "area": "29820",
+    "area_title": "Las Vegas-Henderson-North Las Vegas, NV",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2398871,
+    "area_counties": [
+     "32003"
+    ],
+    "shared_by": 1,
+    "share": 2398871
+   },
+   {
+    "station": "Apple Valley",
+    "county": "San Bernardino County, CA",
+    "county_fips": "06071",
+    "area": "40140",
+    "area_title": "Riverside-San Bernardino-Ontario, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4744214,
+    "area_counties": [
+     "06065",
+     "06071"
+    ],
+    "shared_by": 3,
+    "share": 1581405
+   },
+   {
+    "station": "Hesperia",
+    "county": "San Bernardino County, CA",
+    "county_fips": "06071",
+    "area": "40140",
+    "area_title": "Riverside-San Bernardino-Ontario, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4744214,
+    "area_counties": [
+     "06065",
+     "06071"
+    ],
+    "shared_by": 3,
+    "share": 1581405
+   },
+   {
+    "station": "Rancho Cucamonga",
+    "county": "San Bernardino County, CA",
+    "county_fips": "06071",
+    "area": "40140",
+    "area_title": "Riverside-San Bernardino-Ontario, CA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4744214,
+    "area_counties": [
+     "06065",
+     "06071"
+    ],
+    "shared_by": 3,
+    "share": 1581405
+   }
+  ]
+ }
+}

@@ -11,6 +11,7 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-11-06", "Comparison: flip either map, slide the shorter route along the line (or align the biggest stations), and show US stations' census metro-area populations with county outlines."),
     ("2026-11-06", "The grey background in the height view and the comparison now covers 50 km either side of the whole line, in a lighter tone, so it reads as geography rather than counted data."),
     ("2026-11-06", "New section: compare any two corridors side by side, with both routes straightened into one line of distance."),
     ("2026-10-30", "Height view: north never points downward any more, so Florida now reads Orlando → Miami and Taiwan reads Kaohsiung → Taipei."),

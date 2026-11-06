@@ -40,6 +40,9 @@ BINS, GREYS = FOOTPRINT["density"]
 CONTEXT_GREYS = ["#e4e3dd", "#d2d1cb", "#bab9b3", "#9d9c97"]
 
 POP = {(r["corridor"], r["station"]): r for r in json.load(open(os.path.join(OUT, "pop_kontur.json")))["rows"]}
+_msa_path = os.path.join(OUT, "msa.json")
+MSA = json.load(open(_msa_path))["corridors"] if os.path.exists(_msa_path) else {}
+COUNTIES = gpd.read_file(f"zip://{os.path.join(HERE, 'data', 'census', 'cb_2023_us_county_5m.zip')}")[["GEOID", "NAME", "geometry"]] if MSA else None
 NE = os.path.join(HERE, "data", "ne")
 ADM0 = gpd.read_file(os.path.join(NE, "ne_10m_admin_0_countries.geojson"))[["geometry"]]
 ADM1 = gpd.read_file(os.path.join(NE, "ne_10m_admin_1_states_provinces_lakes.geojson"))[["geometry"]]
@@ -105,13 +108,46 @@ def corridor(c, orient="h"):
     if orient == "h":
         print(f"   {c['id']:9s} turn {phi:6.1f}°  north → ({north[0]:+.2f}, {north[1]:+.2f})  {short(sts[0][0]) if xy[0,0] < xy[-1,0] else short(sts[-1][0])} on the left")
     seg = [round(hav_km(a[1], a[2], b[1], b[2])) for a, b in zip(sts[:-1], sts[1:])]
+    if orient == "v" and c["id"] in MSA:  # census metro areas (build_msa.py) + county outlines
+        recs = {r["station"]: r for r in MSA[c["id"]]}
+        for st, s_ in zip(stations, sts):
+            r = recs.get(s_[0])
+            if r:
+                st["msa"] = {k: r[k] for k in ("area", "area_title", "area_kind", "area_pop", "shared_by", "share", "county")}
+        used = {}
+        for r in MSA[c["id"]]:
+            for f in r["area_counties"]:
+                used[f] = r["area"]
+        out_c = counties_in_view(proj, R, (x0, y0, x1, y1), sts, used)
     if orient == "v":  # distance along the route (straight lines between stops) from the first station
         d = np.concatenate([[0], np.cumsum([hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:])])])
         for st, dd in zip(stations, d):
             st["d"] = round(float(dd), 1)
-    return dict(id=c["id"], name=c["name"], country=c["country"], status=c["status"], region=c["region"],
-                bbox=[round(float(v), 2) for v in (x0, y0, x1, y1)], north=[round(n, 3) for n in north],
-                route_km=sum(seg), seg=seg, stations=stations)
+    res = dict(id=c["id"], name=c["name"], country=c["country"], status=c["status"], region=c["region"],
+               bbox=[round(float(v), 2) for v in (x0, y0, x1, y1)], north=[round(n, 3) for n in north],
+               route_km=sum(seg), seg=seg, stations=stations)
+    if orient == "v" and c["id"] in MSA:
+        res["counties"] = out_c
+    return res
+
+
+def counties_in_view(proj, R, bb, sts, used):
+    """US county outlines inside the panel, rotated like the stations. `area` is set for
+    counties that belong to a station's metro area (so the page can tint them)."""
+    x0, y0, x1, y1 = bb
+    lons, lats = [s[1] for s in sts], [s[2] for s in sts]
+    m = 6
+    g = COUNTIES.cx[min(lons) - m:max(lons) + m, min(lats) - m:max(lats) + m].to_crs(proj)
+    g = g.affine_transform([R[0, 0], R[0, 1], R[1, 0], R[1, 1], 0, 0]).to_frame("geometry").join(COUNTIES[["GEOID", "NAME"]])
+    g = gpd.GeoDataFrame(g, geometry="geometry")
+    g["geometry"] = g.geometry.intersection(box(x0, y0, x1, y1)).simplify(0.25)
+    out = []
+    for _, r in g[~g.geometry.is_empty].iterrows():
+        parts = getattr(r.geometry, "geoms", [r.geometry])
+        rings = [rnd(np.asarray(p.exterior.coords), 1) for p in parts if p.geom_type == "Polygon" and p.area > 0.5]
+        if rings:
+            out.append(dict(fips=r.GEOID, name=r.NAME, area=used.get(r.GEOID), rings=rings))
+    return out
 
 
 def ground(cid, proj, R, bb, sts, folder="ground"):
