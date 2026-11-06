@@ -202,196 +202,6 @@
     "share": 2585523
    }
   ],
-  "cascadia": [
-   {
-    "station": "Bellingham",
-    "county": "Whatcom County, WA",
-    "county_fips": "53073",
-    "area": "13380",
-    "area_title": "Bellingham, WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 234954,
-    "area_counties": [
-     "53073"
-    ],
-    "shared_by": 1,
-    "share": 234954
-   },
-   {
-    "station": "Everett",
-    "county": "Snohomish County, WA",
-    "county_fips": "53061",
-    "area": "42660",
-    "area_title": "Seattle-Tacoma-Bellevue, WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 4145494,
-    "area_counties": [
-     "53061",
-     "53033",
-     "53053"
-    ],
-    "shared_by": 3,
-    "share": 1381831
-   },
-   {
-    "station": "Seattle",
-    "county": "King County, WA",
-    "county_fips": "53033",
-    "area": "42660",
-    "area_title": "Seattle-Tacoma-Bellevue, WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 4145494,
-    "area_counties": [
-     "53061",
-     "53033",
-     "53053"
-    ],
-    "shared_by": 3,
-    "share": 1381831
-   },
-   {
-    "station": "Tacoma",
-    "county": "Pierce County, WA",
-    "county_fips": "53053",
-    "area": "42660",
-    "area_title": "Seattle-Tacoma-Bellevue, WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 4145494,
-    "area_counties": [
-     "53061",
-     "53033",
-     "53053"
-    ],
-    "shared_by": 3,
-    "share": 1381831
-   },
-   {
-    "station": "Olympia/Lacey",
-    "county": "Thurston County, WA",
-    "county_fips": "53067",
-    "area": "36500",
-    "area_title": "Olympia-Lacey-Tumwater, WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 302912,
-    "area_counties": [
-     "53067"
-    ],
-    "shared_by": 1,
-    "share": 302912
-   },
-   {
-    "station": "Portland",
-    "county": "Multnomah County, OR",
-    "county_fips": "41051",
-    "area": "38900",
-    "area_title": "Portland-Vancouver-Hillsboro, OR-WA",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 2537904,
-    "area_counties": [
-     "41005",
-     "41009",
-     "41051",
-     "41067",
-     "41071",
-     "53011",
-     "53059"
-    ],
-    "shared_by": 1,
-    "share": 2537904
-   },
-   {
-    "station": "Salem",
-    "county": "Marion County, OR",
-    "county_fips": "41047",
-    "area": "41420",
-    "area_title": "Salem, OR",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 443416,
-    "area_counties": [
-     "41047",
-     "41053"
-    ],
-    "shared_by": 1,
-    "share": 443416
-   },
-   {
-    "station": "Eugene",
-    "county": "Lane County, OR",
-    "county_fips": "41039",
-    "area": "21660",
-    "area_title": "Eugene-Springfield, OR",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 382396,
-    "area_counties": [
-     "41039"
-    ],
-    "shared_by": 1,
-    "share": 382396
-   }
-  ],
-  "tx": [
-   {
-    "station": "Dallas",
-    "county": "Dallas County, TX",
-    "county_fips": "48113",
-    "area": "19100",
-    "area_title": "Dallas-Fort Worth-Arlington, TX",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 8344032,
-    "area_counties": [
-     "48085",
-     "48113",
-     "48121",
-     "48139",
-     "48231",
-     "48257",
-     "48397",
-     "48251",
-     "48367",
-     "48439",
-     "48497"
-    ],
-    "shared_by": 1,
-    "share": 8344032
-   },
-   {
-    "station": "Brazos Valley",
-    "county": "Grimes County, TX",
-    "county_fips": "48185",
-    "area": "county-48185",
-    "area_title": "Grimes County, TX",
-    "area_kind": "County (not in a metro area)",
-    "area_pop": 33448,
-    "area_counties": [
-     "48185"
-    ],
-    "shared_by": 1,
-    "share": 33448
-   },
-   {
-    "station": "Houston",
-    "county": "Harris County, TX",
-    "county_fips": "48201",
-    "area": "26420",
-    "area_title": "Houston-Pasadena-The Woodlands, TX",
-    "area_kind": "Metropolitan Statistical Area",
-    "area_pop": 7796182,
-    "area_counties": [
-     "48015",
-     "48039",
-     "48071",
-     "48157",
-     "48167",
-     "48201",
-     "48291",
-     "48339",
-     "48407",
-     "48473"
-    ],
-    "shared_by": 1,
-    "share": 7796182
-   }
-  ],
   "nec": [
    {
     "station": "Washington",
@@ -775,6 +585,196 @@
     "share": 2512758
    }
   ],
+  "cascadia": [
+   {
+    "station": "Bellingham",
+    "county": "Whatcom County, WA",
+    "county_fips": "53073",
+    "area": "13380",
+    "area_title": "Bellingham, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 234954,
+    "area_counties": [
+     "53073"
+    ],
+    "shared_by": 1,
+    "share": 234954
+   },
+   {
+    "station": "Everett",
+    "county": "Snohomish County, WA",
+    "county_fips": "53061",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Seattle",
+    "county": "King County, WA",
+    "county_fips": "53033",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Tacoma",
+    "county": "Pierce County, WA",
+    "county_fips": "53053",
+    "area": "42660",
+    "area_title": "Seattle-Tacoma-Bellevue, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4145494,
+    "area_counties": [
+     "53061",
+     "53033",
+     "53053"
+    ],
+    "shared_by": 3,
+    "share": 1381831
+   },
+   {
+    "station": "Olympia/Lacey",
+    "county": "Thurston County, WA",
+    "county_fips": "53067",
+    "area": "36500",
+    "area_title": "Olympia-Lacey-Tumwater, WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 302912,
+    "area_counties": [
+     "53067"
+    ],
+    "shared_by": 1,
+    "share": 302912
+   },
+   {
+    "station": "Portland",
+    "county": "Multnomah County, OR",
+    "county_fips": "41051",
+    "area": "38900",
+    "area_title": "Portland-Vancouver-Hillsboro, OR-WA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2537904,
+    "area_counties": [
+     "41005",
+     "41009",
+     "41051",
+     "41067",
+     "41071",
+     "53011",
+     "53059"
+    ],
+    "shared_by": 1,
+    "share": 2537904
+   },
+   {
+    "station": "Salem",
+    "county": "Marion County, OR",
+    "county_fips": "41047",
+    "area": "41420",
+    "area_title": "Salem, OR",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 443416,
+    "area_counties": [
+     "41047",
+     "41053"
+    ],
+    "shared_by": 1,
+    "share": 443416
+   },
+   {
+    "station": "Eugene",
+    "county": "Lane County, OR",
+    "county_fips": "41039",
+    "area": "21660",
+    "area_title": "Eugene-Springfield, OR",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 382396,
+    "area_counties": [
+     "41039"
+    ],
+    "shared_by": 1,
+    "share": 382396
+   }
+  ],
+  "tx": [
+   {
+    "station": "Dallas",
+    "county": "Dallas County, TX",
+    "county_fips": "48113",
+    "area": "19100",
+    "area_title": "Dallas-Fort Worth-Arlington, TX",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 8344032,
+    "area_counties": [
+     "48085",
+     "48113",
+     "48121",
+     "48139",
+     "48231",
+     "48257",
+     "48397",
+     "48251",
+     "48367",
+     "48439",
+     "48497"
+    ],
+    "shared_by": 1,
+    "share": 8344032
+   },
+   {
+    "station": "Brazos Valley",
+    "county": "Grimes County, TX",
+    "county_fips": "48185",
+    "area": "county-48185",
+    "area_title": "Grimes County, TX",
+    "area_kind": "County (not in a metro area)",
+    "area_pop": 33448,
+    "area_counties": [
+     "48185"
+    ],
+    "shared_by": 1,
+    "share": 33448
+   },
+   {
+    "station": "Houston",
+    "county": "Harris County, TX",
+    "county_fips": "48201",
+    "area": "26420",
+    "area_title": "Houston-Pasadena-The Woodlands, TX",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 7796182,
+    "area_counties": [
+     "48015",
+     "48039",
+     "48071",
+     "48157",
+     "48167",
+     "48201",
+     "48291",
+     "48339",
+     "48407",
+     "48473"
+    ],
+    "shared_by": 1,
+    "share": 7796182
+   }
+  ],
   "fl": [
    {
     "station": "Miami",
@@ -933,6 +933,754 @@
     ],
     "shared_by": 3,
     "share": 1581405
+   }
+  ],
+  "cs": [
+   {
+    "station": "Chicago Union Station",
+    "county": "Cook County, IL",
+    "county_fips": "17031",
+    "area": "16980",
+    "area_title": "Chicago-Naperville-Elgin, IL-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 9408576,
+    "area_counties": [
+     "17031",
+     "17043",
+     "17063",
+     "17111",
+     "17197",
+     "17037",
+     "17089",
+     "17093",
+     "17097",
+     "18073",
+     "18089",
+     "18111",
+     "18127"
+    ],
+    "shared_by": 2,
+    "share": 4704288
+   },
+   {
+    "station": "Joliet",
+    "county": "Will County, IL",
+    "county_fips": "17197",
+    "area": "16980",
+    "area_title": "Chicago-Naperville-Elgin, IL-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 9408576,
+    "area_counties": [
+     "17031",
+     "17043",
+     "17063",
+     "17111",
+     "17197",
+     "17037",
+     "17089",
+     "17093",
+     "17097",
+     "18073",
+     "18089",
+     "18111",
+     "18127"
+    ],
+    "shared_by": 2,
+    "share": 4704288
+   },
+   {
+    "station": "Bloomington–Normal",
+    "county": "McLean County, IL",
+    "county_fips": "17113",
+    "area": "14010",
+    "area_title": "Bloomington, IL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 172069,
+    "area_counties": [
+     "17113"
+    ],
+    "shared_by": 1,
+    "share": 172069
+   },
+   {
+    "station": "Springfield IL",
+    "county": "Sangamon County, IL",
+    "county_fips": "17167",
+    "area": "44100",
+    "area_title": "Springfield, IL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 206308,
+    "area_counties": [
+     "17129",
+     "17167"
+    ],
+    "shared_by": 1,
+    "share": 206308
+   },
+   {
+    "station": "Alton",
+    "county": "Madison County, IL",
+    "county_fips": "17119",
+    "area": "41180",
+    "area_title": "St. Louis, MO-IL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2811927,
+    "area_counties": [
+     "17005",
+     "17013",
+     "17027",
+     "17083",
+     "17117",
+     "17119",
+     "17133",
+     "17163",
+     "29071",
+     "29099",
+     "29113",
+     "29183",
+     "29189",
+     "29219",
+     "29510"
+    ],
+    "shared_by": 2,
+    "share": 1405964
+   },
+   {
+    "station": "St. Louis",
+    "county": "St. Louis County, MO",
+    "county_fips": "29510",
+    "area": "41180",
+    "area_title": "St. Louis, MO-IL",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2811927,
+    "area_counties": [
+     "17005",
+     "17013",
+     "17027",
+     "17083",
+     "17117",
+     "17119",
+     "17133",
+     "17163",
+     "29071",
+     "29099",
+     "29113",
+     "29183",
+     "29189",
+     "29219",
+     "29510"
+    ],
+    "shared_by": 2,
+    "share": 1405964
+   }
+  ],
+  "cm": [
+   {
+    "station": "Chicago Union Station",
+    "county": "Cook County, IL",
+    "county_fips": "17031",
+    "area": "16980",
+    "area_title": "Chicago-Naperville-Elgin, IL-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 9408576,
+    "area_counties": [
+     "17031",
+     "17043",
+     "17063",
+     "17111",
+     "17197",
+     "17037",
+     "17089",
+     "17093",
+     "17097",
+     "18073",
+     "18089",
+     "18111",
+     "18127"
+    ],
+    "shared_by": 1,
+    "share": 9408576
+   },
+   {
+    "station": "Milwaukee",
+    "county": "Milwaukee County, WI",
+    "county_fips": "55079",
+    "area": "33340",
+    "area_title": "Milwaukee-Waukesha, WI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 1574452,
+    "area_counties": [
+     "55079",
+     "55089",
+     "55131",
+     "55133"
+    ],
+    "shared_by": 1,
+    "share": 1574452
+   },
+   {
+    "station": "Madison",
+    "county": "Dane County, WI",
+    "county_fips": "55025",
+    "area": "31540",
+    "area_title": "Madison, WI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 707606,
+    "area_counties": [
+     "55021",
+     "55025",
+     "55045",
+     "55049"
+    ],
+    "shared_by": 2,
+    "share": 353803
+   },
+   {
+    "station": "Wisconsin Dells",
+    "county": "Columbia County, WI",
+    "county_fips": "55021",
+    "area": "31540",
+    "area_title": "Madison, WI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 707606,
+    "area_counties": [
+     "55021",
+     "55025",
+     "55045",
+     "55049"
+    ],
+    "shared_by": 2,
+    "share": 353803
+   },
+   {
+    "station": "La Crosse",
+    "county": "La Crosse County, WI",
+    "county_fips": "55063",
+    "area": "29100",
+    "area_title": "La Crosse-Onalaska, WI-MN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 170763,
+    "area_counties": [
+     "27055",
+     "55063",
+     "55123"
+    ],
+    "shared_by": 1,
+    "share": 170763
+   },
+   {
+    "station": "Winona",
+    "county": "Winona County, MN",
+    "county_fips": "27169",
+    "area": "49100",
+    "area_title": "Winona, MN",
+    "area_kind": "Micropolitan Statistical Area",
+    "area_pop": 49973,
+    "area_counties": [
+     "27169"
+    ],
+    "shared_by": 1,
+    "share": 49973
+   },
+   {
+    "station": "Red Wing",
+    "county": "Goodhue County, MN",
+    "county_fips": "27049",
+    "area": "39860",
+    "area_title": "Red Wing, MN",
+    "area_kind": "Micropolitan Statistical Area",
+    "area_pop": 47982,
+    "area_counties": [
+     "27049"
+    ],
+    "shared_by": 1,
+    "share": 47982
+   },
+   {
+    "station": "St. Paul",
+    "county": "Ramsey County, MN",
+    "county_fips": "27123",
+    "area": "33460",
+    "area_title": "Minneapolis-St. Paul-Bloomington, MN-WI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 3757952,
+    "area_counties": [
+     "27003",
+     "27019",
+     "27025",
+     "27037",
+     "27053",
+     "27059",
+     "27079",
+     "27095",
+     "27123",
+     "27139",
+     "27141",
+     "27163",
+     "27171",
+     "55093",
+     "55109"
+    ],
+    "shared_by": 2,
+    "share": 1878976
+   },
+   {
+    "station": "Minneapolis",
+    "county": "Hennepin County, MN",
+    "county_fips": "27053",
+    "area": "33460",
+    "area_title": "Minneapolis-St. Paul-Bloomington, MN-WI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 3757952,
+    "area_counties": [
+     "27003",
+     "27019",
+     "27025",
+     "27037",
+     "27053",
+     "27059",
+     "27079",
+     "27095",
+     "27123",
+     "27139",
+     "27141",
+     "27163",
+     "27171",
+     "55093",
+     "55109"
+    ],
+    "shared_by": 2,
+    "share": 1878976
+   }
+  ],
+  "cd": [
+   {
+    "station": "Chicago Union Station",
+    "county": "Cook County, IL",
+    "county_fips": "17031",
+    "area": "16980",
+    "area_title": "Chicago-Naperville-Elgin, IL-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 9408576,
+    "area_counties": [
+     "17031",
+     "17043",
+     "17063",
+     "17111",
+     "17197",
+     "17037",
+     "17089",
+     "17093",
+     "17097",
+     "18073",
+     "18089",
+     "18111",
+     "18127"
+    ],
+    "shared_by": 2,
+    "share": 4704288
+   },
+   {
+    "station": "Hammond–Whiting",
+    "county": "Lake County, IN",
+    "county_fips": "18089",
+    "area": "16980",
+    "area_title": "Chicago-Naperville-Elgin, IL-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 9408576,
+    "area_counties": [
+     "17031",
+     "17043",
+     "17063",
+     "17111",
+     "17197",
+     "17037",
+     "17089",
+     "17093",
+     "17097",
+     "18073",
+     "18089",
+     "18111",
+     "18127"
+    ],
+    "shared_by": 2,
+    "share": 4704288
+   },
+   {
+    "station": "Niles",
+    "county": "Berrien County, MI",
+    "county_fips": "26021",
+    "area": "35660",
+    "area_title": "Niles, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 152703,
+    "area_counties": [
+     "26021"
+    ],
+    "shared_by": 1,
+    "share": 152703
+   },
+   {
+    "station": "Kalamazoo",
+    "county": "Kalamazoo County, MI",
+    "county_fips": "26077",
+    "area": "28020",
+    "area_title": "Kalamazoo-Portage, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 264780,
+    "area_counties": [
+     "26077"
+    ],
+    "shared_by": 1,
+    "share": 264780
+   },
+   {
+    "station": "Battle Creek",
+    "county": "Calhoun County, MI",
+    "county_fips": "26025",
+    "area": "12980",
+    "area_title": "Battle Creek, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 133785,
+    "area_counties": [
+     "26025"
+    ],
+    "shared_by": 1,
+    "share": 133785
+   },
+   {
+    "station": "Jackson",
+    "county": "Jackson County, MI",
+    "county_fips": "26075",
+    "area": "27100",
+    "area_title": "Jackson, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 160233,
+    "area_counties": [
+     "26075"
+    ],
+    "shared_by": 1,
+    "share": 160233
+   },
+   {
+    "station": "Ann Arbor",
+    "county": "Washtenaw County, MI",
+    "county_fips": "26161",
+    "area": "11460",
+    "area_title": "Ann Arbor, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 373875,
+    "area_counties": [
+     "26161"
+    ],
+    "shared_by": 1,
+    "share": 373875
+   },
+   {
+    "station": "Dearborn",
+    "county": "Wayne County, MI",
+    "county_fips": "26163",
+    "area": "19820",
+    "area_title": "Detroit-Warren-Dearborn, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4400578,
+    "area_counties": [
+     "26163",
+     "26087",
+     "26093",
+     "26099",
+     "26125",
+     "26147"
+    ],
+    "shared_by": 2,
+    "share": 2200289
+   },
+   {
+    "station": "Detroit",
+    "county": "Wayne County, MI",
+    "county_fips": "26163",
+    "area": "19820",
+    "area_title": "Detroit-Warren-Dearborn, MI",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 4400578,
+    "area_counties": [
+     "26163",
+     "26087",
+     "26093",
+     "26099",
+     "26125",
+     "26147"
+    ],
+    "shared_by": 2,
+    "share": 2200289
+   }
+  ],
+  "ac": [
+   {
+    "station": "Atlanta Airport",
+    "county": "Clayton County, GA",
+    "county_fips": "13063",
+    "area": "12060",
+    "area_title": "Atlanta-Sandy Springs-Roswell, GA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6411149,
+    "area_counties": [
+     "13013",
+     "13035",
+     "13045",
+     "13063",
+     "13077",
+     "13085",
+     "13089",
+     "13097",
+     "13113",
+     "13117",
+     "13121",
+     "13135",
+     "13149",
+     "13151",
+     "13159",
+     "13187",
+     "13199",
+     "13211",
+     "13217",
+     "13227",
+     "13231",
+     "13247",
+     "13255",
+     "13297",
+     "13015",
+     "13057",
+     "13067",
+     "13143",
+     "13223"
+    ],
+    "shared_by": 2,
+    "share": 3205574
+   },
+   {
+    "station": "Atlanta",
+    "county": "Fulton County, GA",
+    "county_fips": "13121",
+    "area": "12060",
+    "area_title": "Atlanta-Sandy Springs-Roswell, GA",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 6411149,
+    "area_counties": [
+     "13013",
+     "13035",
+     "13045",
+     "13063",
+     "13077",
+     "13085",
+     "13089",
+     "13097",
+     "13113",
+     "13117",
+     "13121",
+     "13135",
+     "13149",
+     "13151",
+     "13159",
+     "13187",
+     "13199",
+     "13211",
+     "13217",
+     "13227",
+     "13231",
+     "13247",
+     "13255",
+     "13297",
+     "13015",
+     "13057",
+     "13067",
+     "13143",
+     "13223"
+    ],
+    "shared_by": 2,
+    "share": 3205574
+   },
+   {
+    "station": "Greenville SC",
+    "county": "Greenville County, SC",
+    "county_fips": "45045",
+    "area": "24860",
+    "area_title": "Greenville-Anderson-Greer, SC",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 996680,
+    "area_counties": [
+     "45007",
+     "45045",
+     "45059",
+     "45077"
+    ],
+    "shared_by": 1,
+    "share": 996680
+   },
+   {
+    "station": "Spartanburg",
+    "county": "Spartanburg County, SC",
+    "county_fips": "45083",
+    "area": "43900",
+    "area_title": "Spartanburg, SC",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 395934,
+    "area_counties": [
+     "45083",
+     "45087"
+    ],
+    "shared_by": 1,
+    "share": 395934
+   },
+   {
+    "station": "Charlotte Airport",
+    "county": "Mecklenburg County, NC",
+    "county_fips": "37119",
+    "area": "16740",
+    "area_title": "Charlotte-Concord-Gastonia, NC-SC",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2883370,
+    "area_counties": [
+     "37007",
+     "37025",
+     "37071",
+     "37097",
+     "37109",
+     "37119",
+     "37159",
+     "37179",
+     "45023",
+     "45057",
+     "45091"
+    ],
+    "shared_by": 2,
+    "share": 1441685
+   },
+   {
+    "station": "Charlotte",
+    "county": "Mecklenburg County, NC",
+    "county_fips": "37119",
+    "area": "16740",
+    "area_title": "Charlotte-Concord-Gastonia, NC-SC",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2883370,
+    "area_counties": [
+     "37007",
+     "37025",
+     "37071",
+     "37097",
+     "37109",
+     "37119",
+     "37159",
+     "37179",
+     "45023",
+     "45057",
+     "45091"
+    ],
+    "shared_by": 2,
+    "share": 1441685
+   }
+  ],
+  "oh": [
+   {
+    "station": "Cleveland",
+    "county": "Cuyahoga County, OH",
+    "county_fips": "39035",
+    "area": "17410",
+    "area_title": "Cleveland, OH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2171877,
+    "area_counties": [
+     "39007",
+     "39035",
+     "39055",
+     "39085",
+     "39093",
+     "39103"
+    ],
+    "shared_by": 1,
+    "share": 2171877
+   },
+   {
+    "station": "Columbus",
+    "county": "Franklin County, OH",
+    "county_fips": "39049",
+    "area": "18140",
+    "area_title": "Columbus, OH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2225377,
+    "area_counties": [
+     "39041",
+     "39045",
+     "39049",
+     "39073",
+     "39089",
+     "39097",
+     "39117",
+     "39127",
+     "39129",
+     "39159"
+    ],
+    "shared_by": 1,
+    "share": 2225377
+   },
+   {
+    "station": "Springfield OH",
+    "county": "Clark County, OH",
+    "county_fips": "39023",
+    "area": "44220",
+    "area_title": "Springfield, OH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 134985,
+    "area_counties": [
+     "39023"
+    ],
+    "shared_by": 1,
+    "share": 134985
+   },
+   {
+    "station": "Dayton",
+    "county": "Montgomery County, OH",
+    "county_fips": "39113",
+    "area": "19430",
+    "area_title": "Dayton-Kettering-Beavercreek, OH",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 821740,
+    "area_counties": [
+     "39057",
+     "39109",
+     "39113"
+    ],
+    "shared_by": 1,
+    "share": 821740
+   },
+   {
+    "station": "Cincinnati",
+    "county": "Hamilton County, OH",
+    "county_fips": "39061",
+    "area": "17140",
+    "area_title": "Cincinnati, OH-KY-IN",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 2302815,
+    "area_counties": [
+     "18029",
+     "18047",
+     "18115",
+     "21015",
+     "21023",
+     "21037",
+     "21077",
+     "21081",
+     "21117",
+     "21191",
+     "39015",
+     "39017",
+     "39025",
+     "39061",
+     "39165"
+    ],
+    "shared_by": 1,
+    "share": 2302815
    }
   ]
  }

@@ -52,7 +52,8 @@ def main():
         cells = [h for h in want[c["id"]] if h in pop]
         df = pd.DataFrame({"h3": cells, "population": [pop[h] for h in cells]})
         df["density"] = df["population"] / np.array([h3.cell_area(h, unit="km^2") for h in cells])
-        df.to_parquet(os.path.join(OUTDIR, f"{c['id']}.parquet"), index=False)
+        # sorted, so reruns write identical files and git only sees real changes
+        df.sort_values("h3").to_parquet(os.path.join(OUTDIR, f"{c['id']}.parquet"), index=False)
         print(f"  {c['id']:9s} {len(df):7,d} cells  {df['population'].sum()/1e6:6.1f} M within {BUFFER_KM} km of the line", flush=True)
 
 

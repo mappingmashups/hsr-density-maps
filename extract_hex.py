@@ -58,7 +58,8 @@ def main():
         d = np.min([hav_km(lo, la, gdf["lon"].values, gdf["lat"].values) for lo, la in zip(lon, lat)], axis=0)
         sub = gdf[d <= RMAX].copy()
         sub["dist_km"] = d[d <= RMAX]  # distance to the nearest station on this corridor
-        sub.to_parquet(os.path.join(OUTDIR, f"{c['id']}.parquet"))
+        # sorted, so reruns write identical files and git only sees real changes
+        sub.sort_values("h3").reset_index(drop=True).to_parquet(os.path.join(OUTDIR, f"{c['id']}.parquet"))
         print(f"  {c['id']:9s} {len(sub):7,d} hexes  {sub['population'].sum()/1e6:6.1f} M within {RMAX} km", flush=True)
 
 
