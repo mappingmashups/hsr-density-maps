@@ -31,6 +31,21 @@ CORRIDORS = [
         ("Aix-en-Provence TGV",   5.3173, 43.4553),
         ("Marseille St-Charles",  5.3806, 43.3028),
     ]),
+    dict(id="uk", name="Paris – London", country="France/UK", status="existing",
+         region="Europe", stations=[
+        ("Paris Nord",            2.3553, 48.8809),
+        ("Lille Europe",          3.0756, 50.6392),
+        ("London St Pancras",    -0.1263, 51.5317),
+    ]),
+    dict(id="nl", name="Paris – Brussels – Amsterdam", country="France/Belgium/Netherlands",
+         status="existing", region="Europe", stations=[
+        ("Paris Nord",            2.3553, 48.8809),
+        ("Lille Europe",          3.0756, 50.6392),
+        ("Brussels-Midi",         4.3360, 50.8357),
+        ("Antwerp Central",       4.4211, 51.2172),
+        ("Rotterdam Centraal",    4.4690, 51.9249),
+        ("Amsterdam Centraal",    4.9003, 52.3791),
+    ]),
     dict(id="it", name="Turin – Naples", country="Italy", status="existing",
          region="Europe", stations=[
         ("Torino Porta Nuova",    7.6785, 45.0621),
@@ -66,6 +81,7 @@ CORRIDORS = [
         ("Tacoma",             -122.4282, 47.2393),
         ("Olympia/Lacey",      -122.7935, 46.9905),
         ("Portland",           -122.6767, 45.5290),
+        ("Eugene",             -123.0938, 44.0549),
     ]),
     dict(id="tx", name="Dallas – Houston", country="USA (Texas)", status="planned",
          region="North America", stations=[
@@ -185,4 +201,5 @@ MAIN_CITY_STATIONS = ["Madrid Atocha", "Barcelona Sants", "Paris Gare de Lyon", 
         "Roma Termini", "Napoli Centrale", "San Francisco", "San Jose", "Los Angeles", "Vancouver BC", "Seattle", "Dallas",
         "Houston", "Washington", "Baltimore", "Philadelphia", "New York", "Boston", "Miami", "Las Vegas", "Windsor",
         "Toronto", "Montréal", "Tokyo", "Nagoya", "Kyoto", "Shin-Osaka", "Seoul", "Daejeon", "Dongdaegu", "Busan",
-        "Taipei", "Taichung", "Zuoying (Kaohsiung)", "Portland"]
+        "Taipei", "Taichung", "Zuoying (Kaohsiung)", "Portland", "Paris Nord", "London St Pancras",
+        "Brussels-Midi", "Antwerp Central", "Rotterdam Centraal", "Amsterdam Centraal"]

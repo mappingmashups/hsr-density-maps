@@ -30,7 +30,7 @@ INK, INK2, INK3 = "#0b0b0b", "#52514e", "#8a8984"
 LAND, LAND_EDGE, COUNTRY_EDGE, LINE = "#eeede9", "#ffffff", "#c9c8c2", "#3a3a38"
 
 # page order, roughly the comparison you want to read side by side
-ORDER = ["ca", "es", "fr", "it", "nec", "on", "cascadia", "tx", "fl", "bw", "ab", "jp", "kr", "tw"]
+ORDER = ["ca", "es", "fr", "uk", "nl", "it", "nec", "on", "cascadia", "tx", "fl", "bw", "ab", "jp", "kr", "tw"]
 PAGE_W = 2500  # km of page width before wrapping to the next shelf
 GAP = 70       # km between panels
 MIN_W = 390    # km, narrowest panel
@@ -67,7 +67,9 @@ def short(name):
             "Milano Centrale": "Milano", "Roma Termini": "Roma", "Napoli Centrale": "Napoli",
             "Torino Porta Nuova": "Torino", "Bologna Centrale": "Bologna",
             "Firenze S.M.N.": "Firenze", "Zaragoza Delicias": "Zaragoza",
-            "Lleida Pirineus": "Lleida", "Camp de Tarragona": "Tarragona"}.get(name, name)
+            "Lleida Pirineus": "Lleida", "Camp de Tarragona": "Tarragona", "Paris Nord": "Paris",
+            "Lille Europe": "Lille", "London St Pancras": "London", "Brussels-Midi": "Brussels",
+            "Antwerp Central": "Antwerp", "Rotterdam Centraal": "Rotterdam", "Amsterdam Centraal": "Amsterdam"}.get(name, name)
 
 
 def build_panel(cid, radii, density):

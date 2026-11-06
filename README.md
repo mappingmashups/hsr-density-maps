@@ -26,7 +26,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 
 | step | script | output |
 |---|---|---|
-| Station list (14 corridors, ~130 stops) | `stations.py` | – |
+| Station list (16 corridors, ~140 stops) | `stations.py` | – |
 | Population within R of each station | `popcalc.py kontur` · `popcalc.py hrsl` | `out/pop_kontur.json`, `out/pop_hrsl.json` |
 | Tables | `summarize.py` | `out/stations.csv`, `out/corridors.csv` |
 | Hexagons near stations (for footprints) | `extract_hex.py` (~1 min) | `out/hex/<corridor>.parquet` |
