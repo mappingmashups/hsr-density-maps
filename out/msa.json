@@ -298,6 +298,20 @@
     ],
     "shared_by": 1,
     "share": 2537904
+   },
+   {
+    "station": "Eugene",
+    "county": "Lane County, OR",
+    "county_fips": "41039",
+    "area": "21660",
+    "area_title": "Eugene-Springfield, OR",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 382396,
+    "area_counties": [
+     "41039"
+    ],
+    "shared_by": 1,
+    "share": 382396
    }
   ],
   "tx": [
