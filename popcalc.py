@@ -2,7 +2,7 @@
 
 Two sources, same logic:
   hrsl   – Meta/CIESIN High Resolution Settlement Layer, 1 arc-second (~30 m)
-           COGs on AWS Open Data (s3://dataforgood-fb-data). No Canada coverage.
+           COGs on AWS Open Data (s3://dataforgood-fb-data). No Canada, Australia or China coverage.
   kontur – Kontur Population 2023-11-01, H3 res-8 hexagons (~0.74 km², ~460 m
            edge), global incl. Canada. Built from GHSL + HRSL + Microsoft
            buildings + Copernicus land cover.
@@ -24,6 +24,7 @@ R_EARTH = 6371.0088
 HERE = os.path.dirname(os.path.abspath(__file__))
 HRSL_VRT = "/vsicurl/https://dataforgood-fb-data.s3.amazonaws.com/hrsl-cogs/hrsl_general/hrsl_general-latest.vrt"
 KONTUR_GPKG = os.path.join(HERE, "data", "kontur_population_20231101.gpkg")
+HRSL_MISSING = ("ab", "on", "au", "cn")   # corridors in countries HRSL doesn't cover
 
 
 def hav_km(lon1, lat1, lon2, lat2):
@@ -92,8 +93,8 @@ def run(source, radii, only=None):
     getpts = {"hrsl": hrsl_points, "kontur": kontur_points}[source]
     rmax = max(radii)
     jobs = [(c, s) for c in CORRIDORS for s in c["stations"] if only is None or c["id"] in only]
-    if source == "hrsl":  # HRSL has no Canada coverage
-        jobs = [(c, s) for c, s in jobs if c["id"] not in ("ab", "on")
+    if source == "hrsl":  # HRSL has no coverage of Canada, Australia or China
+        jobs = [(c, s) for c, s in jobs if c["id"] not in HRSL_MISSING
                 and not (c["id"] == "cascadia" and s[0] == "Vancouver BC")]
 
     def work(job):

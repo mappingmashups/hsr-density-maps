@@ -53,7 +53,7 @@ Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redep
 * **Meta / CIESIN HRSL** (cross-check). 1 arc-second (~30 m) COGs on AWS Open
   Data (`s3://dataforgood-fb-data/hrsl-cogs/hrsl_general/`). It's read remotely
   through `/vsicurl/` windowed reads, so nothing needs downloading. It has **no
-  Canada coverage**, so it can't be the uniform base. Where both datasets
+  coverage of Canada, Australia or China**, so it can't be the uniform base. Where both datasets
   cover a station they agree within a few percent; see `stations.csv`.
 * Natural Earth 10 m admin-0 / admin-1 outlines for the map backgrounds.
 * **US Census Bureau** (comparison view, US stations only): CBSA delineation of
