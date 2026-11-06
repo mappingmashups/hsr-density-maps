@@ -300,6 +300,21 @@
     "share": 2537904
    },
    {
+    "station": "Salem",
+    "county": "Marion County, OR",
+    "county_fips": "41047",
+    "area": "41420",
+    "area_title": "Salem, OR",
+    "area_kind": "Metropolitan Statistical Area",
+    "area_pop": 443416,
+    "area_counties": [
+     "41047",
+     "41053"
+    ],
+    "shared_by": 1,
+    "share": 443416
+   },
+   {
     "station": "Eugene",
     "county": "Lane County, OR",
     "county_fips": "41039",
