@@ -69,7 +69,11 @@ def short(name):
             "Firenze S.M.N.": "Firenze", "Zaragoza Delicias": "Zaragoza",
             "Lleida Pirineus": "Lleida", "Camp de Tarragona": "Tarragona", "Paris Nord": "Paris",
             "Lille Europe": "Lille", "London St Pancras": "London", "Brussels-Midi": "Brussels",
-            "Antwerp Central": "Antwerp", "Rotterdam Centraal": "Rotterdam", "Amsterdam Centraal": "Amsterdam"}.get(name, name)
+            "Antwerp Central": "Antwerp", "Rotterdam Centraal": "Rotterdam", "Amsterdam Centraal": "Amsterdam",
+            "Chicago Union Station": "Chicago", "Sydney Central": "Sydney", "Melbourne Southern Cross": "Melbourne",
+            "Berlin Hbf": "Berlin", "Berlin Südkreuz": "Berlin Südkreuz", "Leipzig Hbf": "Leipzig", "Erfurt Hbf": "Erfurt",
+            "Nürnberg Hbf": "Nuremberg", "Ingolstadt Hbf": "Ingolstadt", "München Hbf": "Munich", "Mumbai BKC": "Mumbai",
+            "Jakarta Halim": "Jakarta", "Bandung Tegalluar": "Bandung"}.get(name, name)
 
 
 def build_panel(cid, radii, density):
@@ -290,9 +294,9 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     for i, (lab, ls) in enumerate([("existing", "-"), ("under construction", (0, (4, 2))), ("planned", (0, (1.5, 1.5)))]):
         ax.plot([lx + i * 170, lx + i * 170 + 40], [ky, ky], color=LINE, lw=1.1, ls=ls)
         ax.text(lx + i * 170 + 48, ky, lab, fontsize=6.5, va="center", color=INK2)
-    for i, (lab, col) in enumerate(REGION_COL.items()):
-        ax.add_patch(Circle((lx + i * 170 + 12, ky + 40), 10, fc=col, alpha=0.6, ec="none"))
-        ax.text(lx + i * 170 + 30, ky + 40, lab, fontsize=6.5, va="center", color=INK2)
+    for i, (lab, col) in enumerate(REGION_COL.items()):   # four regions: 125 km apart so they fit the page
+        ax.add_patch(Circle((lx + i * 125 + 12, ky + 40), 10, fc=col, alpha=0.6, ec="none"))
+        ax.text(lx + i * 125 + 30, ky + 40, lab, fontsize=6.5, va="center", color=INK2)
 
     for ext in ("png", "svg"):
         fig.savefig(os.path.join(OUT, f"{fname}.{ext}"), dpi=dpi, facecolor="white")
