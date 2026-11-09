@@ -275,11 +275,11 @@ img { max-width: 100%; }
     <p class="intro col">Each corridor's stations and the people around them, all drawn at one scale and turned so the line runs top to bottom.</p>
     <div class="toolbar">
       <div class="field"><span class="flabel">Radius</span><div class="frow"><div class="seg" role="group" aria-label="Map radius" id="mapseg">
-        <button type="button" data-map="nested" aria-pressed="true">5 / 10 / 20 km</button>
         <button type="button" data-map="5km" aria-pressed="false">5 km</button>
         <button type="button" data-map="10km" aria-pressed="false">10 km</button>
-        <button type="button" data-map="20km" aria-pressed="false">20 km</button>
+        <button type="button" data-map="20km" aria-pressed="true">20 km</button>
         <button type="button" data-map="50km" aria-pressed="false">50 km</button>
+        <button type="button" data-map="nested" aria-pressed="false">5 / 10 / 20 km</button>
       </div></div></div>
       <div class="field"><span class="flabel">Zoom</span><div class="frow"><div class="seg" role="group" aria-label="Map zoom" id="zoomseg">
         <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
@@ -287,7 +287,7 @@ img { max-width: 100%; }
       </div></div></div>
     </div>
     <figure>
-      <div class="plate" id="plate"><img id="mapimg" src="maps/map_nested.webp" alt="Same-scale maps of 26 high-speed rail corridors with population circles at each station"></div>
+      <div class="plate" id="plate"><img id="mapimg" src="maps/map_20km.webp" alt="Same-scale maps of 26 high-speed rail corridors with population circles at each station"></div>
       <div class="keyrow" aria-label="Key">
         <span class="kgrp"><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--au)"></i>Australia</span><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></span>
         <span class="kgrp"><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6"/></svg>existing</span><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3"/></svg>under construction</span><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/></svg>planned</span></span>
@@ -432,7 +432,7 @@ img { max-width: 100%; }
 <footer>
   <span class="fhead">Where would High Speed Rail work in North America?</span>
   <p>Data: population © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0); Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>); <a href="https://www.worldpop.org/">WorldPop</a> SSP projections (CC BY 4.0); US county projections from <a href="https://doi.org/10.17605/OSF.IO/9YNFC">Hauer et al.</a> (CC BY 3.0); US metro areas, county populations and outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0); outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).</p>
-  <p>Code, data pipeline and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a> (MIT licence) · by <a href="https://github.com/mappingmashups">mappingmashups</a> · updated <span class="updated"></span></p>
+  <p>Code, data pipeline and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a> (MIT licence) · by <a href="https://mappingmashups.net">Alan McConchie</a> · updated <span class="updated"></span></p>
 </footer>
 <datalist id="radTicks"><option value="5"></option><option value="10"></option><option value="20"></option><option value="50"></option></datalist>
 <div id="tip" hidden></div>

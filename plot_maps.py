@@ -32,7 +32,7 @@ LAND, LAND_EDGE, COUNTRY_EDGE, LINE = "#eeede9", "#ffffff", "#c9c8c2", "#3a3a38"
 
 # page order follows stations.CORRIDORS: North America, Australia, Europe, Asia
 ORDER = [c["id"] for c in CORRIDORS]
-PAGE_W = 2500  # km of page width before wrapping to the next shelf
+PER_ROW = 4    # panels per row; the page is as wide as the widest row
 GAP = 70       # km between panels
 MIN_W = 390    # km, narrowest panel
 # The web page shows its own heading, explanation and colour/line/density key, so the images
@@ -147,26 +147,28 @@ def catchment_lines(xy, r):
 
 
 def pack(panels):
-    """Shelf-pack panels left→right, wrapping at PAGE_W. Title band above each panel."""
+    """Pack panels left→right, PER_ROW to a row. Title band above each panel.
+    Returns (bottom y, page width), both in km of page space."""
     TITLE = 75
     x = y = 0.0
-    shelf_h = 0.0
-    for p in panels:
+    shelf_h = width = 0.0
+    for i, p in enumerate(panels):
         x0, y0, x1, y1 = p["bb"]
         w, h = x1 - x0, y1 - y0 + TITLE
-        if x > 0 and x + w > PAGE_W:
+        if i and i % PER_ROW == 0:
             x, y, shelf_h = 0.0, y - shelf_h - GAP, 0.0
         p["off"] = (x - x0, y - TITLE - y1)  # shift so panel's top-left sits at (x, y-TITLE)
         p["title_xy"] = (x, y)
+        width = max(width, x + w)
         x += w + GAP
         shelf_h = max(shelf_h, h)
-    return y - shelf_h
+    return y - shelf_h, width
 
 
 def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300):
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
-    bottom = pack(panels)
-    W = PAGE_W + 40
+    bottom, page_w = pack(panels)
+    W = page_w + 40
     top = 270 if WITH_TEXT else 15
     H = -bottom + top + 20  # header room
     scale = 0.0072      # inches per km on the page
@@ -270,7 +272,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.text(tx, ty - 46, tot, fontsize=6.4, color=INK2, va="top")
 
     # legend: scale bar + reference circles, bottom-right
-    lx, ly = PAGE_W - 520, bottom + 120
+    lx, ly = page_w - 520, bottom + 120
     ax.plot([lx, lx + 100], [ly, ly], color=INK, lw=1.5)
     for t in (0, 50, 100):
         ax.plot([lx + t, lx + t], [ly - 4, ly + 4], color=INK, lw=1)
