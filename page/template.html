@@ -153,6 +153,14 @@ input[type="range"] { accent-color: var(--ink); width: 150px; margin: 0; }
 #cmp .hl .bar, #cmp .hl .dot { stroke: var(--ink); stroke-width: 2px; }
 #cmp .hl .ring { stroke: #16171a; stroke-width: 2.5px; }
 
+/* flip chart highlighting */
+.fliplegend { margin-bottom: 10px; }
+.legbtn { all: unset; display: inline-flex; align-items: center; gap: 6px; cursor: default; font: 400 0.8125rem/1.2 var(--f-display); color: var(--ink-2); padding: 3px 6px; margin: -3px -6px; border-radius: 4px; }
+.legbtn:hover, .legbtn:focus-visible { background: var(--tool); color: var(--ink); outline: none; }
+#flip .fl-line, #flip .fl-name { transition: opacity .15s; }
+#flip .fl-name { cursor: default; outline: none; }
+#flip .dim { opacity: .1; }
+@media (prefers-reduced-motion: reduce) { #flip .fl-line, #flip .fl-name { transition: none; } }
 #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font: 400 0.8125rem/1.4 var(--f-display); padding: 8px 10px; border-radius: 4px; max-width: 280px; z-index: 20; }
 #tip b { font-weight: 600; }
 
@@ -326,8 +334,8 @@ img { max-width: 100%; }
     <h2 id="h-find">The comparison flips as the circle shrinks</h2>
     <p class="intro col">People per km of route within each radius of a station, relative to the Madrid–Barcelona and Paris–Marseille average. Above 1× means more people near the stations than those two European lines; below 1× means fewer.</p>
     <figure>
-      <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
-      <figcaption>Dark lines: North American and Australian corridors. Light lines: Europe and Asia for reference. Hover a line for values.</figcaption>
+      <div class="chart"><div class="keyrow fliplegend" id="flipLegend" aria-label="Regions: hover to highlight"></div><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
+      <figcaption>Hover a region in the key or a route name to pick it out; hover a line for its values.</figcaption>
     </figure>
   </section>
 
@@ -471,32 +479,69 @@ const NA = DATA.corridors.filter(c => c.region === "North America" || c.region =
   $("#facts").innerHTML = f.map(([b, l, p]) => `<div class="fact"><span class="eyebrow">${l}</span><span class="big num">${b}</span><p>${p}</p></div>`).join("");
 })();
 (function flip() {
-  const svg = $("#flip"), W = 900, H = 420, m = { l: 48, r: 230, t: 16, b: 40 };
+  const svg = $("#flip"), W = 900, m = { l: 48, r: 250, t: 16, b: 40 };
+  let H = 420;
   const xs = r => m.l + R.indexOf(r) * (W - m.l - m.r) / (R.length - 1);
   const series = DATA.corridors.filter(c => !["es", "fr"].includes(c.id)).map(c => ({ c, v: R.map(r => perkm(c, r) / ref(r)) }));
+  // route names in the right gutter beside the 50 km end, nudged apart; the chart grows if they need more room
+  const labels = series.map(s => ({ s, y0: 0, y: 0 }));
   const ymax = 6, ys = v => m.t + (1 - Math.log2(v / 0.125) / Math.log2(ymax / 0.125)) * (H - m.t - m.b);
+  const place = () => {
+    labels.forEach(l => { l.y0 = l.y = ys(l.s.v[3]); });
+    labels.sort((a, b) => a.y0 - b.y0);
+    for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 13) labels[i].y = labels[i - 1].y + 13;
+    return labels[labels.length - 1].y;
+  };
+  if (place() > H - 8) { H = Math.ceil(place() + 12); place(); }
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   [0.125, 0.25, 0.5, 1, 2, 4].forEach(v => {
     el("line", { x1: m.l, x2: W - m.r, y1: ys(v), y2: ys(v), stroke: v === 1 ? "var(--ink-3)" : "var(--grid)", "stroke-width": v === 1 ? 1.2 : 1, "stroke-dasharray": v === 1 ? "4 3" : "" }, svg);
     el("text", { x: m.l - 8, y: ys(v) + 4, "text-anchor": "end", "font-size": 12 }, svg).textContent = v < 1 ? v.toFixed(v === 0.125 ? 3 : 2).replace(/0+$/, "") + "×" : v + "×";
   });
   el("text", { x: m.l + 6, y: ys(1) - 6, "font-size": 11, fill: "var(--ink-3)" }, svg).textContent = "1× = Madrid–Barcelona / Paris–Marseille average";
   R.forEach(r => { el("text", { x: xs(r), y: H - 14, "text-anchor": "middle", "font-size": 12 }, svg).textContent = `within ${r} km`; });
-  series.sort((a, b) => NA.includes(a.c.id) - NA.includes(b.c.id)).forEach(s => {
-    const na = NA.includes(s.c.id);
-    const g = el("g", { tabindex: 0, "aria-label": `${s.c.corridor}: ${s.v.map((v, i) => R[i] + " km " + v.toFixed(2) + "×").join(", ")}` }, svg);
+
+  // highlight: fade everything that doesn't match (a region, or one corridor)
+  const parts = [];   // {el, id, region}
+  const focus = pred => parts.forEach(p => p.el.classList.toggle("dim", !!pred && !pred(p)));
+  const lines = el("g", {}, svg), names = el("g", {}, svg);
+  // North America / Australia drawn last, so they sit on top
+  series.slice().sort((a, b) => NA.includes(a.c.id) - NA.includes(b.c.id)).forEach(s => {
+    const na = NA.includes(s.c.id), col = REGVAR[s.c.region];
+    const g = el("g", { class: "fl-line", tabindex: 0, "aria-label": `${s.c.corridor}: ${s.v.map((v, i) => R[i] + " km " + v.toFixed(2) + "×").join(", ")}` }, lines);
     const d = s.v.map((v, i) => `${i ? "L" : "M"}${xs(R[i])},${ys(v)}`).join("");
-    el("path", { d, fill: "none", stroke: na ? "var(--hi)" : "var(--lo)", "stroke-width": na ? 2 : 1.5, "stroke-linejoin": "round" }, g);
-    s.v.forEach((v, i) => el("circle", { cx: xs(R[i]), cy: ys(v), r: na ? 4 : 3, fill: na ? "var(--hi)" : "var(--lo)", stroke: "var(--surface)", "stroke-width": 2 }, g));
+    el("path", { class: "fl-stroke", d, fill: "none", stroke: col, "stroke-width": na ? 2.2 : 1.6, "stroke-linejoin": "round" }, g);
+    s.v.forEach((v, i) => el("circle", { cx: xs(R[i]), cy: ys(v), r: na ? 4 : 3, fill: col, stroke: "var(--surface)", "stroke-width": 2 }, g));
     el("path", { d, fill: "none", stroke: "transparent", "stroke-width": 14 }, g); // hit target
+    parts.push({ el: g, id: s.c.id, region: s.c.region });
     const html = `<b>${s.c.corridor}</b><br>` + R.map((r, i) => `${r} km: ${s.v[i].toFixed(2)}× <span style="opacity:.7">(${fmtK(perkm(s.c, r))}/km)</span>`).join("<br>");
-    g.addEventListener("pointerenter", e => { showTip(html, e); g.querySelector("path").setAttribute("stroke-width", 3.5); });
-    g.addEventListener("pointermove", moveTip);
-    g.addEventListener("pointerleave", () => { hideTip(); g.querySelector("path").setAttribute("stroke-width", na ? 2 : 1.5); });
+    const on = e => { focus(p => p.id === s.c.id); if (e) showTip(html, e); }, off = () => { focus(null); hideTip(); };
+    g.addEventListener("pointerenter", on); g.addEventListener("pointermove", moveTip); g.addEventListener("pointerleave", off);
+    g.addEventListener("focus", () => focus(p => p.id === s.c.id)); g.addEventListener("blur", off);
   });
-  // direct labels in the right gutter, beside the 50 km end, nudged apart
-  const right = series.map(s => ({ y: ys(s.v[3]), text: s.c.corridor.replace(/ \(.*\)/, ""), na: NA.includes(s.c.id) })).sort((a, b) => a.y - b.y);
-  for (let i = 1; i < right.length; i++) if (right[i].y - right[i - 1].y < 13) right[i].y = right[i - 1].y + 13;
-  right.forEach(l => el("text", { x: W - m.r + 10, y: l.y + 4, "font-size": 11.5, fill: l.na ? "var(--ink)" : "var(--ink-3)", "font-weight": l.na ? 600 : 400 }, svg).textContent = l.text);
+  const x50 = xs(R[3]);
+  labels.forEach(({ s, y0, y }) => {
+    const na = NA.includes(s.c.id), col = REGVAR[s.c.region];
+    const g = el("g", { class: "fl-name", tabindex: 0, role: "button", "aria-label": `Highlight ${s.c.corridor}` }, names);
+    el("path", { d: `M${x50 + 6},${y0} L${x50 + 14},${y} L${x50 + 20},${y}`, fill: "none", stroke: col, "stroke-width": 1, opacity: 0.6 }, g);
+    el("circle", { cx: x50 + 26, cy: y, r: 3.5, fill: col }, g);
+    el("text", { x: x50 + 34, y: y + 4, "font-size": 11.5, fill: "var(--ink)", "font-weight": na ? 600 : 400 }, g).textContent = s.c.corridor;
+    el("rect", { x: x50 + 4, y: y - 6.5, width: m.r - 6, height: 13, fill: "transparent" }, g);   // hit target
+    parts.push({ el: g, id: s.c.id, region: s.c.region });
+    const on = () => focus(p => p.id === s.c.id), off = () => focus(null);
+    g.addEventListener("pointerenter", on); g.addEventListener("pointerleave", off);
+    g.addEventListener("focus", on); g.addEventListener("blur", off);
+  });
+
+  // region legend above the chart: hover or focus a region to fade the others
+  const leg = $("#flipLegend");
+  leg.innerHTML = ["North America", "Australia", "Europe", "Asia"].map(r =>
+    `<button type="button" class="legbtn" data-region="${r}"><i class="sw" style="background:${REGVAR[r]}"></i>${r}</button>`).join("");
+  leg.querySelectorAll(".legbtn").forEach(b => {
+    const on = () => focus(p => p.region === b.dataset.region), off = () => focus(null);
+    b.addEventListener("pointerenter", on); b.addEventListener("pointerleave", off);
+    b.addEventListener("focus", on); b.addEventListener("blur", off);
+  });
 })();
 
 /* ---------- maps ---------- */
