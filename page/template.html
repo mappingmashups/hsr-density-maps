@@ -334,7 +334,7 @@ img { max-width: 100%; }
     <h2 id="h-find">The comparison flips as the circle shrinks</h2>
     <p class="intro col">People per km of route within each radius of a station, relative to the Madrid–Barcelona and Paris–Marseille average. Above 1× means more people near the stations than those two European lines; below 1× means fewer.</p>
     <figure>
-      <div class="chart"><div class="keyrow fliplegend" id="flipLegend" aria-label="Regions: hover to highlight"></div><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
+      <div class="chart"><div class="keyrow fliplegend" id="flipLegend" aria-label="Regions: hover to highlight"></div><svg id="flip" viewBox="0 0 960 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
       <figcaption>Hover a region in the key or a route name to pick it out; hover a line for its values.</figcaption>
     </figure>
   </section>
@@ -479,13 +479,13 @@ const NA = DATA.corridors.filter(c => c.region === "North America" || c.region =
   $("#facts").innerHTML = f.map(([b, l, p]) => `<div class="fact"><span class="eyebrow">${l}</span><span class="big num">${b}</span><p>${p}</p></div>`).join("");
 })();
 (function flip() {
-  const svg = $("#flip"), W = 900, m = { l: 48, r: 250, t: 16, b: 40 };
+  const svg = $("#flip"), W = 960, m = { l: 48, r: 310, t: 16, b: 40 };
   let H = 420;
   const xs = r => m.l + R.indexOf(r) * (W - m.l - m.r) / (R.length - 1);
   const series = DATA.corridors.filter(c => !["es", "fr"].includes(c.id)).map(c => ({ c, v: R.map(r => perkm(c, r) / ref(r)) }));
   // route names in the right gutter beside the 50 km end, nudged apart; the chart grows if they need more room
   const labels = series.map(s => ({ s, y0: 0, y: 0 }));
-  const ymax = 6, ys = v => m.t + (1 - Math.log2(v / 0.125) / Math.log2(ymax / 0.125)) * (H - m.t - m.b);
+  const ymax = Math.max(6, ...series.flatMap(s => s.v)) * 1.08, ys = v => m.t + (1 - Math.log2(v / 0.125) / Math.log2(ymax / 0.125)) * (H - m.t - m.b);
   const place = () => {
     labels.forEach(l => { l.y0 = l.y = ys(l.s.v[3]); });
     labels.sort((a, b) => a.y0 - b.y0);
@@ -494,7 +494,7 @@ const NA = DATA.corridors.filter(c => c.region === "North America" || c.region =
   };
   if (place() > H - 8) { H = Math.ceil(place() + 12); place(); }
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  [0.125, 0.25, 0.5, 1, 2, 4].forEach(v => {
+  [0.125, 0.25, 0.5, 1, 2, 4, 8].filter(v => v < ymax).forEach(v => {
     el("line", { x1: m.l, x2: W - m.r, y1: ys(v), y2: ys(v), stroke: v === 1 ? "var(--ink-3)" : "var(--grid)", "stroke-width": v === 1 ? 1.2 : 1, "stroke-dasharray": v === 1 ? "4 3" : "" }, svg);
     el("text", { x: m.l - 8, y: ys(v) + 4, "text-anchor": "end", "font-size": 12 }, svg).textContent = v < 1 ? v.toFixed(v === 0.125 ? 3 : 2).replace(/0+$/, "") + "×" : v + "×";
   });
@@ -912,11 +912,12 @@ function radiusSlider(id, init, onChange) {
     const maxPop = Math.max(...all.map(s => pop(s, false)), ...all.map(s => share(s, false)),
                             ...(HAS_PROJ ? [...all.map(s => pop(s, true)), ...all.map(s => share(s, true))] : []));
     const step = [250e3, 500e3, 1e6, 2e6, 5e6].find(s => maxPop / s <= 4) || 5e6;
-    for (let v = step; v <= maxPop; v += step) {
+    const labelEvery = Math.ceil(44 / Math.max(1, step / maxPop * half));   // keep axis labels ≥ 44 px apart
+    for (let v = step, n = 1; v <= maxPop; v += step, n++) {
       [-1, 1].forEach(sg => {
         const x = mid + sg * (gap + v / maxPop * half);
         el("line", { x1: x, x2: x, y1: T - 6, y2: T + Lmax * k, stroke: "var(--grid)" }, svg);
-        el("text", { x, y: H - 22, "text-anchor": "middle", "font-size": 10.5, fill: "var(--ink-3)" }, svg).textContent = fmtP(v);
+        if (n % labelEvery === 0) el("text", { x, y: H - 22, "text-anchor": "middle", "font-size": 10.5, fill: "var(--ink-3)" }, svg).textContent = fmtP(v);
       });
     }
     // each side's own line: from its (slid) start to its end

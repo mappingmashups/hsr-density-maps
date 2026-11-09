@@ -49,6 +49,7 @@ COUNTIES = gpd.read_file(f"zip://{os.path.join(HERE, 'data', 'census', 'cb_2023_
 NE = os.path.join(HERE, "data", "ne")
 ADM0 = gpd.read_file(os.path.join(NE, "ne_10m_admin_0_countries.geojson"))[["geometry"]]
 ADM1 = gpd.read_file(os.path.join(NE, "ne_10m_admin_1_states_provinces_lakes.geojson"))[["geometry"]]
+LAKES = gpd.read_file(os.path.join(NE, "ne_10m_lakes.geojson"))[["geometry"]]   # Great Lakes etc., drawn as water
 
 
 def rnd(a, d=2):
@@ -100,8 +101,9 @@ def corridor(c, orient="h"):
     # below by however much longer the longest corridor is (land/water/borders only out there)
     ext = 0.0
     if orient == "v":
-        route = sum(hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:]))
-        ext = MAX_ROUTE - route + 60
+        # the chart runs MAX_ROUTE km below the top station; a winding route covers less than its
+        # length vertically, so extend by the gap between that and the route's own vertical extent
+        ext = MAX_ROUTE - float(xy[:, 1].max() - xy[:, 1].min()) + 60
     gb = (x0, y0 - ext, x1, y1 + ext)
     ground(c["id"], proj, R, gb, sts, "ground" if orient == "h" else "ground_v")
     north = (R @ np.array([0.0, 1.0])).tolist()
@@ -173,7 +175,8 @@ def ground(cid, proj, R, bb, sts, folder="ground"):
     m = 8 + (y1 - y0) / 222   # degrees of margin; grows with tall comparison grounds
     ll = box(min(lons) - m, min(lats) - m, max(lons) + m, max(lats) + m)
     rot = np.degrees(np.arctan2(R[1, 0], R[0, 0]))
-    for g, fc, ec, lw in ((ADM0, LAND, "none", 0), (ADM1, "none", BORDER, 0.6), (ADM0, "none", "#bdbcb5", 0.9)):
+    for g, fc, ec, lw in ((ADM0, LAND, "none", 0), (LAKES, WATER, "none", 0),
+                          (ADM1, "none", BORDER, 0.6), (ADM0, "none", "#bdbcb5", 0.9)):
         gg = g.clip(ll).to_crs(proj).rotate(rot, origin=(0, 0))
         gg.plot(ax=ax, facecolor=fc, edgecolor=ec, linewidth=lw)
     # context only: every cell within 50 km of the route line (extract_context.py), never counted
