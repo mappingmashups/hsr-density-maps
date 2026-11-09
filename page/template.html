@@ -247,11 +247,11 @@ img { max-width: 100%; }
       <div class="field"><span class="flabel">&nbsp;</span><div class="frow"><button type="button" class="btn" id="cmpSwap" aria-label="Swap left and right">⇄</button></div></div>
       <div class="field"><label class="flabel" for="cmpR">Right</label><div class="frow"><select id="cmpR"></select></div></div>
       <span class="sep" aria-hidden="true"></span>
-      <div class="field"><label class="flabel" for="cmpRad">Catchment radius</label><div class="frow"><input type="range" id="cmpRad" min="5" max="50" value="10" step="1" list="radTicks" aria-describedby="cmpRadVal"><span class="val" id="cmpRadVal">10 km</span></div></div>
+      <div class="field"><label class="flabel" for="cmpRad">Catchment radius</label><div class="frow"><input type="range" id="cmpRad" min="5" max="50" value="20" step="1" list="radTicks" aria-describedby="cmpRadVal"><span class="val" id="cmpRadVal">20 km</span></div></div>
       <div class="field"><span class="flabel">Year</span><div class="frow"><div class="seg" role="group" aria-label="Year" id="cmpYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div></div></div>
       <span class="sep" aria-hidden="true"></span>
       <div class="field"><label class="flabel" for="cmpSlide" id="cmpSlideLabel">Slide shorter route</label><div class="frow"><input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"><span class="val" id="cmpSlideVal">0 km</span><button type="button" class="btn" id="cmpAlign">Align biggest stations</button></div></div>
-      <div class="field"><span class="flabel">Compare with</span><div class="frow"><label class="chk" for="cmpMsa"><input type="checkbox" id="cmpMsa"> Official metro population</label></div></div>
+      <div class="field"><span class="flabel">Compare with</span><div class="frow"><label class="chk" for="cmpMsa"><input type="checkbox" id="cmpMsa" checked> Official metro population</label></div></div>
     </div>
     <div class="card cmpscroll"><div class="cmp" id="cmp">
       <div class="cmphead" id="cmpHL"></div>
@@ -261,7 +261,7 @@ img { max-width: 100%; }
       <div class="cmpcol"><svg id="cmpMid" role="img" aria-label="Station populations along the straightened routes"></svg></div>
       <div class="cmpcol" id="cmpColR"><svg id="cmpMapR" role="img"></svg></div>
     </div></div>
-    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: each station's share of its official metro area, the figure usually quoted for a city (US census metro areas, Statistics Canada metro areas, ABS Greater Sydney / Melbourne and urban areas). Stations sharing an area split it evenly. US maps show county outlines, with each station's metro area tinted.</p>
+    <p class="meta col" id="cmpMsaNote">Outlined bars: each station's share of its official metro area, the figure usually quoted for a city (US census metro areas, Statistics Canada metro areas, ABS Greater Sydney / Melbourne and urban areas). Stations sharing an area split it evenly. US maps show county outlines, with each station's metro area tinted.</p>
     <details class="howto">
       <summary>How to read this</summary>
       <p>Each bar is a station's catchment. Its length is the number of people counted there, and its thickness is the stretch of line the catchment covers: up to the radius each way, but only halfway to the next station, so crowded stations get thin bars that touch. Both sides use one population scale.</p>
@@ -735,8 +735,10 @@ function radiusSlider(id, init, onChange) {
   const byId = Object.fromEntries(V.corridors.map(c => [c.id, c]));
   const REGKEY = { "Europe": "--eu", "North America": "--na", "Australia": "--au", "Asia": "--as" };
   const fmtP = v => v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : Math.round(v / 1e3) + "k";
-  const S = { L: { id: "ca", flip: false, off: 0 }, R: { id: "fr", flip: false, off: 0 }, radius: 10, msa: false };
-  try { const s = JSON.parse(localStorage.getItem("hsr-compare2") || "null");
+  // opening view: California against Spain at 20 km, Madrid–Barcelona slid 116 km so Barcelona
+  // sits level with the Bay Area and Madrid with Los Angeles, official metro bars on
+  const S = { L: { id: "ca", flip: false, off: 0 }, R: { id: "es", flip: false, off: 116 }, radius: 20, msa: true };
+  try { const s = JSON.parse(localStorage.getItem("hsr-compare3") || "null");
     if (s && byId[s.L?.id] && byId[s.R?.id]) Object.assign(S, s); } catch (e) {}
 
   const selL = $("#cmpL"), selR = $("#cmpR"), slide = $("#cmpSlide");
@@ -832,7 +834,7 @@ function radiusSlider(id, init, onChange) {
     $("#cmpSlideLabel").textContent = shorter ? `Slide ${byId[S[shorter].id].name.split(" (")[0]}` : "Slide shorter route";
     $("#cmpSlideVal").textContent = `${shorter ? Math.round(S[shorter].off) : 0} km`;
     $("#cmpMsaNote").hidden = !S.msa;
-    try { localStorage.setItem("hsr-compare2", JSON.stringify(S)); } catch (e) {}
+    try { localStorage.setItem("hsr-compare3", JSON.stringify(S)); } catch (e) {}
 
     const wrapW = Math.max($("#cmp").clientWidth, 860);
     const chartW = Math.min(460, Math.max(330, wrapW * 0.37));
