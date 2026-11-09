@@ -43,7 +43,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 | Link-preview image (Slack, social media) | `make_og.py` (needs Playwright + Chromium) | `docs/og.png` |
-| Animated comparison GIF (radius sweep) | `make_gif.py` (needs Playwright + Chromium, ffmpeg) | `docs/compare_ca_es_radius.gif` |
+| Animated comparison GIF (radius sweep); `make_gif.py LEFT RIGHT [--slide KM] [--flip-left] [--flip-right]` for any pair | `make_gif.py` (needs Playwright + Chromium, ffmpeg) | `docs/compare_<left>_<right>_radius.gif` |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
 `python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`, `make_og.py`, `make_gif.py`.
