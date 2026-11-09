@@ -22,6 +22,9 @@ async def capture(url, frames):
         await pg.goto(url); await pg.wait_for_timeout(1500)
         await pg.evaluate("localStorage.clear()"); await pg.reload(); await pg.wait_for_timeout(2500)
         await pg.add_style_tag(content=".secnav,.fliprow{display:none!important}")
+        if await pg.is_checked("#cmpMsa"):   # population near stations only: no official metro bars or county outlines
+            await pg.click("#cmpMsa"); await pg.wait_for_timeout(300)
+        await pg.mouse.move(S - 2, 2)   # park the pointer so no station is hover-highlighted
         await pg.evaluate("""S => {
           const box = document.createElement('div');
           box.style.cssText = `position:fixed;left:0;top:0;width:${S}px;height:${S}px;background:var(--bg);z-index:100;padding:34px 40px;box-sizing:border-box;display:grid;grid-template-rows:auto 1fr;gap:14px;overflow:hidden`;
