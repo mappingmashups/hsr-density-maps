@@ -474,7 +474,7 @@ const NA = DATA.corridors.filter(c => c.region === "North America" || c.region =
   const f = [
     [`${(perkm(ca, 50) / ref(50)).toFixed(2)}×`, "SF–LA vs Spain/France, within 50 km", "At metro scale, California has more people along its line per km than either European corridor."],
     [`${(perkm(ca, 5) / ref(5)).toFixed(2)}×`, "SF–LA vs Spain/France, within 5 km", "Within walking-and-transit distance of the stations, it has fewer."],
-    [`${(perkm(tx, 50) / ref(50)).toFixed(2)}× → ${(perkm(tx, 5) / ref(5)).toFixed(2)}×`, "Dallas–Houston, 50 km → 5 km", "The biggest drop of any corridor, partly because the Houston terminal is planned well outside downtown."],
+    [`${(perkm(tx, 50) / ref(50)).toFixed(2)}× → ${(perkm(tx, 5) / ref(5)).toFixed(2)}×`, "Dallas–Houston, 50 km → 5 km", "The biggest drop of any corridor: Dallas and Houston have large populations, but they're not very dense."],
   ];
   $("#facts").innerHTML = f.map(([b, l, p]) => `<div class="fact"><span class="eyebrow">${l}</span><span class="big num">${b}</span><p>${p}</p></div>`).join("");
 })();
