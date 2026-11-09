@@ -29,6 +29,7 @@ REGION_COL = {"North America": "#eb6834", "Australia": "#b8461d", "Europe": "#2a
 INK, INK2, INK3 = "#0b0b0b", "#52514e", "#8a8984"
 PAGE_BG = "#f6f5f1"   # the web page's background, so images sit on it without a white box
 LAND, LAND_EDGE, COUNTRY_EDGE, LINE = "#eeede9", "#ffffff", "#c9c8c2", "#3a3a38"
+WATER = "#dfe8ed"   # same water colour as the height view, comparison and atlas
 
 # page order follows stations.CORRIDORS: North America, Australia, Europe, Asia
 ORDER = [c["id"] for c in CORRIDORS]
@@ -58,6 +59,7 @@ CORR = {c["id"]: c for c in CORRIDORS}
 ne = os.path.join(HERE, "data", "ne")
 ADM1 = gpd.read_file(os.path.join(ne, "ne_10m_admin_1_states_provinces_lakes.geojson"))[["geometry"]]
 ADM0 = gpd.read_file(os.path.join(ne, "ne_10m_admin_0_countries.geojson"))[["geometry"]]
+LAKES = gpd.read_file(os.path.join(ne, "ne_10m_lakes.geojson"))[["geometry"]]
 
 
 def r_km(pop, density):
@@ -110,7 +112,7 @@ def build_panel(cid, radii, density):
     m = 6
     bb = box(min(lons) - m, min(lats) - m, max(lons) + m, max(lats) + m)
     pbox = box(x0, y0, x1, y1)
-    bg = [g.clip(bb).to_crs(proj).rotate(phi, origin=(0, 0)).clip(pbox) for g in (ADM1, ADM0)]
+    bg = [g.clip(bb).to_crs(proj).rotate(phi, origin=(0, 0)).clip(pbox) for g in (ADM1, ADM0, LAKES)]
     seg = [hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:])]
     hexes = project_hexes(cid, tf, R, max(radii))
     return dict(c=c, sts=sts, xy=xy, bb=(x0, y0, x1, y1), bg=bg, seg=seg, phi=phi, hexes=hexes)
@@ -192,10 +194,13 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ox, oy = p["off"]
         c, sts, xy = p["c"], p["sts"], p["xy"] + (ox, oy)
         col = REGION_COL[c["region"]]
-        for g, (fc, ec, lw) in zip(p["bg"], [(LAND, LAND_EDGE, 0.5), ("none", COUNTRY_EDGE, 0.8)]):
+        # the panel is water; land, then lakes, then country borders on top
+        x0, y0, x1, y1 = p["bb"]
+        ax.add_patch(plt.Rectangle((x0 + ox, y0 + oy), x1 - x0, y1 - y0, fc=WATER, ec="none", zorder=0.9))
+        adm1, adm0, lakes = p["bg"]
+        for g, fc, ec, lw, z in ((adm1, LAND, LAND_EDGE, 0.5, 1), (lakes, WATER, "none", 0, 1.05), (adm0, "none", COUNTRY_EDGE, 0.8, 1.1)):
             if len(g):
-                g = g.translate(ox, oy)
-                g.plot(ax=ax, facecolor=fc, edgecolor=ec, linewidth=lw, zorder=1)
+                g.translate(ox, oy).plot(ax=ax, facecolor=fc, edgecolor=ec, linewidth=lw, zorder=z)
         # route
         ax.plot(xy[:, 0], xy[:, 1], color=LINE, lw=1.1, zorder=3,
                 ls="-" if c["status"] == "existing" else (0, (4, 2)) if c["status"] == "building" else (0, (1.5, 1.5)),
