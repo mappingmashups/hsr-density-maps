@@ -109,7 +109,7 @@ CORRIDORS = [
         ("Route 128",           -71.1478, 42.2101),
         ("Boston",              -71.0552, 42.3522),
     ]),
-    dict(id="fl", name="Miami – Orlando (Brightline)", country="USA (Florida)",
+    dict(id="fl", name="Miami – Orlando", country="USA (Florida)",
          status="existing", region="North America", stations=[
         ("Miami",               -80.1950, 25.7785),
         ("Aventura",            -80.1433, 25.9590),
@@ -118,7 +118,7 @@ CORRIDORS = [
         ("West Palm Beach",     -80.0558, 26.7129),
         ("Orlando Airport",     -81.3081, 28.4312),
     ]),
-    dict(id="bw", name="Las Vegas – LA (Brightline West)",
+    dict(id="bw", name="Las Vegas – LA",
          country="USA (NV/CA)", status="building", region="North America", stations=[
         ("Las Vegas",          -115.1780, 36.0450),
         ("Apple Valley",       -117.2800, 34.5500),
@@ -146,7 +146,7 @@ CORRIDORS = [
         ("Trois-Rivières",      -72.5430, 46.3430),
         ("Québec City",         -71.2139, 46.8172),
     ]),
-    dict(id="jp", name="Tokyo – Osaka (Tōkaidō)", country="Japan", status="existing",
+    dict(id="jp", name="Tokyo – Osaka", country="Japan", status="existing",
          region="Asia", stations=[
         ("Tokyo",              139.7671, 35.6812),
         ("Shinagawa",          139.7388, 35.6285),
@@ -166,7 +166,7 @@ CORRIDORS = [
         ("Kyoto",              135.7588, 34.9858),
         ("Shin-Osaka",         135.5002, 34.7334),
     ]),
-    dict(id="kr", name="Seoul – Busan (Gyeongbu)", country="South Korea",
+    dict(id="kr", name="Seoul – Busan", country="South Korea",
          status="existing", region="Asia", stations=[
         ("Seoul",              126.9707, 37.5547),
         ("Gwangmyeong",        126.8847, 37.4162),
@@ -312,7 +312,7 @@ CORRIDORS = [
         ("Ahmedabad",           72.6000, 23.0260),
         ("Sabarmati",           72.5870, 23.0800),
     ]),
-    dict(id="id", name="Jakarta – Bandung (Whoosh)", country="Indonesia", status="existing",
+    dict(id="id", name="Jakarta – Bandung", country="Indonesia", status="existing",
          region="Asia", stations=[
         ("Jakarta Halim",      106.8928, -6.2617),
         ("Karawang",           107.2570, -6.3500),

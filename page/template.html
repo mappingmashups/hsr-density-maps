@@ -138,8 +138,8 @@ tr.diff td { color: var(--ink-3); }
 input[type="range"] { accent-color: var(--ink); width: 150px; margin: 0; }
 /* two-corridor comparison */
 .cmpscroll { overflow-x: auto; }
-.cmp { display: grid; grid-template-columns: auto auto auto; justify-content: center; align-items: start; gap: 8px 14px; min-width: 860px; }
-.cmpcol { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cmp { display: grid; grid-template-columns: repeat(3, minmax(280px, 1fr)); align-items: start; gap: 8px 16px; min-width: 872px; }
+.cmpcol { display: grid; gap: 8px; align-content: start; justify-items: center; min-width: 0; }
 .cmphead { display: grid; gap: 2px; align-content: start; }
 .cmphead .fliprow { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
 .cmphead .flip { height: 28px; font-size: 0.75rem; padding: 0 9px; }
@@ -787,16 +787,20 @@ function radiusSlider(id, init, onChange) {
     return h;
   }
 
-  function drawMap(svg, L, side, k) {
+  // T: pixels from the top of the panels to the 0 km line; H: full panel height (both shared with the chart)
+  function drawMap(svg, L, side, k, T, H) {
     const { c, fl, os } = L;
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     const [x0, y0, x1, y1] = c.bbox, w = x1 - x0, h = y1 - y0;
-    svg.setAttribute("viewBox", `${x0} ${-y1} ${w} ${h}`);
-    svg.setAttribute("width", (w * k).toFixed(1)); svg.setAttribute("height", (h * k).toFixed(1));
+    const [gx0, gy0, gx1, gy1] = c.gbox || c.bbox;            // ground image extent (taller than bbox)
+    // map y (after any flip) that sits at the top of the panel: the top station plus the gap above 0 km and the slide
+    const yTop = (y1 - L.termKm) + (T / k + S[side].off);
+    svg.setAttribute("viewBox", `${x0} ${-yTop} ${w} ${H / k}`);
+    svg.setAttribute("width", (w * k).toFixed(1)); svg.setAttribute("height", H.toFixed(1));
     svg.setAttribute("aria-label", `Map of ${c.name}${fl ? ", flipped" : ""}`);
     const px = 1 / k, col = getComputedStyle(document.documentElement).getPropertyValue(REGKEY[c.region]).trim();
     const G = el("g", fl ? { transform: `rotate(180 ${(x0 + x1) / 2} ${-(y0 + y1) / 2})` } : {}, svg);
-    el("image", { href: `ground_v/${c.id}.webp`, x: x0, y: -y1, width: w, height: h, preserveAspectRatio: "none" }, G);
+    el("image", { href: `ground_v/${c.id}.webp`, x: gx0, y: -gy1, width: gx1 - gx0, height: gy1 - gy0, preserveAspectRatio: "none" }, G);
     if (S.msa && c.counties) {            // county outlines; each station's metro area tinted
       c.counties.forEach(ct => {
         const d = ct.rings.map(r => "M" + r.map(p => `${p[0]},${-p[1]}`).join("L") + "Z").join("");
@@ -817,7 +821,7 @@ function radiusSlider(id, init, onChange) {
       hook(g, `${side}${i}`, tipHtml(c, st, d));
     });
     // north arrow (drawn unrotated, pointing the way north now faces), top-right
-    const n = fl ? [-c.north[0], -c.north[1]] : c.north, ax = x1 - 18 * px, ay = y1 - 26 * px, Lr = 10 * px;
+    const n = fl ? [-c.north[0], -c.north[1]] : c.north, ax = x1 - 18 * px, ay = yTop - 26 * px, Lr = 10 * px;
     el("line", { x1: ax - n[0] * Lr, y1: -(ay - n[1] * Lr), x2: ax + n[0] * Lr, y2: -(ay + n[1] * Lr), stroke: "#52514e", "stroke-width": 1.2 * px }, svg);
     el("circle", { cx: ax + n[0] * Lr, cy: -(ay + n[1] * Lr), r: 2 * px, fill: "#52514e" }, svg);
     el("text", { x: ax + n[0] * (Lr + 7 * px), y: -(ay + n[1] * (Lr + 7 * px)) + 3.5 * px, "font-size": 10 * px, "text-anchor": "middle", fill: "#52514e" }, svg).textContent = "N";
@@ -836,18 +840,14 @@ function radiusSlider(id, init, onChange) {
     $("#cmpMsaNote").hidden = !S.msa;
     try { localStorage.setItem("hsr-compare3", JSON.stringify(S)); } catch (e) {}
 
-    const wrapW = Math.max($("#cmp").clientWidth, 860);
-    const chartW = Math.min(460, Math.max(330, wrapW * 0.37));
+    const colW = ($("#cmp").clientWidth - 32) / 3, chartW = colW;   // three equal columns
     const wL = cL.bbox[2] - cL.bbox[0], wR = cR.bbox[2] - cR.bbox[0];
-    const hL = cL.bbox[3] - cL.bbox[1], hR = cR.bbox[3] - cR.bbox[1];
     const span = Math.max(LL.termKm + S.L.off + cL.route_km, LR.termKm + S.R.off + cR.route_km) + 60;
     // one km scale for all three panels, so the maps and the straightened line agree
-    k = Math.min((wrapW - chartW - 28) / (wL + wR), 900 / Math.max(span, hL + S.L.off, hR + S.R.off), 1.1);
-    drawMap($("#cmpMapL"), LL, "L", k); drawMap($("#cmpMapR"), LR, "R", k);
-    // vertical placement: each map's top station lines up with its 0 km (plus any slide)
-    const T = Math.max(LL.termKm, LR.termKm, 30) * k;
-    $("#cmpMapL").style.marginTop = (T + S.L.off * k - LL.termKm * k).toFixed(1) + "px";
-    $("#cmpMapR").style.marginTop = (T + S.R.off * k - LR.termKm * k).toFixed(1) + "px";
+    k = Math.min((colW - 8) / Math.max(wL, wR), 900 / span, 1.1);
+    const T = Math.max(LL.termKm, LR.termKm, 30) * k;            // 0 km line, measured from the panel top
+    const Hpanel = T + Math.max(S.L.off + cL.route_km, S.R.off + cR.route_km) * k + 46;
+    drawMap($("#cmpMapL"), LL, "L", k, T, Hpanel); drawMap($("#cmpMapR"), LR, "R", k, T, Hpanel);
     ["L", "R"].forEach(s => $(`#cmpCol${s}`).classList.toggle("drag", s === shorter));
 
     const tot = c => c.stations.reduce((a, s) => a + pop(s), 0);
@@ -861,7 +861,7 @@ function radiusSlider(id, init, onChange) {
     // middle chart
     const svg = $("#cmpMid"); while (svg.firstChild) svg.removeChild(svg.firstChild);
     const endL = S.L.off + cL.route_km, endR = S.R.off + cR.route_km, Lmax = Math.max(endL, endR);
-    const H = T + Lmax * k + 46, mid = chartW / 2, gap = 3, labelRoom = 80, half = mid - gap - labelRoom;
+    const H = Hpanel, mid = chartW / 2, gap = 3, labelRoom = 80, half = mid - gap - labelRoom;
     svg.setAttribute("viewBox", `0 0 ${chartW} ${H}`); svg.setAttribute("width", chartW); svg.setAttribute("height", H);
     const all = LL.os.concat(LR.os).map(o => o.st);
     const maxPop = Math.max(...all.map(s => pop(s, false)), ...all.map(s => share(s, false)),

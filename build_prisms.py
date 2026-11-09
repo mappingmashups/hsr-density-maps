@@ -32,6 +32,7 @@ from plot_maps import FOOTPRINT, short
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
 R_MIN, R_MAX = 5, 50   # catchment radius range offered on the page (km, 1 km steps)
+MAX_ROUTE = 0     # longest corridor, set in __main__
 PAD = 55          # km of ground shown around the stations
 PX_PER_KM = 3     # ground image resolution
 LAND, WATER, BORDER = "#efeee9", "#dfe8ed", "#d2d1cb"
@@ -95,7 +96,14 @@ def corridor(c, orient="h"):
         stations.append(dict(name=short(s_[0]), full=s_[0], x=round(float(p[0]), 2), y=round(float(p[1]), 2),
                              p=[int(round(v)) for v in ded[R_MIN - 1:]], pr=[int(round(v)) for v in raw[R_MIN - 1:]]))
 
-    ground(c["id"], proj, R, (x0, y0, x1, y1), sts, "ground" if orient == "h" else "ground_v")
+    # comparison maps run the full height of the distance chart, so their ground extends above and
+    # below by however much longer the longest corridor is (land/water/borders only out there)
+    ext = 0.0
+    if orient == "v":
+        route = sum(hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:]))
+        ext = MAX_ROUTE - route + 60
+    gb = (x0, y0 - ext, x1, y1 + ext)
+    ground(c["id"], proj, R, gb, sts, "ground" if orient == "h" else "ground_v")
     north = (R @ np.array([0.0, 1.0])).tolist()
     if orient == "h":
         print(f"   {c['id']:9s} turn {phi:6.1f}°  north → ({north[0]:+.2f}, {north[1]:+.2f})  {short(sts[0][0]) if xy[0,0] < xy[-1,0] else short(sts[-1][0])} on the left")
@@ -128,6 +136,7 @@ def corridor(c, orient="h"):
         for st, dd in zip(stations, d):
             st["d"] = round(float(dd), 1)
     res = dict(id=c["id"], name=c["name"], country=c["country"], status=c["status"], region=c["region"],
+               gbox=[round(float(v), 2) for v in gb],
                bbox=[round(float(v), 2) for v in (x0, y0, x1, y1)], north=[round(n, 3) for n in north],
                route_km=sum(seg), seg=seg, stations=stations)
     if orient == "v" and c["id"] in MSA and out_c:
@@ -161,7 +170,7 @@ def ground(cid, proj, R, bb, sts, folder="ground"):
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.axis("off")
     fig.patch.set_facecolor(WATER)
     lons, lats = [s[1] for s in sts], [s[2] for s in sts]
-    m = 8
+    m = 8 + (y1 - y0) / 222   # degrees of margin; grows with tall comparison grounds
     ll = box(min(lons) - m, min(lats) - m, max(lons) + m, max(lats) + m)
     rot = np.degrees(np.arctan2(R[1, 0], R[0, 0]))
     for g, fc, ec, lw in ((ADM0, LAND, "none", 0), (ADM1, "none", BORDER, 0.6), (ADM0, "none", "#bdbcb5", 0.9)):
@@ -185,6 +194,8 @@ def ground(cid, proj, R, bb, sts, folder="ground"):
 
 
 if __name__ == "__main__":
+    MAX_ROUTE = max(sum(hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(c["stations"][:-1], c["stations"][1:]))
+                    for c in CORRIDORS)
     for orient, name in (("h", "prisms.json"), ("v", "compare.json")):
         data = [corridor(c, orient) for c in CORRIDORS]
         json.dump(dict(r_min=R_MIN, r_max=R_MAX, corridors=data), open(os.path.join(OUT, name), "w"), ensure_ascii=False)
