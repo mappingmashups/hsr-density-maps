@@ -69,7 +69,7 @@
  },
  {
   "id": "fl",
-  "corridor": "Miami – Orlando (Brightline)",
+  "corridor": "Miami – Orlando",
   "region": "North America",
   "status": "existing",
   "stations": 6,
@@ -86,7 +86,7 @@
  },
  {
   "id": "bw",
-  "corridor": "Las Vegas – LA (Brightline West)",
+  "corridor": "Las Vegas – LA",
   "region": "North America",
   "status": "building",
   "stations": 4,
@@ -341,7 +341,7 @@
  },
  {
   "id": "jp",
-  "corridor": "Tokyo – Osaka (Tōkaidō)",
+  "corridor": "Tokyo – Osaka",
   "region": "Asia",
   "status": "existing",
   "stations": 17,
@@ -358,7 +358,7 @@
  },
  {
   "id": "kr",
-  "corridor": "Seoul – Busan (Gyeongbu)",
+  "corridor": "Seoul – Busan",
   "region": "Asia",
   "status": "existing",
   "stations": 10,
@@ -426,7 +426,7 @@
  },
  {
   "id": "id",
-  "corridor": "Jakarta – Bandung (Whoosh)",
+  "corridor": "Jakarta – Bandung",
   "region": "Asia",
   "status": "existing",
   "stations": 4,
