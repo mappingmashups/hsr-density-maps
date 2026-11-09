@@ -4,6 +4,10 @@ Mapping population density around existing and proposed high-speed rail stations
 
 **Live page: https://mappingmashups.github.io/hsr-density-maps/**
 
+![San Francisco–LA against Madrid–Barcelona as the catchment radius sweeps from 5 to 50 km](docs/compare_ca_es_radius.gif)
+
+*San Francisco–LA against Madrid–Barcelona: residents near each station as the catchment radius sweeps from 5 to 50 km.*
+
 Is North American sprawl the real problem for high-speed rail? Metro populations
 along US corridors look competitive with Europe and Asia. This project checks
 how many of those people actually live **near the stations**, using one global
@@ -39,9 +43,10 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 | Link-preview image (Slack, social media) | `make_og.py` (needs Playwright + Chromium) | `docs/og.png` |
+| Animated comparison GIF (radius sweep) | `make_gif.py` (needs Playwright + Chromium, ffmpeg) | `docs/compare_ca_es_radius.gif` |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
-`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`, `make_og.py`.
+`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`, `make_og.py`, `make_gif.py`.
 Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redeploys automatically.
 
 ## Data
