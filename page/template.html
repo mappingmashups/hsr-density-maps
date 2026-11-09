@@ -297,8 +297,9 @@ img { max-width: 100%; }
         <li><b>Kontur Population 2023-11-01</b>: a global H3 res-8 grid (~0.74 km² cells) fusing GHSL, Meta HRSL, Microsoft buildings and Copernicus land cover. It's the only uniform layer here that also covers Canada.</li>
         <li><b>Meta / CIESIN HRSL</b>: 30 m, used as a cross-check. It agrees with Kontur within a few percent wherever both exist.</li>
         <li>Natural Earth 10 m outlines for the map backgrounds.</li>
+        <li><b>2050 projections</b>: WorldPop's 1 km population projections under the middle-of-the-road scenario (SSP2). They're too coarse to count a 5 km circle directly, so each catchment's projected growth from 2025 to 2050 is applied to today's Kontur count.</li>
       </ul>
-      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). US metro areas, county populations and county outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0). Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
+      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0), <a href="https://www.worldpop.org/">WorldPop</a> SSP projections (CC BY 4.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). US metro areas, county populations and county outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0). Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
     </div>
     <div>
       <h3>Caveats</h3>
@@ -309,6 +310,7 @@ img { max-width: 100%; }
         <li>Chicago–St. Louis, Chicago–Detroit and Chicago–Twin Cities use today's Amtrak stops (the latter via Madison, as in the Midwest regional rail plan). Atlanta–Charlotte and Cleveland–Columbus–Cincinnati have no fixed stations, so most sites are city centres.</li>
         <li>Mumbai–Ahmedabad and the smaller Beijing–Shanghai stations are placed from approximate coordinates and may be a few km off; many of these stations sit outside town centres, so treat their 5 km figures with care.</li>
         <li>Counts are residents only. Jobs, visitors and transfer catchments aren't included.</li>
+        <li>2050 figures are modelled, not forecasts for particular neighbourhoods: WorldPop spreads each country's projected growth across the map using today's settlement pattern and trends. Metro-area figures for 2050 use today's official number scaled by WorldPop's growth within 50 km of the station.</li>
       </ul>
     </div>
   </section>

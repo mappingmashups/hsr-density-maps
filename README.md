@@ -34,12 +34,13 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Official metro-area population per station (US census CBSA, StatCan CMA/CA, ABS capital-city / urban areas), split evenly between stations sharing an area | `build_msa.py` | `out/msa.json` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
+| Projected growth to 2050 (WorldPop 1 km, SSP2) per station and radius | `build_projection.py` (needs `./fetch_data.sh --projections`) | `out/projection.json` |
 | Browser-drawn views: oblique "population as height" and the two-corridor comparison. Stores each station's population at every km from 5 to 50 km; the page draws catchments live for the radius slider | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` |
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
-`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
+`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
 Add a line to `LOG` in `build_page.py` for each update; the page shows it as a change log.
 Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redeploys automatically.
 
