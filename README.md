@@ -31,7 +31,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Tables | `summarize.py` | `out/stations.csv`, `out/corridors.csv` |
 | Hexagons near stations (for footprints) | `extract_hex.py` (~1 min) | `out/hex/<corridor>.parquet` |
 | Context cells within 50 km of each route line (background only, never counted) | `extract_context.py` (~1–6 min) | `out/context/<corridor>.parquet` |
-| Official metro-area population per station (US census CBSA, StatCan CMA/CA, ABS capital-city / urban areas), split evenly between stations sharing an area | `build_msa.py` | `out/msa.json` |
+| Official metro-area population per station (US census CBSA, StatCan CMA/CA, ABS capital-city / urban areas), split evenly between stations sharing an area; US 2050 metro totals from Hauer et al. county projections (SSP2) when downloaded | `build_msa.py` | `out/msa.json` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
 | Projected growth to 2050 (WorldPop 1 km, SSP2) per station and radius | `build_projection.py` (needs `./fetch_data.sh --projections`) | `out/projection.json` |

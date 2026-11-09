@@ -18,6 +18,9 @@ Inputs (data/census/, from ./fetch_data.sh):
   co-est2024-alldata.csv     county population estimates 2020–2024
   cb_2023_us_county_5m.zip   county outlines (cartographic boundary, 1:5M)
 
+Optional: data/hauer/SSP_asrc.zip (Hauer et al., US county projections by SSP, from OSF)
+adds each US metro area's 2050 population under SSP2.
+
 Also data/statcan/17100148-eng.zip and data/abs/32180DS000{3,4}_2001-25.xlsx.
 Canadian and Australian stations are matched to their area by name (STATION_AREA below);
 there are few enough of them to list, and StatCan's boundary files aren't reachable here.
@@ -88,9 +91,36 @@ def other_country_pops():
     return out
 
 
+HAUER = os.path.join(HERE, "data", "hauer", "SSP_asrc.zip")
+HAUER_CACHE = os.path.join(HERE, "data", "hauer", "county_ssp2_2025_2050.csv")
+
+
+def county_growth():
+    """{county GEOID: SSP2 growth 2025→2050} from Hauer et al.'s county projections, with a
+    {state FIPS: growth} fallback for counties Hauer doesn't have (e.g. Connecticut's 2022
+    planning regions, which replaced its counties). None if the file isn't downloaded."""
+    if not os.path.exists(HAUER_CACHE):
+        if not os.path.exists(HAUER):
+            return None, None
+        import zipfile
+        parts = []
+        for ch in pd.read_csv(zipfile.ZipFile(HAUER).open("SSP_asrc.csv"), usecols=["YEAR", "GEOID", "SSP2"],
+                              chunksize=2_000_000):
+            ch = ch[ch.YEAR.isin([2025, 2050])]
+            parts.append(ch.groupby(["GEOID", "YEAR"]).SSP2.sum())
+        t = pd.concat(parts).groupby(level=[0, 1]).sum().unstack()
+        t.index = t.index.astype(int).map(lambda g: f"{g:05d}")
+        t.to_csv(HAUER_CACHE)
+    t = pd.read_csv(HAUER_CACHE, dtype={"GEOID": str}).set_index("GEOID")
+    t.columns = [int(c) for c in t.columns]
+    st = t.groupby(t.index.str[:2]).sum()
+    return (t[2050] / t[2025]).to_dict(), (st[2050] / st[2025]).to_dict()
+
+
 def main():
     counties, deline, pop = load()
     other = other_country_pops()
+    cg, sg = county_growth()   # US county projections (optional)
     cbsa_pop = deline.join(pop).groupby("CBSA Code")[f"POPESTIMATE{YEAR}"].sum()
     cbsa_counties = deline.reset_index().groupby("CBSA Code")["GEOID"].apply(list)
     out = {}
@@ -113,8 +143,12 @@ def main():
             else:
                 key, title, kind = f"county-{g.GEOID}", f"{g.NAME} County, {g.STUSPS}", "County (not in a metro area)"
                 area_pop, area_counties = int(pop[g.GEOID]), [g.GEOID]
-            recs.append(dict(station=name, county=f"{g.NAME} County, {g.STUSPS}", county_fips=g.GEOID,
-                             area=key, area_title=title, area_kind=kind, area_pop=area_pop, area_counties=area_counties))
+            rec = dict(station=name, county=f"{g.NAME} County, {g.STUSPS}", county_fips=g.GEOID,
+                       area=key, area_title=title, area_kind=kind, area_pop=area_pop, area_counties=area_counties)
+            if cg:   # 2050: each county's latest estimate × its own projected growth (state growth as fallback)
+                rec["area_pop2050"] = int(round(sum(pop[f] * cg.get(f, sg.get(f[:2], 1.0)) for f in area_counties)))
+                rec["counties_without_projection"] = [f for f in area_counties if f not in cg]
+            recs.append(rec)
         if not recs:
             continue
         n = pd.Series([r["area"] for r in recs]).value_counts()
@@ -124,7 +158,8 @@ def main():
         out[c["id"]] = recs
         print(f"{c['id']:9s}")
         for r in recs:
-            print(f"    {r['station']:18s} {r['area_title'][:44]:44s} {r['area_pop']/1e6:5.2f} M / {r['shared_by']} = {r['share']/1e6:5.2f} M")
+            p50 = f"  2050 {r['area_pop2050']/1e6:5.2f} M" if r.get("area_pop2050") else ""
+            print(f"    {r['station']:18s} {r['area_title'][:44]:44s} {r['area_pop']/1e6:5.2f} M / {r['shared_by']} = {r['share']/1e6:5.2f} M{p50}")
     json.dump(dict(year=YEAR, vintage="US: Vintage 2024 county estimates, CBSA delineation July 2023; "
                    "Canada: StatCan table 17-10-0148, 2025; Australia: ABS Regional population 2024–25", corridors=out),
               open(os.path.join(OUT, "msa.json"), "w"), ensure_ascii=False, indent=1)

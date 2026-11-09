@@ -18,6 +18,8 @@
      "06081",
      "06041"
     ],
+    "area_pop2050": 6042161,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2324243
    },
@@ -36,6 +38,8 @@
      "06081",
      "06041"
     ],
+    "area_pop2050": 6042161,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2324243
    },
@@ -51,6 +55,8 @@
      "06069",
      "06085"
     ],
+    "area_pop2050": 2479122,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 997742
    },
@@ -66,6 +72,8 @@
      "06069",
      "06085"
     ],
+    "area_pop2050": 2479122,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 997742
    },
@@ -80,6 +88,8 @@
     "area_counties": [
      "06047"
     ],
+    "area_pop2050": 333686,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 296774
    },
@@ -95,6 +105,8 @@
      "06019",
      "06039"
     ],
+    "area_pop2050": 1311363,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 1189557
    },
@@ -109,6 +121,8 @@
     "area_counties": [
      "06031"
     ],
+    "area_pop2050": 152916,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 154913
    },
@@ -123,6 +137,8 @@
     "area_counties": [
      "06029"
     ],
+    "area_pop2050": 1076347,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 922529
    },
@@ -138,6 +154,8 @@
      "06059",
      "06037"
     ],
+    "area_pop2050": 14274397,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 2585523
    },
@@ -153,6 +171,8 @@
      "06059",
      "06037"
     ],
+    "area_pop2050": 14274397,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 2585523
    },
@@ -168,6 +188,8 @@
      "06059",
      "06037"
     ],
+    "area_pop2050": 14274397,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 2585523
    },
@@ -183,6 +205,8 @@
      "06059",
      "06037"
     ],
+    "area_pop2050": 14274397,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 2585523
    },
@@ -198,6 +222,8 @@
      "06059",
      "06037"
     ],
+    "area_pop2050": 14274397,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 2585523
    }
@@ -236,6 +262,8 @@
      "24017",
      "24033"
     ],
+    "area_pop2050": 8308318,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3218244
    },
@@ -272,6 +300,8 @@
      "24017",
      "24033"
     ],
+    "area_pop2050": 8308318,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3218244
    },
@@ -292,6 +322,8 @@
      "24035",
      "24510"
     ],
+    "area_pop2050": 3142326,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1429512
    },
@@ -312,6 +344,8 @@
      "24035",
      "24510"
     ],
+    "area_pop2050": 3142326,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1429512
    },
@@ -336,6 +370,8 @@
      "24015",
      "34033"
     ],
+    "area_pop2050": 6515412,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3165211
    },
@@ -360,6 +396,8 @@
      "24015",
      "34033"
     ],
+    "area_pop2050": 6515412,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3165211
    },
@@ -374,6 +412,8 @@
     "area_counties": [
      "34021"
     ],
+    "area_pop2050": 409051,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 392138
    },
@@ -409,6 +449,8 @@
      "36087",
      "36119"
     ],
+    "area_pop2050": 22005137,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 6646758
    },
@@ -444,6 +486,8 @@
      "36087",
      "36119"
     ],
+    "area_pop2050": 22005137,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 6646758
    },
@@ -479,6 +523,8 @@
      "36087",
      "36119"
     ],
+    "area_pop2050": 22005137,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 6646758
    },
@@ -491,6 +537,11 @@
     "area_kind": "Metropolitan Statistical Area",
     "area_pop": 972679,
     "area_counties": [
+     "09120",
+     "09190"
+    ],
+    "area_pop2050": 954450,
+    "counties_without_projection": [
      "09120",
      "09190"
     ],
@@ -508,6 +559,10 @@
     "area_counties": [
      "09170"
     ],
+    "area_pop2050": 565910,
+    "counties_without_projection": [
+     "09170"
+    ],
     "shared_by": 1,
     "share": 576718
    },
@@ -520,6 +575,10 @@
     "area_kind": "Metropolitan Statistical Area",
     "area_pop": 282602,
     "area_counties": [
+     "09180"
+    ],
+    "area_pop2050": 277306,
+    "counties_without_projection": [
      "09180"
     ],
     "shared_by": 1,
@@ -541,6 +600,8 @@
      "44007",
      "44009"
     ],
+    "area_pop2050": 1655408,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 1700901
    },
@@ -561,6 +622,8 @@
      "33015",
      "33017"
     ],
+    "area_pop2050": 5873392,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2512758
    },
@@ -581,6 +644,8 @@
      "33015",
      "33017"
     ],
+    "area_pop2050": 5873392,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2512758
    }
@@ -607,6 +672,8 @@
     "area_counties": [
      "53073"
     ],
+    "area_pop2050": 300614,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 234954
    },
@@ -623,6 +690,8 @@
      "53033",
      "53053"
     ],
+    "area_pop2050": 5679023,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1381831
    },
@@ -639,6 +708,8 @@
      "53033",
      "53053"
     ],
+    "area_pop2050": 5679023,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1381831
    },
@@ -655,6 +726,8 @@
      "53033",
      "53053"
     ],
+    "area_pop2050": 5679023,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1381831
    },
@@ -669,6 +742,8 @@
     "area_counties": [
      "53067"
     ],
+    "area_pop2050": 385029,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 302912
    },
@@ -689,6 +764,8 @@
      "53011",
      "53059"
     ],
+    "area_pop2050": 3266594,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2537904
    },
@@ -704,6 +781,8 @@
      "41047",
      "41053"
     ],
+    "area_pop2050": 525575,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 443416
    },
@@ -718,6 +797,8 @@
     "area_counties": [
      "41039"
     ],
+    "area_pop2050": 441017,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 382396
    }
@@ -744,6 +825,8 @@
      "48439",
      "48497"
     ],
+    "area_pop2050": 12022984,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 8344032
    },
@@ -758,6 +841,8 @@
     "area_counties": [
      "48185"
     ],
+    "area_pop2050": 36673,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 33448
    },
@@ -781,6 +866,8 @@
      "48407",
      "48473"
     ],
+    "area_pop2050": 11793089,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 7796182
    }
@@ -799,6 +886,8 @@
      "12086",
      "12099"
     ],
+    "area_pop2050": 8423659,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 1291598
    },
@@ -815,6 +904,8 @@
      "12086",
      "12099"
     ],
+    "area_pop2050": 8423659,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 1291598
    },
@@ -831,6 +922,8 @@
      "12086",
      "12099"
     ],
+    "area_pop2050": 8423659,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 1291598
    },
@@ -847,6 +940,8 @@
      "12086",
      "12099"
     ],
+    "area_pop2050": 8423659,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 1291598
    },
@@ -863,6 +958,8 @@
      "12086",
      "12099"
     ],
+    "area_pop2050": 8423659,
+    "counties_without_projection": [],
     "shared_by": 5,
     "share": 1291598
    },
@@ -880,6 +977,8 @@
      "12097",
      "12117"
     ],
+    "area_pop2050": 4360761,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2940513
    }
@@ -896,6 +995,8 @@
     "area_counties": [
      "32003"
     ],
+    "area_pop2050": 3257190,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2398871
    },
@@ -911,6 +1012,8 @@
      "06065",
      "06071"
     ],
+    "area_pop2050": 5635877,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1581405
    },
@@ -926,6 +1029,8 @@
      "06065",
      "06071"
     ],
+    "area_pop2050": 5635877,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1581405
    },
@@ -941,6 +1046,8 @@
      "06065",
      "06071"
     ],
+    "area_pop2050": 5635877,
+    "counties_without_projection": [],
     "shared_by": 3,
     "share": 1581405
    }
@@ -1123,6 +1230,8 @@
      "18111",
      "18127"
     ],
+    "area_pop2050": 9159132,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 4704288
    },
@@ -1149,6 +1258,8 @@
      "18111",
      "18127"
     ],
+    "area_pop2050": 9159132,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 4704288
    },
@@ -1163,6 +1274,8 @@
     "area_counties": [
      "17113"
     ],
+    "area_pop2050": 172675,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 172069
    },
@@ -1178,6 +1291,8 @@
      "17129",
      "17167"
     ],
+    "area_pop2050": 185945,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 206308
    },
@@ -1206,6 +1321,8 @@
      "29219",
      "29510"
     ],
+    "area_pop2050": 2734928,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1405964
    },
@@ -1234,6 +1351,8 @@
      "29219",
      "29510"
     ],
+    "area_pop2050": 2734928,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1405964
    }
@@ -1262,6 +1381,8 @@
      "18111",
      "18127"
     ],
+    "area_pop2050": 9159132,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 9408576
    },
@@ -1279,6 +1400,8 @@
      "55131",
      "55133"
     ],
+    "area_pop2050": 1612923,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 1574452
    },
@@ -1296,6 +1419,8 @@
      "55045",
      "55049"
     ],
+    "area_pop2050": 903271,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 353803
    },
@@ -1313,6 +1438,8 @@
      "55045",
      "55049"
     ],
+    "area_pop2050": 903271,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 353803
    },
@@ -1329,6 +1456,8 @@
      "55063",
      "55123"
     ],
+    "area_pop2050": 181614,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 170763
    },
@@ -1343,6 +1472,8 @@
     "area_counties": [
      "27169"
     ],
+    "area_pop2050": 45291,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 49973
    },
@@ -1357,6 +1488,8 @@
     "area_counties": [
      "27049"
     ],
+    "area_pop2050": 42826,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 47982
    },
@@ -1385,6 +1518,8 @@
      "55093",
      "55109"
     ],
+    "area_pop2050": 4495186,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1878976
    },
@@ -1413,6 +1548,8 @@
      "55093",
      "55109"
     ],
+    "area_pop2050": 4495186,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1878976
    }
@@ -1441,6 +1578,8 @@
      "18111",
      "18127"
     ],
+    "area_pop2050": 9159132,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 4704288
    },
@@ -1467,6 +1606,8 @@
      "18111",
      "18127"
     ],
+    "area_pop2050": 9159132,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 4704288
    },
@@ -1481,6 +1622,8 @@
     "area_counties": [
      "26021"
     ],
+    "area_pop2050": 128428,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 152703
    },
@@ -1495,6 +1638,8 @@
     "area_counties": [
      "26077"
     ],
+    "area_pop2050": 312099,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 264780
    },
@@ -1509,6 +1654,8 @@
     "area_counties": [
      "26025"
     ],
+    "area_pop2050": 112918,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 133785
    },
@@ -1523,6 +1670,8 @@
     "area_counties": [
      "26075"
     ],
+    "area_pop2050": 139027,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 160233
    },
@@ -1537,6 +1686,8 @@
     "area_counties": [
      "26161"
     ],
+    "area_pop2050": 468392,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 373875
    },
@@ -1556,6 +1707,8 @@
      "26125",
      "26147"
     ],
+    "area_pop2050": 4277258,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2200289
    },
@@ -1575,6 +1728,8 @@
      "26125",
      "26147"
     ],
+    "area_pop2050": 4277258,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 2200289
    }
@@ -1619,6 +1774,8 @@
      "13143",
      "13223"
     ],
+    "area_pop2050": 8491955,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3205574
    },
@@ -1661,6 +1818,8 @@
      "13143",
      "13223"
     ],
+    "area_pop2050": 8491955,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 3205574
    },
@@ -1678,6 +1837,8 @@
      "45059",
      "45077"
     ],
+    "area_pop2050": 1223644,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 996680
    },
@@ -1693,6 +1854,8 @@
      "45083",
      "45087"
     ],
+    "area_pop2050": 454951,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 395934
    },
@@ -1717,6 +1880,8 @@
      "45057",
      "45091"
     ],
+    "area_pop2050": 3990095,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1441685
    },
@@ -1741,6 +1906,8 @@
      "45057",
      "45091"
     ],
+    "area_pop2050": 3990095,
+    "counties_without_projection": [],
     "shared_by": 2,
     "share": 1441685
    }
@@ -1762,6 +1929,8 @@
      "39093",
      "39103"
     ],
+    "area_pop2050": 2027455,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2171877
    },
@@ -1785,6 +1954,8 @@
      "39129",
      "39159"
     ],
+    "area_pop2050": 2786995,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2225377
    },
@@ -1799,6 +1970,8 @@
     "area_counties": [
      "39023"
     ],
+    "area_pop2050": 113180,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 134985
    },
@@ -1815,6 +1988,8 @@
      "39109",
      "39113"
     ],
+    "area_pop2050": 764465,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 821740
    },
@@ -1843,6 +2018,8 @@
      "39061",
      "39165"
     ],
+    "area_pop2050": 2351344,
+    "counties_without_projection": [],
     "shared_by": 1,
     "share": 2302815
    }

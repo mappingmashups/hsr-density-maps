@@ -11,6 +11,7 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-11-09", "US metro-area populations for 2050 now come from county-level projections (Hauer et al., SSP2)."),
     ("2026-11-09", "New Today / 2050 switch in the comparison and height view: projected 2050 populations (WorldPop, middle-of-the-road SSP2 scenario)."),
     ("2026-11-09", "Comparison: the official metro-population bars now cover Canada (Statistics Canada) and Australia (ABS) as well as the US."),
     ("2026-11-08", "Added ten corridors: Chicago–St. Louis, Chicago–Twin Cities, Chicago–Detroit, Atlanta–Charlotte, Cleveland–Columbus–Cincinnati, Sydney–Canberra–Melbourne (shown with North America, in a darker orange), Berlin–Munich, Beijing–Shanghai, Mumbai–Ahmedabad and Jakarta–Bandung."),
