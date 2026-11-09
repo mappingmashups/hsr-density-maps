@@ -33,6 +33,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
 R_MIN, R_MAX = 5, 50   # catchment radius range offered on the page (km, 1 km steps)
 MAX_ROUTE = 0     # longest corridor, set in __main__
+V_HALF_W = 400    # km: comparison grounds reach at least this far either side of the route's centre
 PAD = 55          # km of ground shown around the stations
 PX_PER_KM = 3     # ground image resolution
 LAND, WATER, BORDER = "#efeee9", "#dfe8ed", "#d2d1cb"
@@ -53,6 +54,8 @@ LAKES = gpd.read_file(os.path.join(NE, "ne_10m_lakes.geojson"))[["geometry"]]   
 
 
 def rnd(a, d=2):
+    if d == 0:   # whole km: write ints, not "12.0"
+        return [[int(round(float(x))), int(round(float(y)))] for x, y in a]
     return [[round(float(x), d), round(float(y), d)] for x, y in a]
 
 
@@ -104,7 +107,9 @@ def corridor(c, orient="h"):
         # the chart runs MAX_ROUTE km below the top station; a winding route covers less than its
         # length vertically, so extend by the gap between that and the route's own vertical extent
         ext = MAX_ROUTE - float(xy[:, 1].max() - xy[:, 1].min()) + 60
-    gb = (x0, y0 - ext, x1, y1 + ext)
+    # ...and sideways to at least V_HALF_W km either side of centre, so a map can fill its column
+    xext = max(0.0, V_HALF_W - (x1 - x0) / 2) if orient == "v" else 0.0
+    gb = (x0 - xext, y0 - ext, x1 + xext, y1 + ext)
     ground(c["id"], proj, R, gb, sts, "ground" if orient == "h" else "ground_v")
     north = (R @ np.array([0.0, 1.0])).tolist()
     if orient == "h":
@@ -132,7 +137,7 @@ def corridor(c, orient="h"):
             for f in r["area_counties"]:
                 used[f] = r["area"]
         # county outlines only where there are US metro areas (Canada/Australia have none to draw)
-        out_c = counties_in_view(proj, R, (x0, y0, x1, y1), sts, used) if used else None
+        out_c = counties_in_view(proj, R, gb, sts, used) if used else None
     if orient == "v":  # distance along the route (straight lines between stops) from the first station
         d = np.concatenate([[0], np.cumsum([hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:])])])
         for st, dd in zip(stations, d):
@@ -151,15 +156,16 @@ def counties_in_view(proj, R, bb, sts, used):
     counties that belong to a station's metro area (so the page can tint them)."""
     x0, y0, x1, y1 = bb
     lons, lats = [s[1] for s in sts], [s[2] for s in sts]
-    m = 6
+    m = 3 + max(x1 - x0, y1 - y0) / 111 / 2   # degrees: enough to cover the whole ground
     g = COUNTIES.cx[min(lons) - m:max(lons) + m, min(lats) - m:max(lats) + m].to_crs(proj)
     g = g.affine_transform([R[0, 0], R[0, 1], R[1, 0], R[1, 1], 0, 0]).to_frame("geometry").join(COUNTIES[["GEOID", "NAME"]])
     g = gpd.GeoDataFrame(g, geometry="geometry")
-    g["geometry"] = g.geometry.intersection(box(x0, y0, x1, y1)).simplify(0.25)
+    # 1 km simplification: plenty at the comparison's ~0.3–1 px per km, and keeps the page light
+    g["geometry"] = g.geometry.intersection(box(x0, y0, x1, y1)).simplify(1.0)
     out = []
     for _, r in g[~g.geometry.is_empty].iterrows():
         parts = getattr(r.geometry, "geoms", [r.geometry])
-        rings = [rnd(np.asarray(p.exterior.coords), 1) for p in parts if p.geom_type == "Polygon" and p.area > 0.5]
+        rings = [rnd(np.asarray(p.exterior.coords), 0) for p in parts if p.geom_type == "Polygon" and p.area > 2]
         if rings:
             out.append(dict(fips=r.GEOID, name=r.NAME, area=used.get(r.GEOID), rings=rings))
     return out
@@ -172,7 +178,7 @@ def ground(cid, proj, R, bb, sts, folder="ground"):
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.axis("off")
     fig.patch.set_facecolor(WATER)
     lons, lats = [s[1] for s in sts], [s[2] for s in sts]
-    m = 8 + (y1 - y0) / 222   # degrees of margin; grows with tall comparison grounds
+    m = 8 + max(x1 - x0, y1 - y0) / 222   # degrees of margin; grows with big comparison grounds
     ll = box(min(lons) - m, min(lats) - m, max(lons) + m, max(lats) + m)
     rot = np.degrees(np.arctan2(R[1, 0], R[0, 0]))
     for g, fc, ec, lw in ((ADM0, LAND, "none", 0), (LAKES, WATER, "none", 0),

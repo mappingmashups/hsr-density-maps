@@ -34,6 +34,12 @@ for c in CORRIDORS:
 
 prisms = json.load(open(f"{OUT}/prisms.json"))
 compare = json.load(open(f"{OUT}/compare.json"))
+# US county outlines are large, so each corridor's go in their own file, fetched only when shown
+os.makedirs(os.path.join(SITE, "counties"), exist_ok=True)
+for c in compare["corridors"]:
+    if c.get("counties"):
+        json.dump(c.pop("counties"), open(os.path.join(SITE, "counties", f"{c['id']}.json"), "w"), separators=(",", ":"))
+        c["has_counties"] = True
 data = dict(updated=datetime.date.today().isoformat(), corridors=corridors, stations=stations, cities=cities, prisms=prisms, compare=compare)
 html = open(os.path.join(HERE, "page", "template.html")).read().replace("/*DATA*/null", json.dumps(data, ensure_ascii=False))
 os.makedirs(SITE, exist_ok=True)
