@@ -42,6 +42,8 @@ CONTEXT_GREYS = ["#e4e3dd", "#d2d1cb", "#bab9b3", "#9d9c97"]
 POP = {(r["corridor"], r["station"]): r for r in json.load(open(os.path.join(OUT, "pop_kontur.json")))["rows"]}
 _msa_path = os.path.join(OUT, "msa.json")
 MSA = json.load(open(_msa_path))["corridors"] if os.path.exists(_msa_path) else {}
+_proj_path = os.path.join(OUT, "projection.json")
+PROJ = json.load(open(_proj_path))["corridors"] if os.path.exists(_proj_path) else {}   # build_projection.py
 COUNTIES = gpd.read_file(f"zip://{os.path.join(HERE, 'data', 'census', 'cb_2023_us_county_5m.zip')}")[["GEOID", "NAME", "geometry"]] if MSA else None
 NE = os.path.join(HERE, "data", "ne")
 ADM0 = gpd.read_file(os.path.join(NE, "ne_10m_admin_0_countries.geojson"))[["geometry"]]
@@ -98,12 +100,23 @@ def corridor(c, orient="h"):
     if orient == "h":
         print(f"   {c['id']:9s} turn {phi:6.1f}°  north → ({north[0]:+.2f}, {north[1]:+.2f})  {short(sts[0][0]) if xy[0,0] < xy[-1,0] else short(sts[-1][0])} on the left")
     seg = [round(hav_km(a[1], a[2], b[1], b[2])) for a, b in zip(sts[:-1], sts[1:])]
+    if c["id"] in PROJ:  # projected growth to 2050 per radius (counted and full circle)
+        for st, gp in zip(stations, PROJ[c["id"]]):
+            st["g"], st["gr"] = gp["g"], gp["gr"]
     if orient == "v" and c["id"] in MSA:  # census metro areas (build_msa.py) + county outlines
         recs = {r["station"]: r for r in MSA[c["id"]]}
         for st, s_ in zip(stations, sts):
             r = recs.get(s_[0])
             if r:
                 st["msa"] = {k: r[k] for k in ("area", "area_title", "area_kind", "area_pop", "shared_by", "share", "county") if k in r}
+                # 2050 metro share: the metro's own projection where published (US counties, Hauer et al.),
+                # otherwise today's figure × WorldPop's projected growth within 50 km of the station
+                if r.get("area_pop2050"):
+                    st["msa"]["share2050"] = round(r["area_pop2050"] / r["shared_by"])
+                    st["msa"]["proj_source"] = "US county projections, SSP2"
+                elif "gr" in st:
+                    st["msa"]["share2050"] = round(r["share"] * st["gr"][-1])
+                    st["msa"]["proj_source"] = "WorldPop growth within 50 km, SSP2"
         used = {}
         for r in MSA[c["id"]]:
             for f in r["area_counties"]:

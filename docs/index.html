@@ -169,6 +169,7 @@ img { max-width: 100%; }
       <button type="button" class="swap" id="cmpSwap" aria-label="Swap left and right">⇄</button>
       <label for="cmpR">Right <select id="cmpR"></select></label>
       <label for="cmpRad">Catchment radius <input type="range" id="cmpRad" min="5" max="50" value="10" step="1" aria-describedby="cmpRadVal"> <span class="mono" id="cmpRadVal">10 km</span></label>
+      <div class="seg" role="group" aria-label="Year" id="cmpYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div>
     </div>
     <div class="controls">
       <label for="cmpSlide"><span id="cmpSlideLabel">Slide shorter route</span> <input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"> <span class="mono" id="cmpSlideVal">0 km</span></label>
@@ -214,6 +215,7 @@ img { max-width: 100%; }
     <p class="col">The catchments from the maps above, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground is background only: population density within 50 km of the whole line, shown for geography. Only the people inside the blocks are counted.</p>
     <div class="controls">
       <label for="pxRad">Catchment radius <input type="range" id="pxRad" min="5" max="50" value="10" step="1" aria-describedby="pxRadVal"> <span class="mono" id="pxRadVal">10 km</span></label>
+      <div class="seg" role="group" aria-label="Year" id="pxYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div>
       <label for="pxtilt">View angle <input type="range" id="pxtilt" min="20" max="75" value="58" step="1"></label>
       <div class="pxkey" id="pxkey" aria-hidden="true"></div>
     </div>
@@ -449,8 +451,16 @@ csel.addEventListener("change", stTable); stTable();
 /* ---------- prism view: catchments extruded by population, oblique parallel projection ---------- */
 /* ---------- catchments for any radius: circle cut halfway to each neighbouring station ---------- */
 const R_MIN = 5;
-const popAt = (st, r) => st.p[Math.round(r) - R_MIN];      // people counted (nearest-station rule), precomputed per km
-const rawAt = (st, r) => st.pr[Math.round(r) - R_MIN];     // everyone in the full circle
+// people counted (nearest-station rule) and everyone in the full circle, precomputed per km;
+// `fut` multiplies by the catchment's projected growth to 2050 (WorldPop SSP2), when available
+const popAt = (st, r, fut) => st.p[Math.round(r) - R_MIN] * (fut && st.g ? st.g[Math.round(r) - R_MIN] : 1);
+const rawAt = (st, r, fut) => st.pr[Math.round(r) - R_MIN] * (fut && st.gr ? st.gr[Math.round(r) - R_MIN] : 1);
+const HAS_PROJ = !!(DATA.prisms && DATA.prisms.corridors[0].stations[0].g);
+function yearSeg(id, onChange) {
+  const seg = $("#" + id);
+  if (!HAS_PROJ) { seg.hidden = true; return; }
+  seg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press(seg, b); onChange(b.dataset.y === "2050"); });
+}
 function catchment(sts, i, r, n = 72) {
   const o = sts[i];
   let poly = Array.from({ length: n }, (_, j) => { const a = 2 * Math.PI * j / n; return [o.x + r * Math.cos(a), o.y + r * Math.sin(a)]; }); // CCW
@@ -485,7 +495,7 @@ function radiusSlider(id, init, onChange) {
   const HMAX = 150;
   const maxPopCache = {};
   const maxPopAt = r => maxPopCache[r] ??= Math.max(...P.corridors.flatMap(c => c.stations.map(s => popAt(s, r))));
-  let radius = 10, tilt = 58;
+  let radius = 10, tilt = 58, fut = false;   // block height scale stays at today's, so growth shows as taller blocks
 
   function hex2rgb(h) { h = h.trim().replace("#", ""); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
   function mix(rgb, to, t) { return "rgb(" + rgb.map((v, i) => Math.round(v + (to[i] - v) * t)).join(",") + ")"; }
@@ -498,7 +508,7 @@ function radiusSlider(id, init, onChange) {
   // build one block per corridor
   const rows = P.corridors.map(c => {
     const row = document.createElement("article"); row.className = "pxrow";
-    const tot = r => c.stations.reduce((a, s) => a + popAt(s, r), 0);
+    const tot = r => c.stations.reduce((a, s) => a + popAt(s, r, fut), 0);
     row.innerHTML = `<header><h3>${c.name}</h3><span class="meta">${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km · <span class="pxtot"></span></span></header>`;
     const plate = document.createElement("div"); plate.className = "pxplate";
     plate.style.width = ((c.bbox[2] - c.bbox[0] + 2 * SIDE) / maxSpan * 100).toFixed(2) + "%";
@@ -517,7 +527,7 @@ function radiusSlider(id, init, onChange) {
       const col = colors(c.region);
       const [x0, y0, x1, y1] = c.bbox;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
-      totEl.textContent = `${fmtP(tot(radius))} within ${radius} km`;
+      totEl.textContent = `${fmtP(tot(radius))} within ${radius} km${fut ? " in 2050 (projected)" : ""}`;
       // ground image, mapped onto the tilted plane (parallel projection = pure y-scale)
       const img = el("image", { href: `ground/${c.id}.webp`, x: x0, y: -y1, width: x1 - x0, height: y1 - y0,
         preserveAspectRatio: "none", transform: `scale(1,${cs})` }, svg);
@@ -536,7 +546,7 @@ function radiusSlider(id, init, onChange) {
       let top = Y(y1, 0), bottom = Y(y0, 0);
       const labels = [];
       order.forEach(i => {
-        const s = c.stations[i], poly = catchment(c.stations, i, radius), k = { pop: popAt(s, radius), area: polyArea(poly) }, h = k.pop * hk;
+        const s = c.stations[i], poly = catchment(c.stations, i, radius), k = { pop: popAt(s, radius, fut), area: polyArea(poly) }, h = k.pop * hk;
         const g = el("g", { tabindex: 0, "aria-label": `${s.full}: ${fmtP(k.pop)} within ${radius} km` }, svg);
         // footprint outline on the ground
         el("polygon", { points: poly.map(p => `${X(p[0])},${Y(p[1], 0)}`).join(" "), fill: "none", stroke: col.edge,
@@ -560,7 +570,7 @@ function radiusSlider(id, init, onChange) {
         el("circle", { cx: X(s.x), cy: Y(s.y, h), r: 2 / pxPerKm, fill: "#16171a" }, g);
         top = Math.min(top, Y(s.y, h) - fs * 2.6);
         labels.push({ s, k, x: X(s.x), y: Y(s.y, h) });
-        const tipHtml = `<b>${s.full}</b><br>${fmtP(k.pop)} people counted within ${radius} km<br>catchment ${k.area.toLocaleString()} km² · ${Math.round(k.pop / k.area).toLocaleString()} per km²`;
+        const tipHtml = `<b>${s.full}</b><br>${fmtP(k.pop)} people counted within ${radius} km${fut ? ` in 2050 (projected; ${fmtP(popAt(s, radius))} today)` : ""}<br>catchment ${k.area.toLocaleString()} km² · ${Math.round(k.pop / k.area).toLocaleString()} per km²`;
         g.addEventListener("pointerenter", e => showTip(tipHtml, e)); g.addEventListener("pointermove", moveTip); g.addEventListener("pointerleave", hideTip);
       });
       // labels above block tops, biggest first, skipping ones that would collide
@@ -594,6 +604,7 @@ function radiusSlider(id, init, onChange) {
 
   let raf = 0;   // slider input can fire faster than a full redraw; draw at most once per frame
   radiusSlider("pxRad", radius, r => { radius = r; cancelAnimationFrame(raf); raf = requestAnimationFrame(render); });
+  yearSeg("pxYear", f => { fut = f; render(); });
   $("#pxtilt").addEventListener("input", e => { tilt = +e.target.value; render(); });
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
@@ -634,8 +645,9 @@ function radiusSlider(id, init, onChange) {
     });
     return { c, fl, os, termKm: y1 - dispY(top) };             // km from the top of the map to the top station
   }
-  const pop = st => popAt(st, S.radius);
-  const share = st => S.msa && st.msa ? st.msa.share : 0;
+  const fut = () => S.year === 2050 && HAS_PROJ;
+  const pop = (st, f = fut()) => popAt(st, S.radius, f);
+  const share = (st, f = fut()) => !(S.msa && st.msa) ? 0 : f && st.msa.share2050 ? st.msa.share2050 : st.msa.share;
 
   function highlight(key, on) { document.querySelectorAll(`#cmp [data-k="${key}"]`).forEach(n => n.classList.toggle("hl", on)); }
   function hook(g, key, html) {
@@ -646,12 +658,14 @@ function radiusSlider(id, init, onChange) {
     g.addEventListener("focus", () => highlight(key, true)); g.addEventListener("blur", () => highlight(key, false));
   }
   function tipHtml(c, st, d) {
-    const kp = pop(st), kr = rawAt(st, S.radius);
+    const kp = pop(st), kr = rawAt(st, S.radius, fut());
     let h = `<b>${st.full}</b> · ${c.name}<br>${fmtP(kp)} people counted within ${S.radius} km` +
+      (fut() ? ` in 2050 (projected; ${fmtP(pop(st, false))} today)` : "") +
       (kr > kp * 1.02 ? ` <span style="opacity:.75">(${fmtP(kr)} in the full circle)</span>` : "") +
       `<br>${Math.round(d)} km along the line from the top station`;
     if (st.msa) h += `<br><span style="opacity:.85">Metro area: ${st.msa.area_title}, ${fmtP(st.msa.area_pop)}` +
-      (st.msa.shared_by > 1 ? ` ÷ ${st.msa.shared_by} stations = ${fmtP(st.msa.share)}` : "") + `</span>`;
+      (st.msa.shared_by > 1 ? ` ÷ ${st.msa.shared_by} stations = ${fmtP(st.msa.share)}` : "") +
+      (fut() && st.msa.share2050 ? `; ${fmtP(st.msa.share2050)} in 2050 (${st.msa.proj_source})` : "") + `</span>`;
     return h;
   }
 
@@ -720,7 +734,7 @@ function radiusSlider(id, init, onChange) {
 
     const tot = c => c.stations.reduce((a, s) => a + pop(s), 0);
     const head = (c, side) => `<b>${c.name}</b><span>${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km</span>` +
-      `<span>${fmtP(tot(c))} within ${S.radius} km · ${(tot(c) / c.route_km / 1000).toFixed(1)}k per route-km</span>` +
+      `<span>${fmtP(tot(c))} within ${S.radius} km${fut() ? " in 2050" : ""} · ${(tot(c) / c.route_km / 1000).toFixed(1)}k per route-km</span>` +
       (S.msa && c.stations.some(s => s.msa) ? `<span>${fmtP(c.stations.reduce((a, s) => a + share(s), 0))} by official metro areas</span>` : "") +
       `<span class="fliprow"><button type="button" class="swap flip" data-side="${side}" aria-pressed="${S[side].flip}">↕ Flip map</button></span>`;
     $("#cmpHL").innerHTML = head(cL, "L"); $("#cmpHR").innerHTML = head(cR, "R");
@@ -732,7 +746,8 @@ function radiusSlider(id, init, onChange) {
     const H = T + Lmax * k + 46, mid = chartW / 2, gap = 3, labelRoom = 80, half = mid - gap - labelRoom;
     svg.setAttribute("viewBox", `0 0 ${chartW} ${H}`); svg.setAttribute("width", chartW); svg.setAttribute("height", H);
     const all = LL.os.concat(LR.os).map(o => o.st);
-    const maxPop = Math.max(...all.map(pop), ...all.map(share));
+    const maxPop = Math.max(...all.map(s => pop(s, false)), ...all.map(s => share(s, false)),
+                            ...(HAS_PROJ ? [...all.map(s => pop(s, true)), ...all.map(s => share(s, true))] : []));
     const step = [250e3, 500e3, 1e6, 2e6, 5e6].find(s => maxPop / s <= 4) || 5e6;
     for (let v = step; v <= maxPop; v += step) {
       [-1, 1].forEach(sg => {
@@ -806,6 +821,8 @@ function radiusSlider(id, init, onChange) {
   $("#cmp").addEventListener("click", e => { const b = e.target.closest(".flip"); if (!b) return; const s = b.dataset.side; S[s].flip = !S[s].flip; render(); });
   let raf = 0;
   radiusSlider("cmpRad", S.radius, r => { S.radius = r; cancelAnimationFrame(raf); raf = requestAnimationFrame(render); });
+  S.year = "now";
+  yearSeg("cmpYear", f => { S.year = f ? 2050 : "now"; render(); });
   $("#cmpMsa").addEventListener("change", e => { S.msa = e.target.checked; render(); });
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
   render();
