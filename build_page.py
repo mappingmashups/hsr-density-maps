@@ -11,6 +11,7 @@ from popcalc import hav_km
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "out"); SITE = os.path.join(HERE, "docs")  # served by GitHub Pages (main branch, /docs)
 
 LOG = [  # newest first
+    ("2026-11-09", "Comparison: the official metro-population bars now cover Canada (Statistics Canada) and Australia (ABS) as well as the US."),
     ("2026-11-08", "Added ten corridors: Chicago–St. Louis, Chicago–Twin Cities, Chicago–Detroit, Atlanta–Charlotte, Cleveland–Columbus–Cincinnati, Sydney–Canberra–Melbourne (shown with North America, in a darker orange), Berlin–Munich, Beijing–Shanghai, Mumbai–Ahmedabad and Jakarta–Bandung."),
     ("2026-11-07", "Reordered the page: the two-corridor comparison now comes first, and the same-scale maps are grouped North America, Europe, Asia."),
     ("2026-11-07", "Added Salem to Cascadia, between Portland and Eugene."),

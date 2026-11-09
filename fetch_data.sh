@@ -19,6 +19,14 @@ for u in programs-surveys/metro-micro/geographies/reference-files/2023/delineati
          geo/tiger/GENZ2023/shp/cb_2023_us_county_5m.zip; do
   [ -s "data/census/$(basename "$u")" ] || curl -fL --retry 3 -o "data/census/$(basename "$u")" "$CEN/$u"
 done
+# Canadian and Australian metro populations (build_msa.py)
+mkdir -p data/statcan data/abs
+[ -s data/statcan/17100148-eng.zip ] || curl -fL --retry 3 -o data/statcan/17100148-eng.zip \
+  https://www150.statcan.gc.ca/n1/tbl/csv/17100148-eng.zip
+ABS=https://www.abs.gov.au/statistics/people/population/regional-population/2024-25
+for n in 32180DS0003_2001-25 32180DS0004_2001-25; do
+  [ -s "data/abs/$n.xlsx" ] || curl -fL --retry 3 -o "data/abs/$n.xlsx" "$ABS/$n.xlsx"
+done
 if [ "${1:-}" = "--all" ]; then
   K=kontur_population_20231101.gpkg
   [ -s "data/$K" ] || {

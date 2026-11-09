@@ -31,7 +31,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Tables | `summarize.py` | `out/stations.csv`, `out/corridors.csv` |
 | Hexagons near stations (for footprints) | `extract_hex.py` (~1 min) | `out/hex/<corridor>.parquet` |
 | Context cells within 50 km of each route line (background only, never counted) | `extract_context.py` (~1–6 min) | `out/context/<corridor>.parquet` |
-| US census metro-area (CBSA) population per station, split evenly between stations sharing a metro | `build_msa.py` | `out/msa.json` |
+| Official metro-area population per station (US census CBSA, StatCan CMA/CA, ABS capital-city / urban areas), split evenly between stations sharing an area | `build_msa.py` | `out/msa.json` |
 | Same-scale maps | `plot_maps.py` | `out/map_nested.*`, `out/map_{5,10,20,50}km.*` (PNG + SVG) |
 | Station footprint atlases | `plot_atlas.py` | `out/atlas/<corridor>.png`, `out/atlas_cities.png` |
 | Browser-drawn views: oblique "population as height" and the two-corridor comparison. Stores each station's population at every km from 5 to 50 km; the page draws catchments live for the radius slider | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` |

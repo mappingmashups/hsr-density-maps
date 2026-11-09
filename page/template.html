@@ -173,7 +173,7 @@ img { max-width: 100%; }
     <div class="controls">
       <label for="cmpSlide"><span id="cmpSlideLabel">Slide shorter route</span> <input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"> <span class="mono" id="cmpSlideVal">0 km</span></label>
       <button type="button" class="swap" id="cmpAlign">Align biggest stations</button>
-      <label for="cmpMsa"><input type="checkbox" id="cmpMsa"> Census metro population (US stations)</label>
+      <label for="cmpMsa"><input type="checkbox" id="cmpMsa"> Official metro population (US, Canada, Australia)</label>
     </div>
     <div class="cmpscroll"><div class="cmp" id="cmp">
       <div class="cmphead" id="cmpHL"></div>
@@ -184,7 +184,7 @@ img { max-width: 100%; }
       <div class="cmpcol" id="cmpColR"><svg id="cmpMapR" role="img"></svg></div>
     </div></div>
     <p class="meta col" id="cmpNote">Maps: coloured circle area is proportional to the people counted at each station (the same circle scale as the corridor maps in the next section). Dashed outlines are the real catchments, split halfway between stations, and only people inside them are counted. The grey is background only: population density within 50 km of the line. Bars use one population scale for both sides. Hover a bar or a station to see it on both.</p>
-    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: the station's share of its census metro area's population (Vintage 2024 county estimates; metro areas as defined by the Census Bureau in July 2023). Where several stations on a line share one metro area, its population is split evenly between them. A station in a county outside any metro area gets that county's population. This is the figure people usually quote for US cities; the solid bars show how many of them live near the station. County outlines are drawn on the maps, with each station's metro area tinted.</p>
+    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: the station's share of its official metro area's population, the figure usually quoted for a city. US: census metro areas (Vintage 2024 county estimates, metro areas as defined in July 2023), with county outlines on the maps and each station's metro area tinted. Canada: Statistics Canada census metropolitan areas and agglomerations, 2025. Australia: ABS Greater Sydney and Greater Melbourne, and Significant Urban Areas for the other stops, 2025. Where several stations on a line share one area, its population is split evenly between them. The solid bars show how many of those people actually live near the station.</p>
   </section>
 
   <section class="stack" aria-labelledby="h-maps">
@@ -296,7 +296,7 @@ img { max-width: 100%; }
         <li><b>Meta / CIESIN HRSL</b>: 30 m, used as a cross-check. It agrees with Kontur within a few percent wherever both exist.</li>
         <li>Natural Earth 10 m outlines for the map backgrounds.</li>
       </ul>
-      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). US metro areas, county populations and county outlines from the <a href="https://www.census.gov/">US Census Bureau</a>. Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
+      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). US metro areas, county populations and county outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0). Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
     </div>
     <div>
       <h3>Caveats</h3>
@@ -721,7 +721,7 @@ function radiusSlider(id, init, onChange) {
     const tot = c => c.stations.reduce((a, s) => a + pop(s), 0);
     const head = (c, side) => `<b>${c.name}</b><span>${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km</span>` +
       `<span>${fmtP(tot(c))} within ${S.radius} km · ${(tot(c) / c.route_km / 1000).toFixed(1)}k per route-km</span>` +
-      (S.msa && c.stations.some(s => s.msa) ? `<span>${fmtP(c.stations.reduce((a, s) => a + share(s), 0))} by census metro areas</span>` : "") +
+      (S.msa && c.stations.some(s => s.msa) ? `<span>${fmtP(c.stations.reduce((a, s) => a + share(s), 0))} by official metro areas</span>` : "") +
       `<span class="fliprow"><button type="button" class="swap flip" data-side="${side}" aria-pressed="${S[side].flip}">↕ Flip map</button></span>`;
     $("#cmpHL").innerHTML = head(cL, "L"); $("#cmpHR").innerHTML = head(cR, "R");
     $("#cmpHM").innerHTML = `<b>Distance along the line ↓</b><span>← people near each station → · bar thickness = stretch of line covered</span>`;

@@ -1,6 +1,6 @@
 {
  "year": 2024,
- "vintage": "Vintage 2024 county estimates; CBSA delineation July 2023",
+ "vintage": "US: Vintage 2024 county estimates, CBSA delineation July 2023; Canada: StatCan table 17-10-0148, 2025; Australia: ABS Regional population 2024–25",
  "corridors": {
   "ca": [
    {
@@ -587,6 +587,16 @@
   ],
   "cascadia": [
    {
+    "station": "Vancouver BC",
+    "area": "statcan:Vancouver (CMA), British Columbia",
+    "area_title": "Vancouver (CMA), British Columbia",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 3088036,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 3088036
+   },
+   {
     "station": "Bellingham",
     "county": "Whatcom County, WA",
     "county_fips": "53073",
@@ -933,6 +943,160 @@
     ],
     "shared_by": 3,
     "share": 1581405
+   }
+  ],
+  "on": [
+   {
+    "station": "Windsor",
+    "area": "statcan:Windsor (CMA), Ontario",
+    "area_title": "Windsor (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 488738,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 488738
+   },
+   {
+    "station": "Chatham",
+    "area": "statcan:Chatham-Kent (CA), Ontario",
+    "area_title": "Chatham-Kent (CA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 112977,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 112977
+   },
+   {
+    "station": "London",
+    "area": "statcan:London (CMA), Ontario",
+    "area_title": "London (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 633002,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 633002
+   },
+   {
+    "station": "Kitchener",
+    "area": "statcan:Kitchener - Cambridge - Waterloo (CMA), Ontario",
+    "area_title": "Kitchener–Cambridge–Waterloo (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 701568,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 701568
+   },
+   {
+    "station": "Guelph",
+    "area": "statcan:Guelph (CMA), Ontario",
+    "area_title": "Guelph (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 183134,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 183134
+   },
+   {
+    "station": "Toronto",
+    "area": "statcan:Toronto (CMA), Ontario",
+    "area_title": "Toronto (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 7108874,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 7108874
+   },
+   {
+    "station": "Peterborough",
+    "area": "statcan:Peterborough (CMA), Ontario",
+    "area_title": "Peterborough (CMA), Ontario",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 149938,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 149938
+   },
+   {
+    "station": "Ottawa",
+    "area": "statcan:Ottawa - Gatineau (CMA), Ontario/Quebec",
+    "area_title": "Ottawa–Gatineau (CMA), Ontario/Quebec",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 1700014,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 1700014
+   },
+   {
+    "station": "Montréal",
+    "area": "statcan:Montréal (CMA), Quebec",
+    "area_title": "Montréal (CMA), Quebec",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 4597837,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2298918
+   },
+   {
+    "station": "Laval",
+    "area": "statcan:Montréal (CMA), Quebec",
+    "area_title": "Montréal (CMA), Quebec",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 4597837,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2298918
+   },
+   {
+    "station": "Trois-Rivières",
+    "area": "statcan:Trois-Rivières (CMA), Quebec",
+    "area_title": "Trois-Rivières (CMA), Quebec",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 174316,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 174316
+   },
+   {
+    "station": "Québec City",
+    "area": "statcan:Québec (CMA), Quebec",
+    "area_title": "Québec (CMA), Quebec",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 903607,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 903607
+   }
+  ],
+  "ab": [
+   {
+    "station": "Calgary",
+    "area": "statcan:Calgary (CMA), Alberta",
+    "area_title": "Calgary (CMA), Alberta",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 1836012,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 1836012
+   },
+   {
+    "station": "Red Deer",
+    "area": "statcan:Red Deer (CMA), Alberta",
+    "area_title": "Red Deer (CMA), Alberta",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 115273,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 115273
+   },
+   {
+    "station": "Edmonton",
+    "area": "statcan:Edmonton (CMA), Alberta",
+    "area_title": "Edmonton (CMA), Alberta",
+    "area_kind": "Statistics Canada metro area (2025)",
+    "area_pop": 1692385,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 1692385
    }
   ],
   "cs": [
@@ -1681,6 +1845,98 @@
     ],
     "shared_by": 1,
     "share": 2302815
+   }
+  ],
+  "au": [
+   {
+    "station": "Sydney Central",
+    "area": "abs_gccsa:Greater Sydney",
+    "area_title": "Greater Sydney",
+    "area_kind": "ABS Greater Capital City area (2025)",
+    "area_pop": 5638830,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2819415
+   },
+   {
+    "station": "Campbelltown",
+    "area": "abs_gccsa:Greater Sydney",
+    "area_title": "Greater Sydney",
+    "area_kind": "ABS Greater Capital City area (2025)",
+    "area_pop": 5638830,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2819415
+   },
+   {
+    "station": "Southern Highlands",
+    "area": "abs_sua:Bowral - Mittagong",
+    "area_title": "Bowral–Mittagong",
+    "area_kind": "ABS Significant Urban Area (2025)",
+    "area_pop": 42529,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 42529
+   },
+   {
+    "station": "Canberra",
+    "area": "abs_sua:Canberra - Queanbeyan",
+    "area_title": "Canberra–Queanbeyan",
+    "area_kind": "ABS Significant Urban Area (2025)",
+    "area_pop": 521049,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 521049
+   },
+   {
+    "station": "Wagga Wagga",
+    "area": "abs_sua:Wagga Wagga",
+    "area_title": "Wagga Wagga",
+    "area_kind": "ABS Significant Urban Area (2025)",
+    "area_pop": 58117,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 58117
+   },
+   {
+    "station": "Albury–Wodonga",
+    "area": "abs_sua:Albury - Wodonga",
+    "area_title": "Albury–Wodonga",
+    "area_kind": "ABS Significant Urban Area (2025)",
+    "area_pop": 102435,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 102435
+   },
+   {
+    "station": "Shepparton",
+    "area": "abs_sua:Shepparton - Mooroopna",
+    "area_title": "Shepparton–Mooroopna",
+    "area_kind": "ABS Significant Urban Area (2025)",
+    "area_pop": 55332,
+    "area_counties": [],
+    "shared_by": 1,
+    "share": 55332
+   },
+   {
+    "station": "Melbourne Airport",
+    "area": "abs_gccsa:Greater Melbourne",
+    "area_title": "Greater Melbourne",
+    "area_kind": "ABS Greater Capital City area (2025)",
+    "area_pop": 5435590,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2717795
+   },
+   {
+    "station": "Melbourne Southern Cross",
+    "area": "abs_gccsa:Greater Melbourne",
+    "area_title": "Greater Melbourne",
+    "area_kind": "ABS Greater Capital City area (2025)",
+    "area_pop": 5435590,
+    "area_counties": [],
+    "shared_by": 2,
+    "share": 2717795
    }
   ]
  }

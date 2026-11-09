@@ -103,12 +103,13 @@ def corridor(c, orient="h"):
         for st, s_ in zip(stations, sts):
             r = recs.get(s_[0])
             if r:
-                st["msa"] = {k: r[k] for k in ("area", "area_title", "area_kind", "area_pop", "shared_by", "share", "county")}
+                st["msa"] = {k: r[k] for k in ("area", "area_title", "area_kind", "area_pop", "shared_by", "share", "county") if k in r}
         used = {}
         for r in MSA[c["id"]]:
             for f in r["area_counties"]:
                 used[f] = r["area"]
-        out_c = counties_in_view(proj, R, (x0, y0, x1, y1), sts, used)
+        # county outlines only where there are US metro areas (Canada/Australia have none to draw)
+        out_c = counties_in_view(proj, R, (x0, y0, x1, y1), sts, used) if used else None
     if orient == "v":  # distance along the route (straight lines between stops) from the first station
         d = np.concatenate([[0], np.cumsum([hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:])])])
         for st, dd in zip(stations, d):
@@ -116,7 +117,7 @@ def corridor(c, orient="h"):
     res = dict(id=c["id"], name=c["name"], country=c["country"], status=c["status"], region=c["region"],
                bbox=[round(float(v), 2) for v in (x0, y0, x1, y1)], north=[round(n, 3) for n in north],
                route_km=sum(seg), seg=seg, stations=stations)
-    if orient == "v" and c["id"] in MSA:
+    if orient == "v" and c["id"] in MSA and out_c:
         res["counties"] = out_c
     return res
 
