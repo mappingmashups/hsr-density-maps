@@ -5,6 +5,7 @@ data/
 # The published, compressed copies live in docs/.
 out/*.png
 out/*.svg
+out/*.mp4
 out/atlas/
 out/ground/
 out/ground_v/

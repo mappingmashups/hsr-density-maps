@@ -8,6 +8,7 @@ Run after build_page.py. Needs Playwright with Chromium (or set CHROMIUM) and ff
 Usage: python make_gif.py                          # San Francisco–LA vs Madrid–Barcelona (the page's default view)
        python make_gif.py cascadia de             # any two corridor ids from stations.py
        python make_gif.py ca fr --slide 0 --flip-right
+       python make_gif.py cascadia de --mp4        # also a 1080×1080 H.264 video for Instagram (out/*.mp4)
 """
 import argparse, asyncio, os, shutil, subprocess, tempfile
 from playwright.async_api import async_playwright
@@ -68,6 +69,7 @@ def main():
     ap.add_argument("left", nargs="?", default="ca"); ap.add_argument("right", nargs="?", default="es")
     ap.add_argument("--slide", type=int, help="km to slide the shorter route (default: 116 for ca/es, else 0)")
     ap.add_argument("--flip-left", action="store_true"); ap.add_argument("--flip-right", action="store_true")
+    ap.add_argument("--mp4", action="store_true", help="also write a 1080×1080 MP4 for Instagram to out/")
     a = ap.parse_args()
     if a.slide is None:
         a.slide = 116 if (a.left, a.right) == ("ca", "es") else 0
@@ -79,6 +81,15 @@ def main():
                         "-vf", f"scale={OUT_PX}:{OUT_PX}:flags=lanczos,split[a][b];[a]palettegen=max_colors=192:stats_mode=diff[p];"
                                "[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle",
                         "-loop", "0", out], check=True)
+        if a.mp4:   # full 1080 px frames, played twice (~19 s), 30 fps, silent AAC track for maximum app compatibility
+            os.makedirs(os.path.join(os.path.dirname(DOCS), "out"), exist_ok=True)
+            mp4 = os.path.join(os.path.dirname(DOCS), "out", f"compare_{a.left}_{a.right}_radius.mp4")
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-stream_loop", "1", "-framerate", str(FPS),
+                            "-i", os.path.join(frames, "%04d.png"), "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
+                            "-vf", f"scale={S}:{S}:flags=lanczos,fps=30,format=yuv420p", "-c:v", "libx264", "-preset", "slow",
+                            "-crf", "18", "-profile:v", "high", "-level", "4.0", "-c:a", "aac", "-b:a", "64k", "-shortest",
+                            "-movflags", "+faststart", mp4], check=True)
+            print("wrote", os.path.relpath(mp4))
     srv.shutdown()
     print("wrote", os.path.relpath(out))
 
