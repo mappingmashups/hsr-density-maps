@@ -125,6 +125,7 @@ tr.diff td { color: var(--ink-3); }
 
 /* prism view */
 .pxscroll { overflow-x: auto; }
+.card.pxcard { background: var(--bg); }   /* off-white, like the map cards */
 .pxstack { display: grid; gap: 28px; min-width: 760px; }
 .pxrow { display: grid; gap: 6px; min-width: 0; }
 .pxrow header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
@@ -320,7 +321,7 @@ img { max-width: 100%; }
       <span class="sep" aria-hidden="true"></span>
       <div class="field"><span class="flabel">Key</span><div class="frow"><div class="pxkey" id="pxkey" aria-hidden="true"></div></div></div>
     </div>
-    <div class="card pxscroll"><div class="pxstack" id="pxstack"></div></div>
+    <div class="card pxcard pxscroll"><div class="pxstack" id="pxstack"></div></div>
     <details class="howto">
       <summary>How to read this</summary>
       <p>Each station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. Block height uses one scale for every corridor at the chosen radius; switching to 2050 keeps that scale, so growth shows as taller blocks.</p>
