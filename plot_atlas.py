@@ -163,5 +163,9 @@ if __name__ == "__main__":
     big = [(c["id"], i) for c in CORRIDORS for i, s in enumerate(c["stations"])
            if s[0] in CITY and POP[(c["id"], s[0])]["raw_50"] >= 2.5e6]
     big.sort(key=lambda t: -POP[(t[0], CORR[t[0]]["stations"][t[1]][0])]["raw_10"])
+    # one disc per city: a station on several lines (Chicago) or two stations in one city (Paris Nord and
+    # Gare de Lyon) appears once, as its busiest station (the list is sorted by people within 10 km)
+    seen = set()
+    big = [t for t in big if not (short(CORR[t[0]]["stations"][t[1]][0]) in seen or seen.add(short(CORR[t[0]]["stations"][t[1]][0])))]
     page(big, "Main-city stations compared: what's inside 20 km", SUB + " Sorted by residents within 10 km.",
          os.path.join(OUT, "atlas_cities.png"), per_row=9)
