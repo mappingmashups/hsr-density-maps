@@ -3,31 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HSR Station Catchments</title>
+<title>Where would High Speed Rail work in North America?</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316171a'/%3E%3Crect x='7' y='14' width='5' height='12' fill='%23eb6834'/%3E%3Crect x='14' y='7' width='5' height='19' fill='%232a78d6'/%3E%3Crect x='21' y='17' width='5' height='9' fill='%231baf7a'/%3E%3C/svg%3E">
 <meta name="description" content="How many people live within 5, 10, 20 and 50 km of the stations on 26 existing and planned high-speed rail corridors, measured from one global population grid.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Where would High Speed Rail work in North America?">
+<meta property="og:description" content="North American metros look big enough for high-speed rail, but far fewer of their residents live near the stations. Population within 5–50 km of every stop on 26 lines, at one scale.">
+<meta property="og:url" content="https://mappingmashups.github.io/hsr-density-maps/">
+<meta property="og:image" content="https://mappingmashups.github.io/hsr-density-maps/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Overpass+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
 /* Layout: a single reading column (~70ch) for argument + method, with figure "plates"
    that break out wider. Transit-signage display face, bookish serif body, mono for numbers. */
 :root {
-  --bg: #f6f5f1; --surface: #ffffff; --plate: #ffffff;
+  --bg: #f6f5f1; --surface: #ffffff; --plate: #f6f5f1; --tool: #efeee9;
   --ink: #16171a; --ink-2: #4f5057; --ink-3: #85868c; --rule: #dddcd5; --grid: #e7e6e0;
   --accent: #16171a;
   --eu: #2a78d6; --na: #eb6834; --au: #b8461d; --as: #1baf7a;
   --hi: #16171a; --lo: #c4c3bc;
   --f-display: "Overpass", "Helvetica Neue", Arial, sans-serif;
   --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --f-mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --f-mono: ui-monospace, "SF Mono", Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
+  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1; --tool: #1a1b20;
   --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
   --accent: #eeede8; --eu: #3987e5; --na: #d95926; --au: #ee8a5e; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
   color-scheme: dark } }
 :root[data-theme="dark"] {
-  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1;
+  --bg: #15161a; --surface: #1d1e23; --plate: #f6f5f1; --tool: #1a1b20;
   --ink: #eeede8; --ink-2: #b9b9bf; --ink-3: #85868c; --rule: #33343b; --grid: #2b2c32;
   --accent: #eeede8; --eu: #3987e5; --na: #d95926; --au: #ee8a5e; --as: #199e70; --hi: #eeede8; --lo: #4c4d55;
   color-scheme: dark }
@@ -35,38 +43,54 @@
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--f-body);
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-main { max-width: 1180px; margin: 0 auto; padding-block: 48px 96px; display: grid; gap: 64px; }
+main { max-width: 1180px; margin: 0 auto; padding-block: 40px 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 72px; }
+main > * { min-width: 0; }
 .col { max-width: 70ch; }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
-h1 { font-size: clamp(2rem, 4.5vw, 3.1rem); font-weight: 800; letter-spacing: -0.01em; }
-h2 { font-size: 1.55rem; font-weight: 800; }
+h1 { font-size: clamp(2.3rem, 5.2vw, 3.75rem); font-weight: 800; letter-spacing: -0.015em; line-height: 1.05; max-width: 17em; }
+h2 { font-size: 1.6rem; font-weight: 800; scroll-margin-top: 72px; }
 h3 { font-size: 1.05rem; font-weight: 600; }
 p { margin: 0; }
-.stack { display: grid; gap: 16px; }
+.stack { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.field select { max-width: min(320px, calc(100vw - 80px)); }
 .eyebrow { font: 600 0.75rem/1 var(--f-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
 .lede { font-size: 1.25rem; line-height: 1.5; color: var(--ink-2); }
+.intro { font-size: 1.0625rem; color: var(--ink-2); }
 .meta { font: 400 0.8125rem/1.5 var(--f-display); color: var(--ink-3); }
 a { color: inherit; text-decoration-color: var(--ink-3); text-underline-offset: 3px; }
-.num, td.n, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.num, td.n, .mono { font-family: var(--f-display); font-variant-numeric: tabular-nums; }
+svg text { font-variant-numeric: tabular-nums; }
 hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
 
-/* segmented control */
+/* controls: every figure gets one toolbar; every control is 34px tall with a small label above */
+.toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 24px; padding: 12px 16px; background: var(--tool); border: 1px solid var(--rule); border-radius: 10px; }
+.toolbar .sep { width: 1px; align-self: stretch; background: var(--rule); }
+.field { display: grid; gap: 6px; min-width: 0; }
+.flabel { font: 600 0.6875rem/1 var(--f-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.frow { display: flex; align-items: center; gap: 8px; height: 34px; }
+.frow:has(.pxkey) { height: auto; min-height: 34px; }
+.frow output, .frow .val { font: 600 0.8125rem/1 var(--f-display); font-variant-numeric: tabular-nums; color: var(--ink); min-width: 3.4em; }
+.btn { font: 600 0.8125rem/1 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; height: 34px; padding: 0 12px; cursor: pointer; }
+.btn:hover { border-color: var(--ink-3); }
+.chk { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); cursor: pointer; }
+.chk:has(input:checked) { border-color: var(--ink); color: var(--ink); }
+.chk input { accent-color: var(--ink); margin: 0; }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
-.seg button { font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); background: none; border: 0; padding: 9px 14px; cursor: pointer; }
+.seg button { font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); background: none; border: 0; height: 32px; padding: 0 13px; cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--rule); }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .seg button:focus-visible, select:focus-visible, th button:focus-visible, .plate a:focus-visible { outline: 2px solid var(--eu); outline-offset: 2px; }
-.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
-.controls label { font: 600 0.8125rem/1 var(--f-display); color: var(--ink-2); display: flex; gap: 8px; align-items: center; }
-select { font: 400 0.875rem/1.2 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 7px 10px; }
+select { font: 400 0.875rem/1.2 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; height: 34px; padding: 0 8px; max-width: 100%; }
+.seg button:focus-visible, select:focus-visible, .btn:focus-visible, .chk:focus-within, input[type="range"]:focus-visible, summary:focus-visible, .secnav a:focus-visible { outline: 2px solid var(--eu); outline-offset: 2px; }
 
 /* figures */
 figure { margin: 0; display: grid; gap: 12px; }
 figcaption { font: 400 0.875rem/1.5 var(--f-display); color: var(--ink-3); max-width: 80ch; }
-.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 4px; overflow: auto; max-height: 85vh; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; min-width: 0; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; overflow: auto; max-height: 85vh; }
 .plate img { display: block; width: 100%; height: auto; }
 .plate.actual img { width: auto; max-width: none; }
-.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; overflow-x: auto; }
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; overflow-x: auto; }
 .chart svg { display: block; width: 100%; height: auto; min-width: 560px; }
 .chart text { font-family: var(--f-display); fill: var(--ink-2); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 400 0.8125rem/1 var(--f-display); color: var(--ink-2); }
@@ -74,14 +98,14 @@ figcaption { font: 400 0.875rem/1.5 var(--f-display); color: var(--ink-3); max-w
 .sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
 /* key-finding row */
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
 .fact { background: var(--surface); padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
 .fact .big { font: 800 2.1rem/1 var(--f-display); }
 .fact .big small { font-size: 0.95rem; font-weight: 600; color: var(--ink-3); }
 .fact p { font: 400 0.9375rem/1.45 var(--f-display); color: var(--ink-2); }
 
 /* tables */
-.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
 table { border-collapse: collapse; width: 100%; font: 400 0.875rem/1.35 var(--f-display); }
 th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--grid); white-space: nowrap; }
 th { font-weight: 600; color: var(--ink-3); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--surface); position: sticky; top: 0; }
@@ -111,14 +135,14 @@ tr.diff td { color: var(--ink-3); }
 .pxplate text { font-family: var(--f-display); }
 .pxkey { display: flex; align-items: flex-end; gap: 18px; font: 400 0.75rem/1.2 var(--f-display); color: var(--ink-2); }
 .pxkey svg { display: block; overflow: visible; }
-input[type="range"] { accent-color: var(--ink); width: 140px; }
+input[type="range"] { accent-color: var(--ink); width: 150px; margin: 0; }
 /* two-corridor comparison */
 .cmpscroll { overflow-x: auto; }
 .cmp { display: grid; grid-template-columns: auto auto auto; justify-content: center; align-items: start; gap: 8px 14px; min-width: 860px; }
 .cmpcol { display: grid; gap: 8px; align-content: start; min-width: 0; }
 .cmphead { display: grid; gap: 2px; align-content: start; }
 .cmphead .fliprow { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
-.cmphead .flip { font: 600 0.75rem/1 var(--f-display); padding: 5px 8px; }
+.cmphead .flip { height: 28px; font-size: 0.75rem; padding: 0 9px; }
 .cmpcol.drag svg { cursor: ns-resize; touch-action: none; }
 .cmphead b { font: 600 0.9375rem/1.25 var(--f-display); }
 .cmphead span { font: 400 0.75rem/1.3 var(--f-display); color: var(--ink-3); }
@@ -128,8 +152,7 @@ input[type="range"] { accent-color: var(--ink); width: 140px; }
 #cmp text { font-family: var(--f-display); }
 #cmp .hl .bar, #cmp .hl .dot { stroke: var(--ink); stroke-width: 2px; }
 #cmp .hl .ring { stroke: #16171a; stroke-width: 2.5px; }
-.swap { font: 600 1rem/1 var(--f-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
-.swap:focus-visible { outline: 2px solid var(--eu); outline-offset: 2px; }
+
 #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font: 400 0.8125rem/1.4 var(--f-display); padding: 8px 10px; border-radius: 4px; max-width: 280px; z-index: 20; }
 #tip b { font-weight: 600; }
 
@@ -138,10 +161,43 @@ input[type="range"] { accent-color: var(--ink); width: 140px; }
 .method p, .method li { font-size: 0.9875rem; color: var(--ink-2); }
 .method ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
 code { font-family: var(--f-mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; overflow-wrap: anywhere; }
-.log { display: grid; gap: 10px; }
-.log div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; font-size: 0.9375rem; color: var(--ink-2); }
-.log time { font-family: var(--f-mono); font-size: 0.8125rem; color: var(--ink-3); padding-top: 2px; }
-@media (max-width: 520px) { .log div { grid-template-columns: 1fr; gap: 2px; } body { font-size: 1rem; } }
+@media (max-width: 520px) { body { font-size: 1rem; } }
+
+/* sticky section menu */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 16; background: var(--bg); }
+.secnav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 15; margin-block: -36px -24px; background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); }
+.secnav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.secnav li { flex: none; }
+.secnav a { display: block; font: 600 0.8125rem/1 var(--f-display); color: var(--ink-3); text-decoration: none; padding: 14px 10px 12px; border-bottom: 2px solid transparent; }
+.secnav a:hover { color: var(--ink); }
+.secnav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.secnav .grp { display: block; font: 600 0.625rem/1 var(--f-display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding: 14px 4px 12px 14px; opacity: .75; }
+.secnav li:first-child .grp { padding-left: 0; }
+
+/* part labels */
+.part { display: flex; align-items: center; gap: 14px; margin-bottom: -40px; }
+.part::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+/* "how to read this" */
+details.howto { max-width: 80ch; font: 400 0.875rem/1.55 var(--f-display); color: var(--ink-2); }
+details.howto summary { cursor: pointer; color: var(--ink-3); font-weight: 600; list-style: none; display: inline-flex; gap: 6px; align-items: center; }
+details.howto summary::-webkit-details-marker { display: none; }
+details.howto summary::before { content: "＋"; font-weight: 400; }
+details.howto[open] summary::before { content: "−"; }
+details.howto[open] summary { margin-bottom: 8px; }
+details.howto p + p { margin-top: 8px; }
+
+/* in-page keys (replacing the legends baked into the images) */
+.keyrow { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; font: 400 0.8125rem/1.2 var(--f-display); color: var(--ink-2); }
+.keyrow > span { display: inline-flex; align-items: center; gap: 6px; }
+.keyrow .kgrp { gap: 10px; }
+.sq { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+
+/* footer */
+footer { border-top: 1px solid var(--rule); margin-top: 24px; padding-block: 32px 48px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); max-width: 1180px; margin-inline: auto; }
+footer p { font: 400 0.8125rem/1.6 var(--f-display); color: var(--ink-3); max-width: 110ch; }
+footer .fhead { font: 800 1rem/1.2 var(--f-display); color: var(--ink); }
 @media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s, color .15s; } }
 
 /* base reset (previously supplied by the artifact host) */
@@ -154,29 +210,50 @@ img { max-width: 100%; }
 <body>
 
 <main>
-  <header class="stack col">
+  <header class="stack">
     <span class="eyebrow">High-speed rail · population near stations</span>
     <h1>Where would High Speed Rail work in North America?</h1>
-    <p class="lede">Metro populations and distances between many city pairs in North America are comparable to those in Europe, where High Speed Rail is successful. But North American cities are less dense, so fewer of their residents live close to where the train actually stops. This page measures that with one global population grid, using fixed circles around every station on 26 corridors.</p>
-    <p class="meta">Updated <span id="updated"></span> · Kontur Population 2023 (~400 m H3 grid) · cross-checked against Meta HRSL (30 m)</p>
+    <p class="lede col">Metro populations and distances between many city pairs in North America are comparable to those in Europe, where High Speed Rail is successful. But North American cities are less dense, so fewer of their residents live close to where the train actually stops. This page measures that with one global population grid, using fixed circles around every station on 26 corridors.</p>
+    <div class="stack" style="gap:10px;margin-top:12px">
+      <span class="flabel">People per km of route near stations, compared with the Madrid–Barcelona and Paris–Marseille average</span>
+      <div class="facts" id="facts"></div>
+    </div>
   </header>
 
+  <nav class="secnav" aria-label="Sections">
+    <ul>
+      <li><span class="grp">Explore</span></li>
+      <li><a href="#h-cmp">Compare</a></li>
+      <li><a href="#h-maps">All corridors</a></li>
+      <li><a href="#h-px">Height</a></li>
+      <li><span class="grp">The numbers</span></li>
+      <li><a href="#h-find">Radius</a></li>
+      <li><a href="#h-corr">Table</a></li>
+      <li><a href="#h-cent">Metro share</a></li>
+      <li><span class="grp">Reference</span></li>
+      <li><a href="#h-fp">Footprints</a></li>
+      <li><a href="#h-st">Stations</a></li>
+      <li><a href="#h-m">Method</a></li>
+    </ul>
+  </nav>
+
+  <div class="part"><span class="eyebrow">Explore</span></div>
+
   <section class="stack" aria-labelledby="h-cmp">
-    <h2 id="h-cmp" class="col">Compare two corridors</h2>
-    <p class="col">Pick two lines. The maps on either side use the same scale as each other, and the middle panel straightens both routes into one vertical line of distance. Each bar is a station's catchment: its length is the people counted there, and its thickness is the stretch of line the catchment covers (up to the radius each way, but only halfway to the next station). Where stations crowd together, their bars get thinner and touch. Flip either map to run it from the other end, and slide the shorter route up or down (drag its map or bars, or use the slider) to line up the cities you want to compare.</p>
-    <div class="controls">
-      <label for="cmpL">Left <select id="cmpL"></select></label>
-      <button type="button" class="swap" id="cmpSwap" aria-label="Swap left and right">⇄</button>
-      <label for="cmpR">Right <select id="cmpR"></select></label>
-      <label for="cmpRad">Catchment radius <input type="range" id="cmpRad" min="5" max="50" value="10" step="1" aria-describedby="cmpRadVal"> <span class="mono" id="cmpRadVal">10 km</span></label>
-      <div class="seg" role="group" aria-label="Year" id="cmpYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div>
+    <h2 id="h-cmp">Compare two corridors</h2>
+    <p class="intro col">Set any two lines side by side at the same scale. The middle chart straightens both routes into one line of distance and shows how many people live near each stop.</p>
+    <div class="toolbar">
+      <div class="field"><label class="flabel" for="cmpL">Left</label><div class="frow"><select id="cmpL"></select></div></div>
+      <div class="field"><span class="flabel">&nbsp;</span><div class="frow"><button type="button" class="btn" id="cmpSwap" aria-label="Swap left and right">⇄</button></div></div>
+      <div class="field"><label class="flabel" for="cmpR">Right</label><div class="frow"><select id="cmpR"></select></div></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="field"><label class="flabel" for="cmpRad">Catchment radius</label><div class="frow"><input type="range" id="cmpRad" min="5" max="50" value="10" step="1" list="radTicks" aria-describedby="cmpRadVal"><span class="val" id="cmpRadVal">10 km</span></div></div>
+      <div class="field"><span class="flabel">Year</span><div class="frow"><div class="seg" role="group" aria-label="Year" id="cmpYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div></div></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="field"><label class="flabel" for="cmpSlide" id="cmpSlideLabel">Slide shorter route</label><div class="frow"><input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"><span class="val" id="cmpSlideVal">0 km</span><button type="button" class="btn" id="cmpAlign">Align biggest stations</button></div></div>
+      <div class="field"><span class="flabel">Compare with</span><div class="frow"><label class="chk" for="cmpMsa"><input type="checkbox" id="cmpMsa"> Official metro population</label></div></div>
     </div>
-    <div class="controls">
-      <label for="cmpSlide"><span id="cmpSlideLabel">Slide shorter route</span> <input type="range" id="cmpSlide" min="0" max="0" value="0" step="1"> <span class="mono" id="cmpSlideVal">0 km</span></label>
-      <button type="button" class="swap" id="cmpAlign">Align biggest stations</button>
-      <label for="cmpMsa"><input type="checkbox" id="cmpMsa"> Official metro population (US, Canada, Australia)</label>
-    </div>
-    <div class="cmpscroll"><div class="cmp" id="cmp">
+    <div class="card cmpscroll"><div class="cmp" id="cmp">
       <div class="cmphead" id="cmpHL"></div>
       <div class="cmphead cmpmidhead" id="cmpHM"></div>
       <div class="cmphead" id="cmpHR"></div>
@@ -184,105 +261,141 @@ img { max-width: 100%; }
       <div class="cmpcol"><svg id="cmpMid" role="img" aria-label="Station populations along the straightened routes"></svg></div>
       <div class="cmpcol" id="cmpColR"><svg id="cmpMapR" role="img"></svg></div>
     </div></div>
-    <p class="meta col" id="cmpNote">Maps: coloured circle area is proportional to the people counted at each station (the same circle scale as the corridor maps in the next section). Dashed outlines are the real catchments, split halfway between stations, and only people inside them are counted. The grey is background only: population density within 50 km of the line. Bars use one population scale for both sides. Hover a bar or a station to see it on both.</p>
-    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: the station's share of its official metro area's population, the figure usually quoted for a city. US: census metro areas (Vintage 2024 county estimates, metro areas as defined in July 2023), with county outlines on the maps and each station's metro area tinted. Canada: Statistics Canada census metropolitan areas and agglomerations, 2025. Australia: ABS Greater Sydney and Greater Melbourne, and Significant Urban Areas for the other stops, 2025. Where several stations on a line share one area, its population is split evenly between them. The solid bars show how many of those people actually live near the station.</p>
+    <p class="meta col" id="cmpMsaNote" hidden>Outlined bars: each station's share of its official metro area, the figure usually quoted for a city (US census metro areas, Statistics Canada metro areas, ABS Greater Sydney / Melbourne and urban areas). Stations sharing an area split it evenly. US maps show county outlines, with each station's metro area tinted.</p>
+    <details class="howto">
+      <summary>How to read this</summary>
+      <p>Each bar is a station's catchment. Its length is the number of people counted there, and its thickness is the stretch of line the catchment covers: up to the radius each way, but only halfway to the next station, so crowded stations get thin bars that touch. Both sides use one population scale.</p>
+      <p>Flip either map to run it from the other end. Slide the shorter route up or down (drag its map or bars, use the slider, or align the two biggest stations) to line up the cities you want to compare. Hover a bar or a station to see it on both.</p>
+      <p>On the maps, coloured circle area is proportional to the people counted (the same scale as the corridor maps below), and dashed outlines are the real catchments. The grey background is population density within 50 km of the line, shown for geography only.</p>
+    </details>
   </section>
 
   <section class="stack" aria-labelledby="h-maps">
-    <h2 id="h-maps" class="col">Every corridor at the same scale</h2>
-    <p class="col">Each panel is rotated so its route runs top to bottom (arrow points north). Coloured circle area is proportional to the population inside the radius. Dashed rings show the real radius at map scale, and the grey inside them shows how densely populated that land is. Where two stations’ rings overlap, a dashed line splits them halfway between the stations, matching how the counts work: each person is counted once, toward the nearest station. When a coloured circle is bigger than its dashed ring, the area inside the radius is denser than the circle scale; when it's smaller, the area is sparser.</p>
-    <div class="controls">
-      <div class="seg" role="group" aria-label="Map radius" id="mapseg">
+    <h2 id="h-maps">Every corridor at the same scale</h2>
+    <p class="intro col">Each corridor's stations and the people around them, all drawn at one scale and turned so the line runs top to bottom.</p>
+    <div class="toolbar">
+      <div class="field"><span class="flabel">Radius</span><div class="frow"><div class="seg" role="group" aria-label="Map radius" id="mapseg">
         <button type="button" data-map="nested" aria-pressed="true">5 / 10 / 20 km</button>
         <button type="button" data-map="5km" aria-pressed="false">5 km</button>
         <button type="button" data-map="10km" aria-pressed="false">10 km</button>
         <button type="button" data-map="20km" aria-pressed="false">20 km</button>
         <button type="button" data-map="50km" aria-pressed="false">50 km</button>
-      </div>
-      <div class="seg" role="group" aria-label="Map zoom" id="zoomseg">
+      </div></div></div>
+      <div class="field"><span class="flabel">Zoom</span><div class="frow"><div class="seg" role="group" aria-label="Map zoom" id="zoomseg">
         <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
         <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
-      </div>
+      </div></div></div>
     </div>
     <figure>
       <div class="plate" id="plate"><img id="mapimg" src="maps/map_nested.webp" alt="Same-scale maps of 26 high-speed rail corridors with population circles at each station"></div>
-      <figcaption id="mapcap">Circle scale differs between radius views (stated on each map) so that the 5 km circles stay readable. Within one map, every circle uses the same scale.</figcaption>
+      <div class="keyrow" aria-label="Key">
+        <span class="kgrp"><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--au)"></i>Australia</span><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></span>
+        <span class="kgrp"><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6"/></svg>existing</span><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3"/></svg>under construction</span><span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/></svg>planned</span></span>
+        <span><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-dasharray="2.5 2"/></svg>real radius</span>
+        <span class="kgrp">people per km² inside it: <span><i class="sq" style="background:#d3d2cc"></i>300+</span><span><i class="sq" style="background:#adaca6"></i>1,500+</span><span><i class="sq" style="background:#7f7e79"></i>5,000+</span><span><i class="sq" style="background:#4d4c49"></i>15,000+</span></span>
+      </div>
     </figure>
+    <details class="howto">
+      <summary>How to read this</summary>
+      <p>Coloured circle area is proportional to the people within the radius of each station. Dashed rings show the real radius at map scale, and the grey inside them shows how densely that land is populated. A coloured circle bigger than its dashed ring means the area inside the radius is denser than the circle scale; smaller means sparser.</p>
+      <p>Where two stations' rings overlap, a dashed line splits them halfway between the stations, matching how the counts work: each person is counted once, toward the nearest station. The arrow on each panel points north. Circle scale differs between radius views (each image has its own key) so the 5 km circles stay readable.</p>
+    </details>
   </section>
 
   <section class="stack" aria-labelledby="h-px">
-    <h2 id="h-px" class="col">Population as height</h2>
-    <p class="col">The catchments from the maps above, without circles-on-circles. Each corridor is turned so it runs left to right and tilted into an oblique view, all at the same scale. Every station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. The grey ground is background only: population density within 50 km of the whole line, shown for geography. Only the people inside the blocks are counted.</p>
-    <div class="controls">
-      <label for="pxRad">Catchment radius <input type="range" id="pxRad" min="5" max="50" value="10" step="1" aria-describedby="pxRadVal"> <span class="mono" id="pxRadVal">10 km</span></label>
-      <div class="seg" role="group" aria-label="Year" id="pxYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div>
-      <label for="pxtilt">View angle <input type="range" id="pxtilt" min="20" max="75" value="58" step="1"></label>
-      <div class="pxkey" id="pxkey" aria-hidden="true"></div>
+    <h2 id="h-px">Population as height</h2>
+    <p class="intro col">The same catchments raised into blocks: the taller the block, the more people live near that stop. Every corridor runs left to right at one scale.</p>
+    <div class="toolbar">
+      <div class="field"><label class="flabel" for="pxRad">Catchment radius</label><div class="frow"><input type="range" id="pxRad" min="5" max="50" value="10" step="1" list="radTicks" aria-describedby="pxRadVal"><span class="val" id="pxRadVal">10 km</span></div></div>
+      <div class="field"><span class="flabel">Year</span><div class="frow"><div class="seg" role="group" aria-label="Year" id="pxYear"><button type="button" data-y="now" aria-pressed="true">Today</button><button type="button" data-y="2050" aria-pressed="false">2050 projected</button></div></div></div>
+      <div class="field"><label class="flabel" for="pxtilt">View angle</label><div class="frow"><input type="range" id="pxtilt" min="20" max="75" value="58" step="1"></div></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="field"><span class="flabel">Key</span><div class="frow"><div class="pxkey" id="pxkey" aria-hidden="true"></div></div></div>
     </div>
-    <div class="pxscroll"><div class="pxstack" id="pxstack"></div></div>
-    <p class="meta col">Block height uses one scale for every corridor at the chosen radius (see the key); the scale adjusts as you change the radius, so the tallest block always fits. Hover a block for its numbers.</p>
+    <div class="card pxscroll"><div class="pxstack" id="pxstack"></div></div>
+    <details class="howto">
+      <summary>How to read this</summary>
+      <p>Each station's catchment is raised into a block whose height is the number of people living in it. Where catchments overlap they're split halfway between stations, so the blocks fit together and nobody is counted twice. Block height uses one scale for every corridor at the chosen radius; switching to 2050 keeps that scale, so growth shows as taller blocks.</p>
+      <p>The grey ground is population density within 50 km of the whole line, shown for geography only. Hover a block for its numbers.</p>
+    </details>
   </section>
 
+  <div class="part"><span class="eyebrow">The numbers</span></div>
+
   <section class="stack" aria-labelledby="h-find">
-    <h2 id="h-find" class="col">The comparison flips as the circle shrinks</h2>
-    <p class="col">Residents per kilometre of route, counted within a radius of any station, relative to the average of Madrid–Barcelona and Paris–Marseille. Above 1.0 means the corridor has more people near its stations per km of track than those two European lines; below 1.0 means fewer.</p>
-    <div class="facts" id="facts"></div>
+    <h2 id="h-find">The comparison flips as the circle shrinks</h2>
+    <p class="intro col">People per km of route within each radius of a station, relative to the Madrid–Barcelona and Paris–Marseille average. Above 1× means more people near the stations than those two European lines; below 1× means fewer.</p>
     <figure>
       <div class="chart"><svg id="flip" viewBox="0 0 900 420" role="img" aria-labelledby="flip-t"><title id="flip-t">Residents per route-km relative to Spain and France, at 5, 10, 20 and 50 km radii</title></svg></div>
-      <figcaption>Dark lines: North American and Australian corridors. Light lines: Europe and Asia for reference. Hover a line for values. Each resident is counted once, at the nearest station.</figcaption>
+      <figcaption>Dark lines: North American and Australian corridors. Light lines: Europe and Asia for reference. Hover a line for values.</figcaption>
     </figure>
   </section>
 
   <section class="stack" aria-labelledby="h-corr">
-    <h2 id="h-corr" class="col">Corridor catchments</h2>
-    <div class="controls">
-      <div class="seg" role="group" aria-label="Radius" id="radseg">
+    <h2 id="h-corr">Corridor catchments</h2>
+    <p class="intro col">Every corridor ranked by people near its stations per km of route.</p>
+    <div class="toolbar">
+      <div class="field"><span class="flabel">Radius</span><div class="frow"><div class="seg" role="group" aria-label="Radius" id="radseg">
         <button type="button" data-r="5" aria-pressed="false">5 km</button>
         <button type="button" data-r="10" aria-pressed="true">10 km</button>
         <button type="button" data-r="20" aria-pressed="false">20 km</button>
         <button type="button" data-r="50" aria-pressed="false">50 km</button>
-      </div>
-      <div class="legend"><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--au)"></i>Australia</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></div>
+      </div></div></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="field"><span class="flabel">Region</span><div class="frow legend"><span><i class="sw" style="background:var(--na)"></i>North America</span><span><i class="sw" style="background:var(--au)"></i>Australia</span><span><i class="sw" style="background:var(--eu)"></i>Europe</span><span><i class="sw" style="background:var(--as)"></i>Asia</span></div></div>
     </div>
     <div class="tablewrap"><table id="ctable"><thead></thead><tbody></tbody></table></div>
-    <p class="meta col">Bars show residents per route-km at the selected radius. Route length is the sum of straight-line distances between consecutive stops. Click a column header to sort.</p>
+    <p class="meta col">Route length is the sum of straight-line distances between consecutive stops. Click a column header to sort.</p>
   </section>
 
   <section class="stack" aria-labelledby="h-cent">
-    <h2 id="h-cent" class="col">How much of the metro is near the station?</h2>
-    <p class="col">For each large metro (at least 2.5 M people within 50 km), the share of that 50 km population living within 5 km and within 10 km of its main station. European cities cluster around 40% at 10 km. Most US cities sit between 8% and 22%.</p>
+    <h2 id="h-cent">How much of the metro is near the station?</h2>
+    <p class="intro col">For each large metro, the share of the people within 50 km who live within 5 km and 10 km of its main station. European cities cluster around 40% at 10 km; most US cities sit between 8% and 22%.</p>
     <figure>
       <div class="chart"><svg id="cent" role="img" aria-labelledby="cent-t"><title id="cent-t">Share of 50 km population within 5 and 10 km of the main station</title></svg></div>
-      <figcaption>Open circle: within 5 km. Filled circle: within 10 km. Hover for counts. Smaller, isolated cities score higher on this measure by construction, so they're left out.</figcaption>
+      <figcaption>Open circle: within 5 km. Filled circle: within 10 km. Metros with at least 2.5 M people within 50 km; smaller, isolated cities score higher on this measure by construction, so they're left out. Hover for counts.</figcaption>
     </figure>
   </section>
 
+  <div class="part"><span class="eyebrow">Reference</span></div>
+
   <section class="stack" aria-labelledby="h-fp">
-    <h2 id="h-fp" class="col">Station footprints</h2>
-    <p class="col">The same 20 km circles drawn large, so you can see what's actually around each main-city station. Where another station sits within 40 km, a straight dashed line and a pale wash mark the part that the corridor maps count toward that neighbour; the numbers under each disc include everything inside it. Every disc uses the same scale, with north up. Grey shows people per km², and dashed rings mark 5, 10 and 20 km. Paris, Tokyo, Seoul and Taipei are dark nearly to the 10 km ring. Los Angeles, Houston and Dallas are an even mid-grey sprawl, with no dense core around the station.</p>
-    <div class="controls">
-      <div class="seg" role="group" aria-label="Footprint zoom" id="fpzoom">
+    <h2 id="h-fp">Station footprints</h2>
+    <p class="intro col">The real 20 km around each main-city station, drawn large and at one scale. Paris, Tokyo, Seoul and Taipei are dark nearly to the 10 km ring; Los Angeles, Houston and Dallas are an even mid-grey sprawl with no dense core.</p>
+    <div class="toolbar">
+      <div class="field"><span class="flabel">Zoom</span><div class="frow"><div class="seg" role="group" aria-label="Footprint zoom" id="fpzoom">
         <button type="button" data-zoom="fit" aria-pressed="true">Fit width</button>
         <button type="button" data-zoom="actual" aria-pressed="false">Full size</button>
-      </div>
+      </div></div></div>
     </div>
     <figure>
-      <div class="plate" id="fpplate"><img src="atlas/atlas_cities.webp" alt="Twenty-kilometre discs around 36 main-city stations, shaded by population density, sorted by population within 10 km"></div>
-      <figcaption>Sorted by residents within 10 km. The bar under each disc shows the share of its 20 km population living within 5 km. Pick a corridor in the station explorer below to see every stop on that line.</figcaption>
+      <div class="plate" id="fpplate"><img src="atlas/atlas_cities.webp" alt="Twenty-kilometre discs around main-city stations, shaded by population density, sorted by population within 10 km"></div>
+      <div class="keyrow" aria-label="Key">
+        <span class="kgrp">people per km²: <span><i class="sq" style="background:#d3d2cc"></i>300+</span><span><i class="sq" style="background:#adaca6"></i>1,500+</span><span><i class="sq" style="background:#7f7e79"></i>5,000+</span><span><i class="sq" style="background:#4d4c49"></i>15,000+</span></span>
+        <span><i class="sq" style="background:#dde8ee"></i>water</span>
+        <span><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-dasharray="2.5 2"/></svg>5, 10 and 20 km</span>
+        <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="currentColor" stroke-width="2"/></svg>direction of the line</span>
+      </div>
+      <figcaption>Sorted by residents within 10 km. The bar under each disc shows the share of its 20 km population living within 5 km.</figcaption>
     </figure>
+    <details class="howto">
+      <summary>How to read this</summary>
+      <p>Every disc uses the same scale, with north up. The numbers under each disc count everyone inside it. Where another station sits within 40 km, a straight dashed line and a pale wash mark the part that the corridor maps count toward that neighbour instead.</p>
+    </details>
   </section>
 
   <section class="stack" aria-labelledby="h-st">
-    <h2 id="h-st" class="col">Station explorer</h2>
-    <div class="controls"><label for="csel">Corridor <select id="csel"></select></label></div>
+    <h2 id="h-st">Station explorer</h2>
+    <p class="intro col">Every stop on one line: its 20 km footprint and its numbers.</p>
+    <div class="toolbar">
+      <div class="field"><label class="flabel" for="csel">Corridor</label><div class="frow"><select id="csel"></select></div></div>
+    </div>
     <figure>
       <div class="plate" id="stplate"><img id="stimg" src="atlas/es.webp" alt=""></div>
     </figure>
     <div class="tablewrap"><table id="stable"><thead></thead><tbody></tbody></table></div>
-    <p class="meta col">“Counted” columns credit overlapping circles to the nearest station, and corridor totals use these. HRSL is the 30 m Meta layer, listed as a check on Kontur (it has no data for Canada, Australia or China). km to next is the straight-line distance.</p>
+    <p class="meta col">“Counted” columns credit overlapping circles to the nearest station, and corridor totals use these. HRSL is Meta's 30 m layer, listed as a check on Kontur (it has no data for Canada, Australia or China). km to next is the straight-line distance.</p>
   </section>
-
-  <hr>
 
   <section class="method" aria-labelledby="h-m">
     <div>
@@ -296,10 +409,10 @@ img { max-width: 100%; }
       <ul>
         <li><b>Kontur Population 2023-11-01</b>: a global H3 res-8 grid (~0.74 km² cells) fusing GHSL, Meta HRSL, Microsoft buildings and Copernicus land cover. It's the only uniform layer here that also covers Canada.</li>
         <li><b>Meta / CIESIN HRSL</b>: 30 m, used as a cross-check. It agrees with Kontur within a few percent wherever both exist.</li>
-        <li>Natural Earth 10 m outlines for the map backgrounds.</li>
+        <li><b>Official metro populations</b>: US Census Bureau metro areas and county estimates, Statistics Canada metro areas, and Australian Bureau of Statistics capital-city and urban areas.</li>
         <li><b>2050 projections</b>: WorldPop's 1 km population projections under the middle-of-the-road scenario (SSP2). They're too coarse to count a 5 km circle directly, so each catchment's projected growth from 2025 to 2050 is applied to today's Kontur count.</li>
+        <li>Natural Earth 10 m outlines for the map backgrounds.</li>
       </ul>
-      <p class="meta">Credits: population data © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0), <a href="https://www.worldpop.org/">WorldPop</a> SSP projections (CC BY 4.0), US county projections from <a href="https://doi.org/10.17605/OSF.IO/9YNFC">Hauer et al.</a> (CC BY 3.0) and Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>). Outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain). US metro areas, county populations and county outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0). Code and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a>.</p>
     </div>
     <div>
       <h3>Caveats</h3>
@@ -314,12 +427,14 @@ img { max-width: 100%; }
       </ul>
     </div>
   </section>
-
-  <section class="stack col" aria-labelledby="h-log">
-    <h2 id="h-log">Change log</h2>
-    <div class="log" id="log"></div>
-  </section>
 </main>
+
+<footer>
+  <span class="fhead">Where would High Speed Rail work in North America?</span>
+  <p>Data: population © <a href="https://www.kontur.io/datasets/population-dataset/">Kontur</a> (CC BY 4.0); Meta / CIESIN High Resolution Settlement Layer (CC BY 4.0, via <a href="https://registry.opendata.aws/dataforgood-fb-hrsl/">AWS Open Data</a>); <a href="https://www.worldpop.org/">WorldPop</a> SSP projections (CC BY 4.0); US county projections from <a href="https://doi.org/10.17605/OSF.IO/9YNFC">Hauer et al.</a> (CC BY 3.0); US metro areas, county populations and outlines from the <a href="https://www.census.gov/">US Census Bureau</a>; Canadian metro populations from <a href="https://www150.statcan.gc.ca/">Statistics Canada</a> (Open Government Licence – Canada); Australian from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> (CC BY 4.0); outlines from <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).</p>
+  <p>Code, data pipeline and method: <a href="https://github.com/mappingmashups/hsr-density-maps">github.com/mappingmashups/hsr-density-maps</a> (MIT licence) · by <a href="https://github.com/mappingmashups">mappingmashups</a> · updated <span class="updated"></span></p>
+</footer>
+<datalist id="radTicks"><option value="5"></option><option value="10"></option><option value="20"></option><option value="50"></option></datalist>
 <div id="tip" hidden></div>
 
 <script>
@@ -337,8 +452,7 @@ function showTip(html, ev) { tip.innerHTML = html; tip.hidden = false; moveTip(e
 function moveTip(ev) { const x = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = x + "px"; tip.style.top = (ev.clientY + 14) + "px"; }
 function hideTip() { tip.hidden = true; }
 
-$("#updated").textContent = DATA.updated;
-$("#log").innerHTML = DATA.log.map(([d, t]) => `<div><time>${d}</time><span>${t}</span></div>`).join("");
+document.querySelectorAll(".updated").forEach(e => e.textContent = DATA.updated);
 
 /* ---------- flip chart: per-km relative to ES+FR average ---------- */
 const C = Object.fromEntries(DATA.corridors.map(c => [c.id, c]));
@@ -429,7 +543,7 @@ corrTable();
     el("line", { x1: xs(c.s5), x2: xs(c.s10), y1: y, y2: y, stroke: col, "stroke-width": 3, "stroke-opacity": .45, "stroke-linecap": "round" }, g);
     el("circle", { cx: xs(c.s5), cy: y, r: 4.5, fill: "var(--surface)", stroke: col, "stroke-width": 2 }, g);
     el("circle", { cx: xs(c.s10), cy: y, r: 5.5, fill: col, stroke: "var(--surface)", "stroke-width": 2 }, g);
-    el("text", { x: xs(c.s10) + 10, y: y + 4, "font-size": 11.5, fill: "var(--ink-3)", "font-family": "var(--f-mono)" }, g).textContent = Math.round(c.s10 * 100) + "%";
+    el("text", { x: xs(c.s10) + 10, y: y + 4, "font-size": 11.5, fill: "var(--ink-3)", "font-variant-numeric": "tabular-nums" }, g).textContent = Math.round(c.s10 * 100) + "%";
     const html = `<b>${c.name}</b> · ${c.corridor}<br>≤5 km: ${fmtM(c.p5)} (${Math.round(c.s5 * 100)}%)<br>≤10 km: ${fmtM(c.p10)} (${Math.round(c.s10 * 100)}%)<br>≤50 km: ${fmtM(c.p50)}`;
     g.addEventListener("pointerenter", e => showTip(html, e)); g.addEventListener("pointermove", moveTip); g.addEventListener("pointerleave", hideTip);
   });
@@ -589,7 +703,7 @@ function radiusSlider(id, init, onChange) {
         tx.textContent = l.s.name;
         if (major) {
           const v = el("text", { x: l.x, y: l.y - f * 0.7, "font-size": fsS, "text-anchor": "middle", fill: "var(--ink-2)",
-            stroke: "var(--bg)", "stroke-width": fsS * 0.28, "paint-order": "stroke", "pointer-events": "none", "font-family": "var(--f-mono)" }, svg);
+            stroke: "var(--bg)", "stroke-width": fsS * 0.28, "paint-order": "stroke", "pointer-events": "none", "font-variant-numeric": "tabular-nums" }, svg);
           v.textContent = fmtP(l.k.pop);
         }
       });
@@ -738,7 +852,7 @@ function radiusSlider(id, init, onChange) {
     const head = (c, side) => `<b>${c.name}</b><span>${c.country} · ${c.status === "building" ? "under construction" : c.status} · ${c.route_km.toLocaleString()} km</span>` +
       `<span>${fmtP(tot(c))} within ${S.radius} km${fut() ? " in 2050" : ""} · ${(tot(c) / c.route_km / 1000).toFixed(1)}k per route-km</span>` +
       (S.msa && c.stations.some(s => s.msa) ? `<span>${fmtP(c.stations.reduce((a, s) => a + share(s), 0))} by official metro areas</span>` : "") +
-      `<span class="fliprow"><button type="button" class="swap flip" data-side="${side}" aria-pressed="${S[side].flip}">↕ Flip map</button></span>`;
+      `<span class="fliprow"><button type="button" class="btn flip" data-side="${side}" aria-pressed="${S[side].flip}">↕ Flip map</button></span>`;
     $("#cmpHL").innerHTML = head(cL, "L"); $("#cmpHR").innerHTML = head(cR, "R");
     $("#cmpHM").innerHTML = `<b>Distance along the line ↓</b><span>← people near each station → · bar thickness = stretch of line covered</span>`;
 
@@ -782,7 +896,7 @@ function radiusSlider(id, init, onChange) {
           const t = el("text", { x: sg < 0 ? mid - gap - reach - 5 : mid + gap + reach + 5, y: y + 3.5, "text-anchor": sg < 0 ? "end" : "start",
             "font-size": 10.5, fill: "var(--ink)" }, g);
           t.textContent = st.name + " ";
-          const v = el("tspan", { fill: "var(--ink-3)", "font-family": "var(--f-mono)", "font-size": 9.5 }, t); v.textContent = fmtP(pop(st));
+          const v = el("tspan", { fill: "var(--ink-3)", "font-variant-numeric": "tabular-nums", "font-size": 9.5 }, t); v.textContent = fmtP(pop(st));
         }
         hook(g, `${side}${i}`, tipHtml(c, st, d));
       });
@@ -792,7 +906,7 @@ function radiusSlider(id, init, onChange) {
     for (let d = 0; d <= Lmax + 0.1; d += kmStep) {
       el("line", { x1: mid - 5, x2: mid + 5, y1: T + d * k, y2: T + d * k, stroke: "var(--ink-3)", "pointer-events": "none" }, svg);
       el("text", { x: mid, y: T + d * k + 3.5, "text-anchor": "middle", "font-size": 10, fill: "var(--ink-2)", "pointer-events": "none",
-        stroke: "var(--surface)", "stroke-width": 4, "paint-order": "stroke", "font-family": "var(--f-mono)" }, svg).textContent = `${d}`;
+        stroke: "var(--surface)", "stroke-width": 4, "paint-order": "stroke", "font-variant-numeric": "tabular-nums" }, svg).textContent = `${d}`;
     }
     if (shorter) barsG[shorter].style.cursor = "ns-resize";
   }
@@ -828,6 +942,24 @@ function radiusSlider(id, init, onChange) {
   $("#cmpMsa").addEventListener("change", e => { S.msa = e.target.checked; render(); });
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
   render();
+})();
+
+/* ---------- section menu: highlight the section in view ---------- */
+(function secnav() {
+  const links = [...document.querySelectorAll(".secnav a")];
+  const targets = links.map(a => document.querySelector(a.getAttribute("href"))?.closest("section")).filter(Boolean);
+  const byId = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const h = e.target.querySelector("h2"); if (!h) return;
+      links.forEach(a => a.removeAttribute("aria-current"));
+      const a = byId.get(h.id); if (!a) return;
+      a.setAttribute("aria-current", "true");
+      a.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+  }, { rootMargin: "-80px 0px -70% 0px" });
+  targets.forEach(s => io.observe(s));
 })();
 </script>
 </body>

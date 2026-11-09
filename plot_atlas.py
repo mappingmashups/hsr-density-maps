@@ -19,7 +19,7 @@ from matplotlib.patches import Polygon as MplPolygon
 from pyproj import Transformer
 from stations import CORRIDORS, MAIN_CITY_STATIONS as CITY
 from popcalc import hav_km
-from plot_maps import FOOTPRINT, REGION_COL, INK, INK2, INK3, short
+from plot_maps import FOOTPRINT, REGION_COL, INK, INK2, INK3, short, WITH_TEXT, PAGE_BG
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
@@ -127,23 +127,23 @@ def page(items, title, subtitle, path, per_row=PER_ROW):
     cols = min(n, per_row)
     cw = CELL / KM               # cell width in km of page space
     ch = cw * 1.22
-    head = 52
+    head = 52 if WITH_TEXT else 6
     W, H = cols * cw + 20, rows * ch + head + 30
     fig = plt.figure(figsize=(W * KM, H * KM))
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(-H, 0); ax.set_aspect("equal"); ax.axis("off")
-    ax.text(8, -6, title, fontsize=12, weight="bold", color=INK, va="top")
-    ax.text(8, -22, subtitle, fontsize=6.6, color=INK2, va="top", linespacing=1.5)
-    # legend
-    lx = 8
-    for lab, col in zip([f"{b:,}–{BINS[i+1]:,}" if i + 1 < len(BINS) else f"{b:,}+" for i, b in enumerate(BINS)], GREYS):
-        ax.add_patch(plt.Rectangle((lx, -41), 5, 5, fc=col, ec="none"))
-        ax.text(lx + 7, -38.5, lab, fontsize=5.6, color=INK2, va="center"); lx += 40
-    ax.text(lx, -38.5, "people per km²", fontsize=5.6, color=INK2, va="center"); lx += 48
-    ax.add_patch(plt.Rectangle((lx, -41), 5, 5, fc=WATER, ec="none")); ax.text(lx + 7, -38.5, "water", fontsize=5.6, color=INK2, va="center")
+    if WITH_TEXT:   # the web page shows its own heading, explanation and density key
+        ax.text(8, -6, title, fontsize=12, weight="bold", color=INK, va="top")
+        ax.text(8, -22, subtitle, fontsize=6.6, color=INK2, va="top", linespacing=1.5)
+        lx = 8
+        for lab, col in zip([f"{b:,}–{BINS[i+1]:,}" if i + 1 < len(BINS) else f"{b:,}+" for i, b in enumerate(BINS)], GREYS):
+            ax.add_patch(plt.Rectangle((lx, -41), 5, 5, fc=col, ec="none"))
+            ax.text(lx + 7, -38.5, lab, fontsize=5.6, color=INK2, va="center"); lx += 40
+        ax.text(lx, -38.5, "people per km²", fontsize=5.6, color=INK2, va="center"); lx += 48
+        ax.add_patch(plt.Rectangle((lx, -41), 5, 5, fc=WATER, ec="none")); ax.text(lx + 7, -38.5, "water", fontsize=5.6, color=INK2, va="center")
     for i, (cid, idx) in enumerate(items):
         r_, c_ = divmod(i, per_row)
         disc(ax, 10 + c_ * cw + cw / 2, -head - r_ * ch - R - 4, cid, idx)
-    fig.savefig(path, dpi=220, facecolor="white")
+    fig.savefig(path, dpi=220, facecolor=PAGE_BG)
     plt.close(fig)
     print("wrote", path)
 

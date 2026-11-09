@@ -27,6 +27,7 @@ SRC = "kontur"
 # categorical slots 1-3 of the reference palette (validated all-pairs)
 REGION_COL = {"North America": "#eb6834", "Australia": "#b8461d", "Europe": "#2a78d6", "Asia": "#1baf7a"}
 INK, INK2, INK3 = "#0b0b0b", "#52514e", "#8a8984"
+PAGE_BG = "#f6f5f1"   # the web page's background, so images sit on it without a white box
 LAND, LAND_EDGE, COUNTRY_EDGE, LINE = "#eeede9", "#ffffff", "#c9c8c2", "#3a3a38"
 
 # page order follows stations.CORRIDORS: North America, Australia, Europe, Asia
@@ -34,6 +35,10 @@ ORDER = [c["id"] for c in CORRIDORS]
 PAGE_W = 2500  # km of page width before wrapping to the next shelf
 GAP = 70       # km between panels
 MIN_W = 390    # km, narrowest panel
+# The web page shows its own heading, explanation and colour/line/density key, so the images
+# carry only what must stay to scale with them: panels, scale bar and circle-size key.
+# Set to False for stand-alone images with a title, subtitle and full legend.
+WITH_TEXT = False
 ROT_OVERRIDE = {}  # corridor id -> rotation in degrees, if the automatic one looks wrong
 
 # Footprint layer: Kontur hexagons inside the real radius, drawn as opaque greys
@@ -162,18 +167,20 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
     bottom = pack(panels)
     W = PAGE_W + 40
-    H = -bottom + 290  # header room
+    top = 270 if WITH_TEXT else 15
+    H = -bottom + top + 20  # header room
     scale = 0.0072      # inches per km on the page
     fig = plt.figure(figsize=(W * scale, H * scale))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(-20, W - 20)
-    ax.set_ylim(bottom - 20, 270)
+    ax.set_ylim(bottom - 20, top)
     ax.set_aspect("equal")
     ax.axis("off")
     fs = 7.5
 
-    ax.text(0, 245, title, fontsize=17, weight="bold", color=INK, va="top")
-    ax.text(0, 192, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.5)
+    if WITH_TEXT:
+        ax.text(0, 245, title, fontsize=17, weight="bold", color=INK, va="top")
+        ax.text(0, 192, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.5)
 
     rings = sorted(radii, reverse=True)
     alphas = {1: [0.22], 2: [0.1, 0.18], 3: [0.07, 0.12, 0.2]}[len(rings)]
@@ -276,6 +283,8 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.text(cx + rr, ly - 22, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
                 fontsize=6.5, ha="center", va="top", color=INK2)
         cx += 2 * rr + 18
+    if not WITH_TEXT:
+        return save(fig, fname, dpi)
     # real radius + footprint key
     fy = ly + 260
     ax.add_patch(Circle((lx + 12, fy), 10, **RING_STYLE))
@@ -298,8 +307,12 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.add_patch(Circle((lx + i * 125 + 12, ky + 40), 10, fc=col, alpha=0.6, ec="none"))
         ax.text(lx + i * 125 + 30, ky + 40, lab, fontsize=6.5, va="center", color=INK2)
 
+    save(fig, fname, dpi)
+
+
+def save(fig, fname, dpi):
     for ext in ("png", "svg"):
-        fig.savefig(os.path.join(OUT, f"{fname}.{ext}"), dpi=dpi, facecolor="white")
+        fig.savefig(os.path.join(OUT, f"{fname}.{ext}"), dpi=dpi, facecolor=PAGE_BG)
     plt.close(fig)
     print("wrote", fname)
 

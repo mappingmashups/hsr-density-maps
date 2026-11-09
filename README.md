@@ -38,10 +38,10 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Browser-drawn views: oblique "population as height" and the two-corridor comparison. Stores each station's population at every km from 5 to 50 km; the page draws catchments live for the radius slider | `build_prisms.py` | `out/prisms.json`, `out/compare.json`, `out/ground/`, `out/ground_v/` |
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
+| Link-preview image (Slack, social media) | `make_og.py` (needs Playwright + Chromium) | `docs/og.png` |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
-`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`.
-Add a line to `LOG` in `build_page.py` for each update; the page shows it as a change log.
+`python popcalc.py hrsl <id>`, then `extract_hex.py`, `extract_context.py`, `build_msa.py`, `build_projection.py`, `summarize.py`, `plot_maps.py`, `plot_atlas.py`, `build_prisms.py`, `plot_summary.py`, `build_page.py`, `make_og.py`.
 Then commit `docs/` (plus any changed code or `out/` data) and push; Pages redeploys automatically.
 
 ## Data
