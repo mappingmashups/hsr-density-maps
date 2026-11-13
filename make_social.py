@@ -9,7 +9,8 @@ import plot_maps as pm
 from popcalc import hav_km
 
 ORDER = ["cascadia", "de", "es", "it", "fr"]
-RADIUS, DENSITY = 20, 800   # same radius and circle scale as the page's default 20 km map
+RADIUS = 20 * pm.KM_PER_MI   # 20 miles (32.2 km), counted from the cached hexagons
+DENSITY = 1000               # people per km² of circle: keeps Paris (10.6 M) about as big as at 20 km / 800
 
 # Fastest scheduled end-to-end time (minutes) and top line speed (km/h), checked Nov 2026.
 # Average speed = straight-line route length through every mapped stop / fastest time, so it
@@ -47,6 +48,7 @@ def speed_lines():
 
 
 if __name__ == "__main__":
+    pm.add_radius(ORDER, RADIUS)
     pm.PER_ROW = len(ORDER)
     pm.MIN_W, pm.GAP = 250, 45   # narrower panels than the page so the image comes out near-square
     pm.TITLE_H = 120             # two extra stats lines (speeds) above each panel

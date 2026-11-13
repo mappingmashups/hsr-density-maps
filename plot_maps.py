@@ -63,6 +63,19 @@ ADM0 = gpd.read_file(os.path.join(ne, "ne_10m_admin_0_countries.geojson"))[["geo
 LAKES = gpd.read_file(os.path.join(ne, "ne_10m_lakes.geojson"))[["geometry"]]
 
 
+def add_radius(cids, r):
+    """Counted population (nearest-station rule, as popcalc.py) at any radius up to 50 km,
+    from the cached hexagons; stored in POP as dedup_<r> so draw() can use it like the
+    precomputed 5 / 10 / 20 / 50 km values. Matches popcalc.py exactly at those radii."""
+    for cid in cids:
+        sts = CORR[cid]["stations"]
+        h = gpd.read_parquet(os.path.join(OUT, "hex", f"{cid}.parquet"))
+        d = np.array([hav_km(s[1], s[2], h["lon"].values, h["lat"].values) for s in sts])
+        near, dmin = d.argmin(0), d.min(0)
+        for i, s in enumerate(sts):
+            POP[(cid, s[0])][f"dedup_{r}"] = float(h["population"].values[(near == i) & (dmin <= r)].sum())
+
+
 def r_km(pop, density):
     """Circle radius (map km) whose area represents `pop` at `density` people/km²."""
     return np.sqrt(max(pop, 0) / (np.pi * density))
@@ -370,7 +383,7 @@ def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
     ax.text(x, ky - 12, f"{unit}, every map\nsame scale", fontsize=fs, ha="left", va="top", color=INK2, linespacing=1.4)
     x += 215
     r = max(radii)
-    rlab = f"{r / KM_PER_MI:.0f} miles ({r} km)" if miles else f"{r} km"
+    rlab = f"{r / KM_PER_MI:.0f} miles ({r:.0f} km)" if miles else f"{r:g} km"
     refs = [5e5, 2e6, 5e6] if density <= 1000 else [1e6, 5e6, 15e6]
     ax.text(x, ky + 52, f"People within {rlab}", fontsize=fs, va="bottom", color=INK2)
     base = ky - 40
