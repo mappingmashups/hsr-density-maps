@@ -167,11 +167,16 @@ def pack(panels):
     return y - shelf_h, width
 
 
-def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300):
+def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300, social=False):
+    """social=True: a stand-alone image for social media, with a title band above the panels
+    and a one-line key plus credits below them (see make_social.py)."""
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
     bottom, page_w = pack(panels)
+    panels_bottom = bottom
+    if social:
+        bottom -= SOCIAL_BAND
     W = page_w + 40
-    top = 270 if WITH_TEXT else 15
+    top = 270 if WITH_TEXT else 190 if social else 15
     H = -bottom + top + 20  # header room
     scale = 0.0072      # inches per km on the page
     fig = plt.figure(figsize=(W * scale, H * scale))
@@ -182,7 +187,10 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     ax.axis("off")
     fs = 7.5
 
-    if WITH_TEXT:
+    if social:
+        ax.text(0, 165, title, fontsize=19, weight="bold", color=INK, va="top")
+        ax.text(0, 100, subtitle, fontsize=10, color=INK2, va="top", linespacing=1.5)
+    elif WITH_TEXT:
         ax.text(0, 245, title, fontsize=17, weight="bold", color=INK, va="top")
         ax.text(0, 192, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.5)
 
@@ -276,6 +284,9 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         tot = "   ".join(f"≤{r} km: {totals[r]/1e6:.1f} M" for r in sorted(radii))
         ax.text(tx, ty - 46, tot, fontsize=6.4, color=INK2, va="top")
 
+    if social:
+        social_key(ax, panels, panels_bottom, page_w, radii, density, bins, shade)
+        return save(fig, fname, dpi)
     # legend: scale bar + reference circles, bottom-right
     lx, ly = page_w - 520, bottom + 120
     ax.plot([lx, lx + 100], [ly, ly], color=INK, lw=1.5)
@@ -315,6 +326,55 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.text(lx + i * 125 + 30, ky + 40, lab, fontsize=6.5, va="center", color=INK2)
 
     save(fig, fname, dpi)
+
+
+SOCIAL_BAND = 175   # km of page below the panels for the key and credits
+SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · "
+                 "mappingmashups.github.io/hsr-density-maps · #30DayMapChallenge")
+
+
+def social_key(ax, panels, y, page_w, radii, density, bins, shade):
+    """One row of key below the panels (scale bar, circle sizes, real radius + density greys,
+    regions and line styles actually shown), then a credit line."""
+    fs = 7
+    ky = y - 75            # centre line of the key row
+    x = 0
+    ax.plot([x, x + 100], [ky, ky], color=INK, lw=1.5)
+    for t in (0, 50, 100):
+        ax.plot([x + t, x + t], [ky - 4, ky + 4], color=INK, lw=1)
+    ax.text(x, ky - 12, "100 km, every map same scale", fontsize=fs, ha="left", va="top", color=INK2)
+    x += 250
+    refs = [5e5, 2e6, 5e6] if density <= 1000 else [1e6, 5e6, 15e6]
+    ax.text(x, ky + 52, f"People within {max(radii)} km (circle area)", fontsize=fs, va="bottom", color=INK2)
+    base = ky - 40
+    for v in refs:
+        rr = r_km(v, density)
+        ax.add_patch(Circle((x + rr, base + rr), rr, fc="none", ec=INK2, lw=0.7))
+        ax.text(x + 2 * rr + 4, base + 2, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
+                fontsize=fs, ha="left", va="bottom", color=INK2)
+        x += 2 * rr + 45
+    x += 70
+    ax.add_patch(Circle((x + 12, ky + 25), 11, **RING_STYLE))
+    ax.text(x + 32, ky + 25, f"real {' / '.join(str(r) for r in sorted(radii))} km radius; grey = people per km² inside it",
+            fontsize=fs, va="center", color=INK2)
+    labels = [f"{b:,}+" for b in bins]
+    cx = x + 4
+    for lab, a in zip(labels, shade):
+        ax.add_patch(plt.Rectangle((cx, ky - 22), 16, 16, fc=a, ec="none"))
+        ax.text(cx + 22, ky - 14, lab, fontsize=fs, va="center", color=INK2)
+        cx += 115
+    x += 540
+    regions = list(dict.fromkeys(p["c"]["region"] for p in panels))
+    for i, reg in enumerate(regions):
+        ax.add_patch(Circle((x + 12 + i * 160, ky + 25), 10, fc=REGION_COL[reg], alpha=0.6, ec="none"))
+        ax.text(x + 30 + i * 160, ky + 25, reg, fontsize=fs, va="center", color=INK2)
+    styles = {"existing": "-", "building": (0, (4, 2)), "planned": (0, (1.5, 1.5))}
+    names = {"existing": "existing", "building": "under construction", "planned": "planned"}
+    shown = [s for s in styles if any(p["c"]["status"] == s for p in panels)]
+    for i, st in enumerate(shown):
+        ax.plot([x + i * 160, x + i * 160 + 36], [ky - 14, ky - 14], color=LINE, lw=1.1, ls=styles[st])
+        ax.text(x + i * 160 + 44, ky - 14, names[st], fontsize=fs, va="center", color=INK2)
+    ax.text(0, y - SOCIAL_BAND + 25, SOCIAL_CREDIT, fontsize=6.5, color=INK3, va="bottom")
 
 
 def save(fig, fname, dpi):
