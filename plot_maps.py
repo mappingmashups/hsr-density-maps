@@ -213,7 +213,14 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.plot(xy[:, 0], xy[:, 1], color=LINE, lw=1.1, zorder=3,
                 ls="-" if c["status"] == "existing" else (0, (4, 2)) if c["status"] == "building" else (0, (1.5, 1.5)),
                 solid_capstyle="round")
-        for (a, b), d in zip(zip(xy[:-1], xy[1:]), p["seg"]):
+        if social:   # every gap labelled, upright, just left of the line (station names sit to the right)
+            for (a, b), d in zip(zip(xy[:-1], xy[1:]), p["seg"]):
+                mx, my = (a + b) / 2
+                ax.text(mx - 9, my, f"{d:.0f} km", fontsize=6.6, color=INK, weight="bold", ha="right", va="center",
+                        zorder=6.5, bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=INK3, lw=0.4, alpha=0.9))
+                ax.plot([mx - 8, mx], [my, my], color=INK3, lw=0.5, zorder=6.4)
+        else:
+          for (a, b), d in zip(zip(xy[:-1], xy[1:]), p["seg"]):
             if d >= 90:
                 mx, my = (a + b) / 2
                 ang = np.degrees(np.arctan2(b[1] - a[1], b[0] - a[0]))
@@ -282,6 +289,8 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         stat = f"{c['country']} · {c['status']} · {route:,.0f} km · {len(sts)} stations"
         ax.text(tx, ty - 26, stat, fontsize=6.4, color=INK2, va="top")
         tot = "   ".join(f"≤{r} km: {totals[r]/1e6:.1f} M" for r in sorted(radii))
+        if social:   # stop spacing instead of population totals
+            tot = f"stops every {np.mean(p['seg']):.0f} km on average ({min(p['seg']):.0f}–{max(p['seg']):.0f} km)"
         ax.text(tx, ty - 46, tot, fontsize=6.4, color=INK2, va="top")
 
     if social:
