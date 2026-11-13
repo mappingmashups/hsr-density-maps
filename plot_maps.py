@@ -384,7 +384,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
 
 
 KM_PER_MI = 1.609344
-SOCIAL_BAND = 215   # km of page below the panels for the key and credits
+SOCIAL_BAND = 180   # km of page below the panels for the key, notes and credits
 SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · "
                  "mappingmashups.github.io/hsr-density-maps")
 
@@ -412,9 +412,13 @@ def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
         ax.text(x + 2 * rr + 4, base + 2, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
                 fontsize=fs, ha="left", va="bottom", color=INK2)
         x += 2 * rr + 40
-    if notes:
-        ax.text(x + 50, ky + 58, notes, fontsize=8, va="top", color=INK2, linespacing=1.55)
-    ax.text(0, y - SOCIAL_BAND + 25, SOCIAL_CREDIT, fontsize=6.5, color=INK3, va="bottom")
+    # notes + credits: wrapped to run from beside the circle key to the right margin
+    import textwrap
+    nx, fs_n = x + 50, 8.5
+    per_line = int((page_w + 70 - nx) / (0.5 * fs_n / 72 / 0.0072))   # ~0.5 em per character; 0.0072 in per km
+    paras = [p for p in notes.split("\n") if p] + [SOCIAL_CREDIT]
+    text = "\n".join(textwrap.fill(p, per_line) for p in paras)
+    ax.text(nx, ky + 58, text, fontsize=fs_n, va="top", color=INK2, linespacing=1.5)
 
 
 def save(fig, fname, dpi):
