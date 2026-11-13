@@ -84,7 +84,7 @@ def short(name):
             "Jakarta Halim": "Jakarta", "Bandung Tegalluar": "Bandung"}.get(name, name)
 
 
-def build_panel(cid, radii, density):
+def build_panel(cid, radii, density, min_h=0):
     c = CORR[cid]
     sts = c["stations"]
     lon0, lat0 = np.mean([s[1] for s in sts]), np.mean([s[2] for s in sts])
@@ -108,6 +108,9 @@ def build_panel(cid, radii, density):
     if x1 - x0 < MIN_W:  # keep room for the title text; widen symmetrically
         extra = (MIN_W - (x1 - x0)) / 2
         x0, x1 = x0 - extra, x1 + extra
+    if y1 - y0 < min_h:  # equal-height frames: extend the map evenly above and below
+        extra = (min_h - (y1 - y0)) / 2
+        y0, y1 = y0 - extra, y1 + extra
     # background polygons: clip in lon/lat with generous margin, then project + clip exactly
     lons, lats = [s[1] for s in sts], [s[2] for s in sts]
     m = 6
@@ -175,6 +178,9 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     extra: corridor id -> list of further stats lines under each panel's title (e.g. train speeds)."""
     U, ul = (1 / KM_PER_MI, "mi") if miles else (1, "km")
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
+    if social:   # every frame as tall as the tallest, padded with more map
+        h = max(p["bb"][3] - p["bb"][1] for p in panels)
+        panels = [build_panel(cid, radii, density, min_h=h) for cid in (order or ORDER)]
     bottom, page_w = pack(panels)
     panels_bottom = bottom
     if social:
@@ -346,7 +352,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
 
 
 KM_PER_MI = 1.609344
-SOCIAL_BAND = 200   # km of page below the panels for the key and credits
+SOCIAL_BAND = 215   # km of page below the panels for the key and credits
 SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · "
                  "mappingmashups.github.io/hsr-density-maps")
 
@@ -355,7 +361,7 @@ def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
     """Key below the panels (scale bar, circle sizes, real radius + density greys,
     regions and line styles actually shown), then a credit line. Fits in ~1,450 km of page."""
     fs = 7
-    ky = y - 75            # centre line of the key row
+    ky = y - 95            # centre line of the key row
     x = 0
     bar, unit = (100 * KM_PER_MI, "100 miles") if miles else (100, "100 km")
     ax.plot([x, x + bar], [ky, ky], color=INK, lw=1.5)
