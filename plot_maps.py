@@ -243,7 +243,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
             ax.add_patch(Circle((x, y), 2.2, fc=INK, ec="white", lw=0.4, zorder=5.6))
         # the real-world radius at map scale, split Voronoi-style where circles overlap
         # (matching the nearest-station rule used for the counts)
-        for r in rings:
+        for r in ([] if social else rings):   # social image: no dashed catchment outlines
             for line in catchment_lines(xy, r):
                 ax.plot(*np.asarray(line.coords).T, color=RING_STYLE["ec"], lw=RING_STYLE["lw"],
                         ls=RING_STYLE["ls"], alpha=RING_STYLE["alpha"], zorder=5.5)
@@ -348,7 +348,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
 KM_PER_MI = 1.609344
 SOCIAL_BAND = 200   # km of page below the panels for the key and credits
 SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · "
-                 "mappingmashups.github.io/hsr-density-maps · #30DayMapChallenge")
+                 "mappingmashups.github.io/hsr-density-maps")
 
 
 def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
@@ -365,7 +365,6 @@ def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
     x += 215
     r = max(radii)
     rlab = f"{r / KM_PER_MI:.0f} miles ({r} km)" if miles else f"{r} km"
-    rlab1 = f"{r / KM_PER_MI:.0f}-mile ({r} km)" if miles else f"{r} km"
     refs = [5e5, 2e6, 5e6] if density <= 1000 else [1e6, 5e6, 15e6]
     ax.text(x, ky + 52, f"People within {rlab}", fontsize=fs, va="bottom", color=INK2)
     base = ky - 40
@@ -376,9 +375,8 @@ def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
                 fontsize=fs, ha="left", va="bottom", color=INK2)
         x += 2 * rr + 40
     x += 30
-    ax.add_patch(Circle((x + 12, ky + 25), 11, **RING_STYLE))
     area = "sq mi" if miles else "km²"
-    ax.text(x + 32, ky + 25, f"real {rlab1} radius;\ngrey = people per {area} inside it",
+    ax.text(x + 4, ky + 25, f"Grey: people per {area}\nwithin {rlab} of a stop",
             fontsize=fs, va="center", color=INK2, linespacing=1.3)
     if miles:   # same class breaks, restated per square mile and rounded
         labels = [f"{float(f'{b * KM_PER_MI ** 2:.2g}'):,.0f}+" for b in bins]
