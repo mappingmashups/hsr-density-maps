@@ -385,13 +385,14 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
 
 KM_PER_MI = 1.609344
 SOCIAL_BAND = 180   # km of page below the panels for the key, notes and credits
-SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · "
-                 "mappingmashups.github.io/hsr-density-maps")
+SOCIAL_CREDIT = "Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth · Read more: "
+SOCIAL_URL = "mappingmashups.github.io/hsr-density-maps"   # set in bold after the credit
 
 
 def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
-    """Below the panels: scale bar and circle-size key on the left, explanatory notes on
-    the right, then a credit line."""
+    """Below the panels: scale bar and nested circle-size key on the left, explanatory notes
+    and credits on the right, running to the right margin."""
+    import textwrap
     fs = 7
     ky = y - 95            # centre line of the key row
     x = 0
@@ -401,24 +402,31 @@ def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
         ax.plot([x + t, x + t], [ky - 4, ky + 4], color=INK, lw=1)
     ax.text(x, ky - 12, f"{unit}, every map\nsame scale", fontsize=fs, ha="left", va="top", color=INK2, linespacing=1.4)
     x += 215
+    # nested circles on one baseline; each value sits level with the top of its circle
     r = max(radii)
     rlab = f"{r / KM_PER_MI:.0f} miles ({r:.0f} km)" if miles else f"{r:g} km"
     refs = [5e5, 2e6, 5e6] if density <= 1000 else [1e6, 5e6, 15e6]
-    ax.text(x, ky + 52, f"People within {rlab}", fontsize=fs, va="bottom", color=INK2)
-    base = ky - 40
+    rmax = r_km(max(refs), density)
+    base, cx = ky - 62, x + rmax
+    lx = cx + rmax + 14
     for v in refs:
         rr = r_km(v, density)
-        ax.add_patch(Circle((x + rr, base + rr), rr, fc="none", ec=INK2, lw=0.7))
-        ax.text(x + 2 * rr + 4, base + 2, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
-                fontsize=fs, ha="left", va="bottom", color=INK2)
-        x += 2 * rr + 40
+        top = base + 2 * rr
+        ax.add_patch(Circle((cx, base + rr), rr, fc="none", ec=INK2, lw=0.7))
+        ax.plot([cx, lx - 4], [top, top], color=INK3, lw=0.5, ls=(0, (1.5, 1.5)))
+        ax.text(lx, top, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
+                fontsize=fs, ha="left", va="center", color=INK2)
+    ax.text(x, base + 2 * rmax + 12, f"People within\n{rlab}", fontsize=fs, va="bottom", color=INK2, linespacing=1.3)
+    x = lx + 40
     # notes + credits: wrapped to run from beside the circle key to the right margin
-    import textwrap
-    nx, fs_n = x + 50, 8.5
+    nx, fs_n, ls = x + 50, 8.5, 1.5
     per_line = int((page_w + 70 - nx) / (0.5 * fs_n / 72 / 0.0072))   # ~0.5 em per character; 0.0072 in per km
-    paras = [p for p in notes.split("\n") if p] + [SOCIAL_CREDIT]
-    text = "\n".join(textwrap.fill(p, per_line) for p in paras)
-    ax.text(nx, ky + 58, text, fontsize=fs_n, va="top", color=INK2, linespacing=1.5)
+    lines = [l for p in notes.split("\n") if p for l in textwrap.wrap(p, per_line)]
+    body = ax.text(nx, ky + 58, "\n".join(lines), fontsize=fs_n, va="top", color=INK2, linespacing=ls)
+    t = ax.annotate(SOCIAL_CREDIT, xy=(0, 0), xycoords=body, xytext=(0, -fs_n * (ls - 1) * 1.2),
+                    textcoords="offset points", va="top", ha="left", fontsize=fs_n, color=INK2)
+    ax.annotate(SOCIAL_URL, xy=(1, 1), xycoords=t, va="top", ha="left",
+                fontsize=fs_n, weight="bold", color=INK)
 
 
 def save(fig, fname, dpi):

@@ -57,7 +57,7 @@ if __name__ == "__main__":
             "Straight-line miles between consecutive high-speed rail stops on the proposed\n"
             "Vancouver–Seattle–Portland line and four European lines in service.",
             notes=f"Circles: people within {RADIUS / pm.KM_PER_MI:.0f} miles of each stop (circle area ∝ people), each person "
-                  "counted once, at their nearest stop. Grey: people per sq mi within 31 miles (50 km) of the line. "
+                  "counted once, at their nearest stop. Grey: people per sq\u00a0mi within 31 miles (50 km) of the line. "
                   "All five maps share one scale, each turned so the line runs top to bottom. "
                   "Average speed: fastest scheduled train over the mapped route length.",
             order=ORDER, dpi=200, social=True, miles=True, extra=speed_lines())
