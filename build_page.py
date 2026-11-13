@@ -60,4 +60,6 @@ for c in CORRIDORS:
 webp(os.path.join(OUT, "atlas_cities.png"), os.path.join(SITE, "atlas", "atlas_cities.webp"))
 for v in ("nested", "5km", "10km", "20km", "50km"):
     webp(os.path.join(OUT, f"map_{v}.png"), os.path.join(SITE, "maps", f"map_{v}.webp"))
+for v in ("social_cascadia_europe", "social_fast_slow"):   # stop-spacing section (make_social.py, make_local.py)
+    webp(os.path.join(OUT, f"{v}.png"), os.path.join(SITE, "maps", f"{v}.webp"))
 print("built", os.path.join(SITE, "index.html"), len(stations), "stations", len(cities), "cities")

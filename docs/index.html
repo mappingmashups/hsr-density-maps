@@ -89,6 +89,7 @@ figcaption { font: 400 0.875rem/1.5 var(--f-display); color: var(--ink-3); max-w
 .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; min-width: 0; }
 .plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; overflow: auto; max-height: 85vh; }
 .plate img { display: block; width: 100%; height: auto; }
+.plate.full { max-height: none; }   /* whole image, no inner scroll (stop-spacing section) */
 .plate.actual img { width: auto; max-width: none; }
 .chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; overflow-x: auto; }
 .chart svg { display: block; width: 100%; height: auto; min-width: 560px; }
@@ -242,6 +243,7 @@ img { max-width: 100%; }
       <li><span class="grp">Reference</span></li>
       <li><a href="#h-fp">Footprints</a></li>
       <li><a href="#h-st">Stations</a></li>
+      <li><a href="#h-stops">Stop spacing</a></li>
       <li><a href="#h-m">Method</a></li>
     </ul>
   </nav>
@@ -404,6 +406,21 @@ img { max-width: 100%; }
     </figure>
     <div class="tablewrap"><table id="stable"><thead></thead><tbody></tbody></table></div>
     <p class="meta col">“Counted” columns credit overlapping circles to the nearest station, and corridor totals use these. HRSL is Meta's 30 m layer, listed as a check on Kontur (it has no data for Canada, Australia or China). km to next is the straight-line distance.</p>
+  </section>
+
+  <section class="stack" aria-labelledby="h-stops">
+    <h2 id="h-stops">Where should the trains stop?</h2>
+    <p class="intro col">The sections above ask which cities make a corridor worth building. Once the line is drawn, a second choice matters almost as much: how many stops, and how far apart. Each extra stop brings the train closer to more people and costs everyone riding through a few minutes. Cascadia's high-speed stations haven't been chosen yet, so that choice is still open there.</p>
+    <figure>
+      <div class="plate full"><a href="social_cascadia_europe.png" title="Open the full-size image"><img src="maps/social_cascadia_europe.webp" alt="The planned Vancouver–Seattle–Portland line beside Berlin–Munich, Madrid–Barcelona, Turin–Naples and Paris–Marseille at one scale, with the miles between consecutive stops and circles for the people within 20 miles of each stop" loading="lazy"></a></div>
+      <figcaption>The nine stops in current Cascadia proposals against four European lines in service, at one scale and in miles. Labels give the straight-line distance between consecutive stops. Average speeds use the fastest scheduled train over the mapped route length.</figcaption>
+    </figure>
+    <p class="col">As proposed, Cascadia's stops would be 48 miles apart on average: closer than Paris–Marseille (61), Madrid–Barcelona (57) or Turin–Naples (86), and about the same as Berlin–Munich (44). Around Puget Sound they bunch up, with Everett, Seattle, Tacoma and Olympia each 24 to 27 miles from the next; on the European lines, gaps that short appear only around Nuremberg and Marseille and between Berlin's two stations. Closer stops usually mean a slower trip: the fastest train from Berlin to Munich averages about 92 mph over the mapped route, against about 136 mph for the non-stop train from Madrid to Barcelona. Stations don't have to be all-or-nothing, though: on these European lines the fastest trains typically skip intermediate stations, while slower trains on the same track stop at more of them.</p>
+    <figure>
+      <div class="plate full"><a href="social_fast_slow.png" title="Open the full-size image"><img src="maps/social_fast_slow.webp" alt="Each high-speed line beside the slower regional trains on the same corridor, with a dot at every regional stop; for Cascadia, today's Amtrak Cascades beside the planned high-speed line" loading="lazy"></a></div>
+      <figcaption>Each high-speed line (dark) beside the slower regional trains on the same corridor (green). Regional lines chain several services where no single train runs end to end, and show the main regional-express stops rather than every local station.</figcaption>
+    </figure>
+    <p class="col">The European high-speed lines also don't work alone. Slower regional trains run beside them, stopping every 13 to 20 miles on average and carrying people from smaller towns to the high-speed stations. Cascadia already has a version of this: today's Amtrak Cascades makes 18 stops, about 23 miles apart on average, twice as many as the planned high-speed line. Keeping a service like that running alongside lets the fast trains skip small towns without leaving them behind.</p>
   </section>
 
   <section class="method" aria-labelledby="h-m">
