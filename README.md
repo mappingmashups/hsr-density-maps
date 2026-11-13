@@ -43,7 +43,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Summary charts | `plot_summary.py` | `out/chart_per_km.png`, `out/chart_centralisation.png` |
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 | Link-preview image (Slack, social media) | `make_og.py` (needs Playwright + Chromium) | `docs/og.png` |
-| Same-scale social-media image: Cascadia against France, Spain, Italy and Germany, every stop-to-stop distance labelled, 20 km circles, title, key and credits | `make_social.py` | `docs/social_cascadia_europe.png` |
+| Same-scale social-media image in miles: Cascadia against Germany, Spain, Italy and France, every stop-to-stop distance labelled, average and top train speeds, 20 km circles, title, key and credits | `make_social.py` | `docs/social_cascadia_europe.png` |
 | Animated comparison GIF (radius sweep); `make_gif.py LEFT RIGHT [--slide KM] [--flip-left] [--flip-right] [--mp4]` for any pair; `--mp4` adds a 1080×1080 Instagram video in `out/` (not committed) | `make_gif.py` (needs Playwright + Chromium, ffmpeg) | `docs/compare_<left>_<right>_radius.gif` |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and
