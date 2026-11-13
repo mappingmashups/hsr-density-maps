@@ -44,6 +44,7 @@ git-ignored; the published copies are WebP files in `docs/`.
 | Web page | `build_page.py` (template in `page/template.html`) | `docs/` → GitHub Pages (main branch, `/docs`) |
 | Link-preview image (Slack, social media) | `make_og.py` (needs Playwright + Chromium) | `docs/og.png` |
 | Same-scale social-media image in miles: Cascadia against Germany, Spain, Italy and France, every stop-to-stop distance labelled, average and top train speeds, 20-mile circles (counted from the hexagon extract), title, key and credits | `make_social.py` | `docs/social_cascadia_europe.png` |
+| Same-scale social-media image: each HSR line beside the slower regional trains on the same corridor (Amtrak Cascades for Cascadia); station lists in `local_lines.py` | `make_local.py` | `docs/social_fast_slow.png` |
 | Animated comparison GIF (radius sweep); `make_gif.py LEFT RIGHT [--slide KM] [--flip-left] [--flip-right] [--mp4]` for any pair; `--mp4` adds a 1080×1080 Instagram video in `out/` (not committed) | `make_gif.py` (needs Playwright + Chromium, ffmpeg) | `docs/compare_<left>_<right>_radius.gif` |
 
 To recompute one corridor after editing `stations.py`: `python popcalc.py kontur <id>` and

@@ -25,6 +25,7 @@ OUT = os.path.join(HERE, "out")
 SRC = "kontur"
 
 # categorical slots 1-3 of the reference palette (validated all-pairs)
+LOCAL_COL, LOCAL_INK = "#1baf7a", "#0d7a54"   # regional trains (make_local.py): line, and text in the header
 REGION_COL = {"North America": "#eb6834", "Australia": "#b8461d", "Europe": "#2a78d6", "Asia": "#1baf7a"}
 INK, INK2, INK3 = "#0b0b0b", "#52514e", "#8a8984"
 PAGE_BG = "#f6f5f1"   # the web page's background, so images sit on it without a white box
@@ -97,7 +98,9 @@ def short(name):
             "Jakarta Halim": "Jakarta", "Bandung Tegalluar": "Bandung"}.get(name, name)
 
 
-def build_panel(cid, radii, density, min_h=0, context=False):
+def build_panel(cid, radii, density, min_h=0, context=False, more=None, circles=True):
+    """more: further (name, lon, lat) points (e.g. a regional line) that the frame must also
+    show; returned rotated as p["lxy"]. circles=False: pad for station dots, not population circles."""
     c = CORR[cid]
     sts = c["stations"]
     lon0, lat0 = np.mean([s[1] for s in sts]), np.mean([s[2] for s in sts])
@@ -114,10 +117,12 @@ def build_panel(cid, radii, density, min_h=0, context=False):
     t = np.radians(phi)
     R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
     xy = xy @ R.T
-    rmax = max(r_km(POP[(cid, s[0])][f"dedup_{max(radii)}"], density) for s in sts)
+    lxy = (np.array([tf.transform(m[1], m[2]) for m in more]) @ R.T) if more else np.zeros((0, 2))
+    rmax = max(r_km(POP[(cid, s[0])][f"dedup_{max(radii)}"], density) for s in sts) if circles else 0
     pad = max(rmax, 25) + 15
-    x0, y0 = xy.min(0) - pad
-    x1, y1 = xy.max(0) + pad
+    allxy = np.vstack([xy, lxy])
+    x0, y0 = allxy.min(0) - pad
+    x1, y1 = allxy.max(0) + pad
     if x1 - x0 < MIN_W:  # keep room for the title text; widen symmetrically
         extra = (MIN_W - (x1 - x0)) / 2
         x0, x1 = x0 - extra, x1 + extra
@@ -126,7 +131,7 @@ def build_panel(cid, radii, density, min_h=0, context=False):
         y0, y1 = y0 - extra, y1 + extra
     # background polygons: clip in lon/lat with generous margin, then project + clip exactly
     lons, lats = [s[1] for s in sts], [s[2] for s in sts]
-    m = 6
+    m = 6 if not more else 7
     bb = box(min(lons) - m, min(lats) - m, max(lons) + m, max(lats) + m)
     pbox = box(x0, y0, x1, y1)
     bg = [g.clip(bb).to_crs(proj).rotate(phi, origin=(0, 0)).clip(pbox) for g in (ADM1, ADM0, LAKES)]
@@ -137,7 +142,7 @@ def build_panel(cid, radii, density, min_h=0, context=False):
         hexes = (v[keep], d[keep])
     else:
         hexes = project_hexes(cid, tf, R, max(radii))
-    return dict(c=c, sts=sts, xy=xy, bb=(x0, y0, x1, y1), bg=bg, seg=seg, phi=phi, hexes=hexes)
+    return dict(c=c, sts=sts, xy=xy, bb=(x0, y0, x1, y1), bg=bg, seg=seg, phi=phi, hexes=hexes, lxy=lxy)
 
 
 _HEX = {}
@@ -202,17 +207,20 @@ def pack(panels):
     return y - shelf_h, width
 
 
-def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300, social=False, miles=False, extra=None, notes=""):
+def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300, social=False, miles=False, extra=None, notes="", local=None):
     """social=True: a stand-alone image for social media, with a title band above the panels
     and a one-line key plus credits below them (see make_social.py).
     miles=True (social only): distances, scale bar and density key in miles.
     notes (social only): explanatory text set beside the circle key, below the panels.
-    extra: corridor id -> list of further stats lines under each panel's title (e.g. train speeds)."""
+    extra: corridor id -> list of further stats lines under each panel's title (e.g. train speeds).
+    local (social only): corridor id -> list of (name, lon, lat) for a slower regional line drawn
+    beside the HSR line; replaces the population circles and gap labels, and the key shows the lines."""
     U, ul = (1 / KM_PER_MI, "mi") if miles else (1, "km")
-    panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
+    kw = lambda cid: dict(more=local.get(cid), circles=False) if local else {}
+    panels = [build_panel(cid, radii, density, **kw(cid)) for cid in (order or ORDER)]
     if social:   # every frame as tall as the tallest, padded with more map; density along the whole line
         h = max(p["bb"][3] - p["bb"][1] for p in panels)
-        panels = [build_panel(cid, radii, density, min_h=h, context=True) for cid in (order or ORDER)]
+        panels = [build_panel(cid, radii, density, min_h=h, context=True, **kw(cid)) for cid in (order or ORDER)]
     bottom, page_w = pack(panels)
     panels_bottom = bottom
     if social:
@@ -255,7 +263,12 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         ax.plot(xy[:, 0], xy[:, 1], color=LINE, lw=1.1, zorder=3,
                 ls="-" if c["status"] == "existing" else (0, (4, 2)) if c["status"] == "building" else (0, (1.5, 1.5)),
                 solid_capstyle="round")
-        if social:   # every gap labelled, upright, just left of the line (station names sit to the right)
+        if local:   # the regional line under the HSR line, with a dot at every stop
+            lxy = p["lxy"] + (ox, oy)
+            ax.plot(lxy[:, 0], lxy[:, 1], color=LOCAL_COL, lw=1.6, zorder=2.8, solid_capstyle="round", solid_joinstyle="round")
+            for x, y in lxy:
+                ax.add_patch(Circle((x, y), 2.6, fc="white", ec=LOCAL_COL, lw=1.0, zorder=3.4))
+        elif social:   # every gap labelled, upright, just left of the line (station names sit to the right)
             for (a, b), d in zip(zip(xy[:-1], xy[1:]), p["seg"]):
                 mx, my = (a + b) / 2
                 ax.text(mx - 9, my, f"{d * U:.0f} {ul}", fontsize=6.6, color=INK, weight="bold", ha="right", va="center",
@@ -274,11 +287,11 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         # circles: biggest ring first, each ring = dedup pop within that radius
         for s, (x, y) in zip(sts, xy):
             pr = POP[(c["id"], s[0])]
-            for r, al in zip(rings, alphas):
+            for r, al in zip([] if local else rings, alphas):
                 rr = r_km(pr[f"dedup_{r}"], density)
                 ax.add_patch(Circle((x, y), rr, fc=col, alpha=al, ec="none", zorder=4))
                 ax.add_patch(Circle((x, y), rr, fc="none", ec=col, lw=0.9, alpha=0.9, zorder=4.1))
-            ax.add_patch(Circle((x, y), 2.2, fc=INK, ec="white", lw=0.4, zorder=5.6))
+            ax.add_patch(Circle((x, y), 3.4 if local else 2.2, fc=INK, ec="white", lw=0.6 if local else 0.4, zorder=5.6))
         # the real-world radius at map scale, split Voronoi-style where circles overlap
         # (matching the nearest-station rule used for the counts)
         for r in ([] if social else rings):   # social image: no dashed catchment outlines
@@ -299,7 +312,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         order = sorted(zip(sts, xy), key=lambda t: -POP[(c["id"], t[0][0])][f"dedup_{main}"])
         for s, (x, y) in order:
             v = POP[(c["id"], s[0])][f"dedup_{main}"]
-            rr = max(r_km(v, density), 4)
+            rr = 5 if local else max(r_km(v, density), 4)
             big = v >= 400_000 or s is sts[0] or s is sts[-1]
             lx_, ly_ = x + rr + 3, y
             if any(abs(lx_ - a) < 80 and abs(ly_ - b) < 13 for a, b in placed):
@@ -335,12 +348,15 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
         if social:   # stop spacing instead of population totals
             seg = np.array(p["seg"]) * U
             tot = f"avg. {seg.mean():.0f} {ul} between stops ({seg.min():.0f}–{seg.max():.0f})"
+            if local:
+                tot = f"high-speed: {len(sts)} stops, avg. {seg.mean():.0f} {ul} apart"
         ax.text(tx, ty - 46, tot, fontsize=6.4, color=INK2, va="top")
         for k, line in enumerate((extra or {}).get(c["id"], [])):
-            ax.text(tx, ty - 66 - 20 * k, line, fontsize=6.4, color=INK, va="top")
+            ax.text(tx, ty - 66 - 20 * k, line, fontsize=6.4, color=LOCAL_INK if local else INK, va="top",
+                    weight="bold" if local else "normal")
 
     if social:
-        social_key(ax, panels_bottom, page_w, radii, density, miles, notes)
+        social_key(ax, panels_bottom, page_w, radii, density, miles, notes, lines_key=bool(local))
         return save(fig, fname, dpi)
     # legend: scale bar + reference circles, bottom-right
     lx, ly = page_w - 520, bottom + 120
@@ -389,7 +405,7 @@ SOCIAL_CREDIT = "Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth 
 SOCIAL_URL = "mappingmashups.github.io/hsr-density-maps"   # set in bold after the credit
 
 
-def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
+def social_key(ax, y, page_w, radii, density, miles=False, notes="", lines_key=False):
     """Below the panels: scale bar and nested circle-size key on the left, explanatory notes
     and credits on the right, running to the right margin."""
     import textwrap
@@ -402,6 +418,19 @@ def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
         ax.plot([x + t, x + t], [ky - 4, ky + 4], color=INK, lw=1)
     ax.text(x, ky - 12, f"{unit}, every map\nsame scale", fontsize=fs, ha="left", va="top", color=INK2, linespacing=1.4)
     x += 215
+    if lines_key:   # high-speed vs regional line samples instead of the circle key
+        for k, (lab, col, dot) in enumerate([("High-speed line and stops\n(dotted: planned)", LINE, "hsr"),
+                                              ("Regional trains\nand stops", LOCAL_COL, "local")]):
+            yy = ky + 30 - k * 62
+            ax.plot([x, x + 60], [yy, yy], color=col, lw=1.6 if dot == "local" else 1.1, solid_capstyle="round")
+            for xx in (x + 8, x + 52):
+                if dot == "hsr":
+                    ax.add_patch(Circle((xx, yy), 3.4, fc=INK, ec="white", lw=0.6, zorder=3))
+                else:
+                    ax.add_patch(Circle((xx, yy), 2.6, fc="white", ec=LOCAL_COL, lw=1.0, zorder=3))
+            ax.text(x + 72, yy, lab, fontsize=fs, va="center", color=INK2, linespacing=1.3)
+        x += 72 + 130
+        return _social_notes(ax, x, ky, page_w, notes)
     # nested circles on one baseline; each value sits level with the top of its circle
     r = max(radii)
     rlab = f"{r / KM_PER_MI:.0f} miles ({r:.0f} km)" if miles else f"{r:g} km"
@@ -418,13 +447,24 @@ def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
                 fontsize=fs, ha="left", va="center", color=INK2)
     ax.text(x, base + 2 * rmax + 12, f"People within\n{rlab}", fontsize=fs, va="bottom", color=INK2, linespacing=1.3)
     x = lx + 40
-    # notes + credits: wrapped to run from beside the circle key to the right margin
+    _social_notes(ax, x, ky, page_w, notes)
+
+
+def _social_notes(ax, x, ky, page_w, notes):
+    """Notes + credits: wrapped to run from beside the key to the right margin."""
+    import textwrap
     nx, fs_n, ls = x + 50, 8.5, 1.5
     per_line = int((page_w + 70 - nx) / (0.5 * fs_n / 72 / 0.0072))   # ~0.5 em per character; 0.0072 in per km
     lines = [l for p in notes.split("\n") if p for l in textwrap.wrap(p, per_line)]
     body = ax.text(nx, ky + 58, "\n".join(lines), fontsize=fs_n, va="top", color=INK2, linespacing=ls)
-    t = ax.annotate(SOCIAL_CREDIT, xy=(0, 0), xycoords=body, xytext=(0, -fs_n * (ls - 1) * 1.2),
-                    textcoords="offset points", va="top", ha="left", fontsize=fs_n, color=INK2)
+    gap = dict(xy=(0, 0), xytext=(0, -fs_n * (ls - 1) * 1.2), textcoords="offset points",
+               va="top", ha="left", fontsize=fs_n, color=INK2)
+    credit = SOCIAL_CREDIT
+    if len(credit) + len(SOCIAL_URL) > per_line:   # too long for one line: "Read more" on a line of its own
+        head, _, more = credit.rpartition("Read more: ")
+        body = ax.annotate(head.rstrip(" ·"), xycoords=body, **gap)
+        credit = "Read more: "
+    t = ax.annotate(credit, xycoords=body, **gap)
     ax.annotate(SOCIAL_URL, xy=(1, 1), xycoords=t, va="top", ha="left",
                 fontsize=fs_n, weight="bold", color=INK)
 
