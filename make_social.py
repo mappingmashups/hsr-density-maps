@@ -55,7 +55,9 @@ if __name__ == "__main__":
     pm.draw([RADIUS], DENSITY, "social_cascadia_europe",
             "Cascadia vs. Europe: how far apart are the stops?",
             "Straight-line miles between consecutive high-speed rail stops on the proposed\n"
-            "Vancouver–Seattle–Portland line and four European lines in service. Circles show people\n"
-            f"within {RADIUS / pm.KM_PER_MI:.0f} miles of each stop. All five maps share one scale, turned so the line runs top to bottom.\n"
-            "Average speed: fastest scheduled train over the mapped route length.",
+            "Vancouver–Seattle–Portland line and four European lines in service.",
+            notes=f"Circles: people within {RADIUS / pm.KM_PER_MI:.0f} miles of each stop (circle area ∝ people), each person counted\n"
+                  "once, at their nearest stop. Grey shading shows how densely that land is settled.\n"
+                  "All five maps share one scale, each turned so the line runs top to bottom.\n"
+                  "Average speed: fastest scheduled train over the mapped route length.",
             order=ORDER, dpi=200, social=True, miles=True, extra=speed_lines())

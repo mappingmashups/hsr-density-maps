@@ -184,10 +184,11 @@ def pack(panels):
     return y - shelf_h, width
 
 
-def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300, social=False, miles=False, extra=None):
+def draw(radii, density, fname, title, subtitle, footprint="density", order=None, dpi=300, social=False, miles=False, extra=None, notes=""):
     """social=True: a stand-alone image for social media, with a title band above the panels
     and a one-line key plus credits below them (see make_social.py).
     miles=True (social only): distances, scale bar and density key in miles.
+    notes (social only): explanatory text set beside the circle key, below the panels.
     extra: corridor id -> list of further stats lines under each panel's title (e.g. train speeds)."""
     U, ul = (1 / KM_PER_MI, "mi") if miles else (1, "km")
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
@@ -199,7 +200,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     if social:
         bottom -= SOCIAL_BAND
     W = page_w + (110 if social else 40)   # social: room for station names past the last panel
-    top = 270 if WITH_TEXT else 255 if social else 15
+    top = 270 if WITH_TEXT else 225 if social else 15
     H = -bottom + top + 20  # header room
     scale = 0.0072      # inches per km on the page
     fig = plt.figure(figsize=(W * scale, H * scale))
@@ -211,8 +212,8 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     fs = 7.5
 
     if social:
-        ax.text(0, top - 25, title, fontsize=19, weight="bold", color=INK, va="top")
-        ax.text(0, top - 90, subtitle, fontsize=10, color=INK2, va="top", linespacing=1.5)
+        ax.text(0, top - 20, title, fontsize=25, weight="bold", color=INK, va="top")
+        ax.text(0, top - 100, subtitle, fontsize=13, color=INK2, va="top", linespacing=1.45)
     elif WITH_TEXT:
         ax.text(0, 245, title, fontsize=17, weight="bold", color=INK, va="top")
         ax.text(0, 192, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.5)
@@ -321,7 +322,7 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
             ax.text(tx, ty - 66 - 20 * k, line, fontsize=6.4, color=INK, va="top")
 
     if social:
-        social_key(ax, panels, panels_bottom, page_w, radii, density, bins, shade, miles)
+        social_key(ax, panels_bottom, page_w, radii, density, miles, notes)
         return save(fig, fname, dpi)
     # legend: scale bar + reference circles, bottom-right
     lx, ly = page_w - 520, bottom + 120
@@ -370,9 +371,9 @@ SOCIAL_CREDIT = ("Population: Kontur 2023 (CC BY 4.0) · Outlines: Natural Earth
                  "mappingmashups.github.io/hsr-density-maps")
 
 
-def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
-    """Key below the panels (scale bar, circle sizes, real radius + density greys,
-    regions and line styles actually shown), then a credit line. Fits in ~1,450 km of page."""
+def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
+    """Below the panels: scale bar and circle-size key on the left, explanatory notes on
+    the right, then a credit line."""
     fs = 7
     ky = y - 95            # centre line of the key row
     x = 0
@@ -393,30 +394,8 @@ def social_key(ax, panels, y, page_w, radii, density, bins, shade, miles=False):
         ax.text(x + 2 * rr + 4, base + 2, f"{v/1e6:g} M" if v >= 1e6 else f"{v/1e3:g}k",
                 fontsize=fs, ha="left", va="bottom", color=INK2)
         x += 2 * rr + 40
-    x += 30
-    area = "sq mi" if miles else "km²"
-    ax.text(x + 4, ky + 25, f"Grey: people per {area}\nwithin {rlab} of a stop",
-            fontsize=fs, va="center", color=INK2, linespacing=1.3)
-    if miles:   # same class breaks, restated per square mile and rounded
-        labels = [f"{float(f'{b * KM_PER_MI ** 2:.2g}'):,.0f}+" for b in bins]
-    else:
-        labels = [f"{b:,}+" for b in bins]
-    cx = x + 4
-    for lab, a in zip(labels, shade):
-        ax.add_patch(plt.Rectangle((cx, ky - 30), 16, 16, fc=a, ec="none"))
-        ax.text(cx + 22, ky - 22, lab, fontsize=fs, va="center", color=INK2)
-        cx += 100
-    x += 440
-    regions = list(dict.fromkeys(p["c"]["region"] for p in panels))
-    for i, reg in enumerate(regions):
-        ax.add_patch(Circle((x + 12 + i * 150, ky + 25), 10, fc=REGION_COL[reg], alpha=0.6, ec="none"))
-        ax.text(x + 30 + i * 150, ky + 25, reg, fontsize=fs, va="center", color=INK2)
-    styles = {"existing": "-", "building": (0, (4, 2)), "planned": (0, (1.5, 1.5))}
-    names = {"existing": "existing", "building": "under construction", "planned": "planned"}
-    shown = [s for s in styles if any(p["c"]["status"] == s for p in panels)]
-    for i, st in enumerate(shown):
-        ax.plot([x + i * 150, x + i * 150 + 36], [ky - 22, ky - 22], color=LINE, lw=1.1, ls=styles[st])
-        ax.text(x + i * 150 + 44, ky - 22, names[st], fontsize=fs, va="center", color=INK2)
+    if notes:
+        ax.text(x + 50, ky + 58, notes, fontsize=8, va="top", color=INK2, linespacing=1.55)
     ax.text(0, y - SOCIAL_BAND + 25, SOCIAL_CREDIT, fontsize=6.5, color=INK3, va="bottom")
 
 
