@@ -97,7 +97,7 @@ def short(name):
             "Jakarta Halim": "Jakarta", "Bandung Tegalluar": "Bandung"}.get(name, name)
 
 
-def build_panel(cid, radii, density, min_h=0):
+def build_panel(cid, radii, density, min_h=0, context=False):
     c = CORR[cid]
     sts = c["stations"]
     lon0, lat0 = np.mean([s[1] for s in sts]), np.mean([s[2] for s in sts])
@@ -131,7 +131,12 @@ def build_panel(cid, radii, density, min_h=0):
     pbox = box(x0, y0, x1, y1)
     bg = [g.clip(bb).to_crs(proj).rotate(phi, origin=(0, 0)).clip(pbox) for g in (ADM1, ADM0, LAKES)]
     seg = [hav_km(a[1], a[2], b[1], b[2]) for a, b in zip(sts[:-1], sts[1:])]
-    hexes = project_hexes(cid, tf, R, max(radii))
+    if context:   # density along the whole line, trimmed to the frame
+        v, d = project_context(cid, tf, R)
+        keep = ((v[..., 0] >= x0) & (v[..., 0] <= x1) & (v[..., 1] >= y0) & (v[..., 1] <= y1)).all(1)
+        hexes = (v[keep], d[keep])
+    else:
+        hexes = project_hexes(cid, tf, R, max(radii))
     return dict(c=c, sts=sts, xy=xy, bb=(x0, y0, x1, y1), bg=bg, seg=seg, phi=phi, hexes=hexes)
 
 
@@ -144,6 +149,19 @@ def project_hexes(cid, tf, R, rmax):
     h = h[(h["dist_km"] <= rmax) & (h["density"] >= 300)]
     rings = [np.asarray(g.exterior.coords)[:6] for g in h.geometry]  # H3 hexagons: 6 vertices
     v = np.stack(rings) if rings else np.zeros((0, 6, 2))
+    x, y = tf.transform(v[..., 0].ravel(), v[..., 1].ravel())
+    v = (np.column_stack([x, y]) @ R.T).reshape(v.shape)
+    return v, h["density"].values
+
+
+def project_context(cid, tf, R):
+    """Cells within 50 km of the whole route line (out/context, from extract_context.py)
+    with at least 300 people/km², as (verts[n,6,2] in rotated km, density[n])."""
+    import h3, pandas as pd
+    h = pd.read_parquet(os.path.join(OUT, "context", f"{cid}.parquet"))
+    h = h[h["density"] >= 300]
+    rings = [h3.cell_to_boundary(c)[:6] for c in h["h3"]]   # (lat, lng) pairs
+    v = np.array(rings, dtype=float).reshape(-1, 6, 2)[..., ::-1] if rings else np.zeros((0, 6, 2))
     x, y = tf.transform(v[..., 0].ravel(), v[..., 1].ravel())
     v = (np.column_stack([x, y]) @ R.T).reshape(v.shape)
     return v, h["density"].values
@@ -192,15 +210,15 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     extra: corridor id -> list of further stats lines under each panel's title (e.g. train speeds)."""
     U, ul = (1 / KM_PER_MI, "mi") if miles else (1, "km")
     panels = [build_panel(cid, radii, density) for cid in (order or ORDER)]
-    if social:   # every frame as tall as the tallest, padded with more map
+    if social:   # every frame as tall as the tallest, padded with more map; density along the whole line
         h = max(p["bb"][3] - p["bb"][1] for p in panels)
-        panels = [build_panel(cid, radii, density, min_h=h) for cid in (order or ORDER)]
+        panels = [build_panel(cid, radii, density, min_h=h, context=True) for cid in (order or ORDER)]
     bottom, page_w = pack(panels)
     panels_bottom = bottom
     if social:
         bottom -= SOCIAL_BAND
     W = page_w + (110 if social else 40)   # social: room for station names past the last panel
-    top = 270 if WITH_TEXT else 225 if social else 15
+    top = 270 if WITH_TEXT else 235 if social else 15
     H = -bottom + top + 20  # header room
     scale = 0.0072      # inches per km on the page
     fig = plt.figure(figsize=(W * scale, H * scale))
@@ -212,8 +230,8 @@ def draw(radii, density, fname, title, subtitle, footprint="density", order=None
     fs = 7.5
 
     if social:
-        ax.text(0, top - 20, title, fontsize=25, weight="bold", color=INK, va="top")
-        ax.text(0, top - 100, subtitle, fontsize=13, color=INK2, va="top", linespacing=1.45)
+        ax.text(0, top - 15, title, fontsize=31, weight="bold", color=INK, va="top")
+        ax.text(0, top - 105, subtitle, fontsize=16.5, color=INK2, va="top", linespacing=1.2)
     elif WITH_TEXT:
         ax.text(0, 245, title, fontsize=17, weight="bold", color=INK, va="top")
         ax.text(0, 192, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.5)
@@ -379,7 +397,7 @@ def social_key(ax, y, page_w, radii, density, miles=False, notes=""):
     x = 0
     bar, unit = (100 * KM_PER_MI, "100 miles") if miles else (100, "100 km")
     ax.plot([x, x + bar], [ky, ky], color=INK, lw=1.5)
-    for t in (0, bar / 2, bar):
+    for t in (0, bar):   # end ticks only: the whole bar is the distance
         ax.plot([x + t, x + t], [ky - 4, ky + 4], color=INK, lw=1)
     ax.text(x, ky - 12, f"{unit}, every map\nsame scale", fontsize=fs, ha="left", va="top", color=INK2, linespacing=1.4)
     x += 215
